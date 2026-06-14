@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Us</title>
+    <style>
+        body {font-family: 'Courier New', Consolas, monospace; background-color: #060608; color: #c5a059; margin: 0; padding: 0;}
+        .container {max-width: 800px; margin: 0 auto; padding: 20px;}
+        h1 {text-align: center;}
+        form {display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 0 auto;}
+        label {font-weight: bold;}
+        input, textarea {padding: 8px; background: #1a1a1a; border: 1px solid #333; color: #c5a059; border-radius: 4px;}
+        button {padding: 10px; background: #c5a059; color: #060608; border: none; border-radius: 4px; cursor: pointer;}
+        button:hover {background: #e0b75a;}
+        .success {text-align: center; color: #4caf50;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Contact Us</h1>
+        {% if success %}
+        <p class="success">Thank you for your message! We'll get back to you soon.</p>
+        {% else %}
+        <form method="POST">
+            <label>Name: <input type="text" name="name" required></label>
+            <label>Email: <input type="email" name="email" required></label>
+            <label>Message: <textarea name="message" rows="5" required></textarea></label>
+            <button type="submit">Send</button>
+        </form>
+        {% endif %}
+    </div>
+</body>
+</html>
