@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WildBill's Vault</title>
+    <meta name="description" content="WildBill's Vault offers premium digital graphics collections for designers and creators.">
+    <meta name="keywords" content="digital graphics, assets, design resources, premium graphics, stock images">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
@@ -94,7 +97,75 @@
         footer div { display: flex; justify-content: center; gap: 24px; }
         footer a { color: #777; text-decoration: none; font-weight: 500; transition: color 0.2s; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
         footer a:hover { color: #ffaa00; }
+    .why-choose {
+        padding: 40px 0;
+        background: rgba(15, 15, 15, 0.85);
+        text-align: center;
+    }
+    .why-choose h2 {
+        color: #ffaa00;
+        margin-bottom: 20px;
+        font-size: 2rem;
+    }
+    .features-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 auto;
+        max-width: 800px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        font-size: 1rem;
+        color: #ddd;
+    }
+    .features-list li {
+        flex: 1 1 200px;
+        background: rgba(20, 20, 20, 0.6);
+        padding: 12px;
+        border-radius: 8px;
+    }
+    .testimonials {
+        padding: 40px 0;
+        background: rgba(10, 10, 10, 0.9);
+        text-align: center;
+    }
+    .testimonials h2 {
+        color: #ffaa00;
+        margin-bottom: 30px;
+        font-size: 2rem;
+    }
+    .testimonial-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    .testimonial {
+        background: rgba(20, 20, 20, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 12px;
+        padding: 20px;
+        max-width: 300px;
+        text-align: left;
+    }
+    .testimonial p {
+        margin: 0 0 10px;
+        color: #fff;
+    }
+    .testimonial .author {
+        font-weight: 600;
+        color: #ffaa00;
+        text-align: right;
+    }
     </style>
+<!-- Google Analytics placeholder -->
+<script>
+  // Replace with your GA tracking ID
+  console.log('Google Analytics script placeholder');
+</script>
 </head>
 <body>
 
@@ -110,6 +181,17 @@
         <p>Premium Digital Graphics Collections</p>
     </header>
 
+    <section class="why-choose">
+        <h2 style="text-align:center; color:#ffaa00;">Why Choose WildBill's Vault?</h2>
+        <ul class="features-list">
+            <li>High‑resolution, royalty‑free graphics</li>
+            <li>Instant download – no waiting</li>
+            <li>Secure checkout with SSL encryption</li>
+            <li>Regularly updated collections</li>
+            <li>Responsive support for designers</li>
+        </ul>
+    </section>
+
     <div class="container">
         <div class="product-grid">
             {% for item in products %}
@@ -119,7 +201,6 @@
                         <div class="image-wrapper">
                             <img src="{{ url_for('static', filename='images/' + item.name + '_preview.jpg') }}" alt="Preview">
                         </div>
-                    </a>
                     <div class="product-info">
                         <a href="{{ url_for('product_detail', sku=item.sku) }}" style="text-decoration: none;">
                             <h3>{{ item.name.replace('_', ' ') }}</h3>
@@ -134,10 +215,28 @@
                 </a>
             </div>
             {% endfor %}
+    </div>
+</div>
+
+<section class="testimonials">
+    <h2 style="text-align:center; color:#ffaa00;">What Our Customers Say</h2>
+    <div class="testimonial-list">
+        <div class="testimonial">
+            <p>"The graphics are top‑quality and instantly boosted my projects!"</p>
+            <p class="author">— Alex P., Graphic Designer</p>
+        </div>
+        <div class="testimonial">
+            <p>"Fast download, great variety, and excellent support."</p>
+            <p class="author">— Maya L., UI/UX Designer</p>
+        </div>
+        <div class="testimonial">
+            <p>"I love the exclusive bundles – they’re perfect for my clients."</p>
+            <p class="author">— Sam K., Marketing Agency</p>
         </div>
     </div>
+</section>
 
-    <footer>
+<footer>
         <p>&copy; 2026 WildBill's Vault. All Rights Reserved.</p>
         <div>
             <a href="{{ url_for('contact') }}">Contact</a>
