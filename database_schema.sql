@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    theme TEXT,
+    sku TEXT UNIQUE NOT NULL,
+    price REAL NOT NULL,
+    image_url TEXT,
+    zip_filename TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    transaction_id TEXT UNIQUE NOT NULL,
+    email TEXT NOT NULL,
+    sku TEXT,
+    amount REAL NOT NULL,
+    status TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS downloads (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id INTEGER NOT NULL,
+    token TEXT UNIQUE NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    download_count INTEGER DEFAULT 0,
+    FOREIGN KEY (order_id) REFERENCES orders(id)
+);

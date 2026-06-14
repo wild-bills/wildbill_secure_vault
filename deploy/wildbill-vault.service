@@ -1,0 +1,17 @@
+[Unit]
+Description=Wildbills Secure Vault Flask App
+After=network.target
+
+[Service]
+User=wildbill
+Group=www-data
+WorkingDirectory=/home/wildbill/wildbill_secure_vault
+EnvironmentFile=/home/wildbill/wildbill_secure_vault/deploy/.env
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/home/wildbill/wildbill_secure_vault/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 wsgi:application
+Restart=always
+RestartSec=5
+UMask=027
+
+[Install]
+WantedBy=multi-user.target
