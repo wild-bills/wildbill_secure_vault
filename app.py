@@ -32,11 +32,20 @@ def get_db_connection():
     return conn
 
 @app.route('/')
+@app.route('/')
 def index():
     conn = get_db_connection()
+    # Fetch all active products
     products = conn.execute('SELECT * FROM products').fetchall()
+    # Fetch all unique themes dynamically to populate the filter menu
+    themes_query = conn.execute('SELECT DISTINCT theme FROM products WHERE theme IS NOT NULL AND theme != "" ORDER BY theme').fetchall()
     conn.close()
-    return render_template('index.html', products=products)
+    
+    # Convert query database rows into a clean, flat list of string themes
+    themes = [row['theme'] for row in themes_query]
+    
+    return render_template('index.html', products=products, themes=themes)
+
 
 @app.route('/product/<sku>')
 def product_detail(sku):
