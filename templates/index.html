@@ -163,6 +163,40 @@
     </style>
 <!-- Google Analytics placeholder -->
 <script>
+<!-- Ticking Countdown Clock Javascript Script Engine -->
+<script>
+    function updateVaultTimer() {
+        const now = new Date();
+        
+        // Target Date: Forces the timer to count down to midnight next Sunday
+        const target = new Date();
+        target.setDate(now.getDate() + (7 - now.getDay()) % 7);
+        target.setHours(23, 59, 59, 999);
+        
+        // If it's already Sunday night, shift target to next Sunday instantly
+        if (target <= now) {
+            target.setDate(target.getDate() + 7);
+        }
+
+        const diff = target - now;
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        // Format numbers with a clean leading zero padding helper
+        const pad = (num) => String(num).padStart(2, '0');
+
+        document.getElementById('vault-countdown').innerHTML = 
+            pad(days) + "d : " + pad(hours) + "h : " + pad(mins) + "m : " + pad(secs) + "s";
+    }
+    
+    // Fire clock ticker loop immediately on page layout execution pass
+    setInterval(updateVaultTimer, 1000);
+    updateVaultTimer();
+</script>
+
   // Replace with your GA tracking ID
   console.log('Google Analytics script placeholder');
 </script>
