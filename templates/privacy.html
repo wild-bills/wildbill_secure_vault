@@ -2,20 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Privacy Policy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - WildBill's Vault</title>
     <style>
-        body {font-family: 'Courier New', Consolas, monospace; background-color: #060608; color: #c5a059; margin: 0; padding: 0;}
-        .container {max-width: 800px; margin: 0 auto; padding: 20px;}
-        h1 {text-align: center;}
-        p {line-height: 1.6;}
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background: linear-gradient(rgba(10, 10, 10, 0.93), rgba(10, 10, 10, 0.93)), url('/static/images/site_bg.jpg');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            color: #f0f0f0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        nav { background: rgba(17, 17, 17, 0.85); backdrop-filter: blur(12px); padding: 20px; display: flex; gap: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); justify-content: center; }
+        nav a { color: #888; text-decoration: none; font-weight: 600; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; }
+        nav a:hover { color: #ffaa00; }
+        .container { max-width: 800px; margin: 60px auto; padding: 0 24px; }
+        .card { background: rgba(18, 18, 18, 0.80); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 20px; padding: 45px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        h1 { color: #ffffff; font-size: 2.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 0.5px; border-bottom: 2px solid #a61c1c; padding-bottom: 10px; }
+        h2 { color: #ffaa00; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; margin-top: 30px; margin-bottom: 12px; letter-spacing: 0.5px; }
+        p { color: #aaa; font-size: 0.95rem; line-height: 1.7; margin-bottom: 18px; }
+        ul { margin-left: 20px; margin-bottom: 20px; color: #aaa; font-size: 0.95rem; line-height: 1.7; }
+        li { margin-bottom: 8px; }
+        footer { background: #0c0c0c; padding: 40px 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.03); margin-top: 100px; font-size: 0.9rem; }
+        footer p { color: #444; margin-bottom: 0; }
     </style>
 </head>
 <body>
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="{{ url_for('privacy') }}">Privacy Policy</a>
+        <a href="{{ url_for('terms') }}">Terms of Service</a>
+    </nav>
     <div class="container">
-        <h1>Privacy Policy</h1>
-        <p>We do not collect any personal information from users beyond what is provided during purchase or contact.</p>
-        <p>All transactions are processed securely. Your payment details are handled by external payment gateways.</p>
-        <p>You can contact us at wildbill@vault.com for privacy-related inquiries.</p>
+        <div class="card">
+            <h1>Privacy Policy</h1>
+            <p>At WildBill's Vault, we value your privacy and are committed to protecting your personal information. This Privacy Policy outlines how your data is handled when using our store platform.</p>
+            
+            <h2>1. Information We Collect</h2>
+            <p>When you make a purchase or access your digital delivery keys, we collect standard operational data necessary to process your transaction:</p>
+            <ul>
+                <li>Email address for secure link generation and transaction receipt delivery.</li>
+                <li>Payment transaction data passed securely via our payment gateways.</li>
+                <li>Standard logging variables required to prevent bandwidth link-sharing fraud.</li>
+            </ul>
+
+            <h2>2. Secure Media Storage & Downloads</h2>
+            <p>All download packages are hosted inside encrypted cloud storage repositories. The download engine generates private, temporary tokens that auto-expire after 15 minutes to guarantee data security and protect file access paths from unauthorized discovery.</p>
+
+            <h2>3. Third-Party Frameworks</h2>
+            <p>We do not sell, trade, or share your contact or delivery metrics with external data brokers. Information is only securely read by our application hosting network (Render) and our payment checkout layers (NexaPay) to fulfill your assets.</p>
+        </div>
     </div>
+    <footer><p>&copy; 2026 WildBill's Vault. All Rights Reserved.</p></footer>
 </body>
 </html>

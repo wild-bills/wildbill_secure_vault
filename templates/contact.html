@@ -2,32 +2,64 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Contact Us</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - WildBill's Vault</title>
     <style>
-        body {font-family: 'Courier New', Consolas, monospace; background-color: #060608; color: #c5a059; margin: 0; padding: 0;}
-        .container {max-width: 800px; margin: 0 auto; padding: 20px;}
-        h1 {text-align: center;}
-        form {display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 0 auto;}
-        label {font-weight: bold;}
-        input, textarea {padding: 8px; background: #1a1a1a; border: 1px solid #333; color: #c5a059; border-radius: 4px;}
-        button {padding: 10px; background: #c5a059; color: #060608; border: none; border-radius: 4px; cursor: pointer;}
-        button:hover {background: #e0b75a;}
-        .success {text-align: center; color: #4caf50;}
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background: linear-gradient(rgba(10, 10, 10, 0.93), rgba(10, 10, 10, 0.93)), url('/static/images/site_bg.jpg');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            color: #f0f0f0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        nav { background: rgba(17, 17, 17, 0.85); backdrop-filter: blur(12px); padding: 20px; display: flex; gap: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); justify-content: center; }
+        nav a { color: #888; text-decoration: none; font-weight: 600; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; }
+        nav a:hover { color: #ffaa00; }
+        .container { max-width: 700px; margin: 60px auto; padding: 0 24px; }
+        .card { background: rgba(18, 18, 18, 0.80); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 20px; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        h1 { color: #ffffff; font-size: 2.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 0.5px; border-bottom: 2px solid #a61c1c; padding-bottom: 10px; }
+        p { color: #aaa; font-size: 0.95rem; line-height: 1.6; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; color: #ffaa00; font-size: 0.8rem; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; }
+        input, textarea { width: 100%; background: #0c0c0c; border: 1px solid #222; border-radius: 6px; padding: 14px; color: #fff; font-size: 0.95rem; font-family: inherit; transition: border-color 0.2s; }
+        input:focus, textarea:focus { outline: none; border-color: #a61c1c; }
+        .submit-btn { display: block; width: 100%; background: linear-gradient(135deg, #a61c1c 0%, #730f0f 100%); color: #ffffff; border: none; font-weight: 700; border-radius: 8px; padding: 16px; text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 16px rgba(166, 28, 28, 0.2); transition: transform 0.1s, box-shadow 0.2s; }
+        .submit-btn:hover { box-shadow: 0 6px 20px rgba(166, 28, 28, 0.35); }
+        .submit-btn:active { transform: scale(0.99); }
+        footer { background: #0c0c0c; padding: 40px 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.03); margin-top: 100px; font-size: 0.9rem; }
+        footer p { color: #444; margin-bottom: 0; }
     </style>
 </head>
 <body>
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="{{ url_for('privacy') }}">Privacy Policy</a>
+        <a href="{{ url_for('terms') }}">Terms of Service</a>
+    </nav>
     <div class="container">
-        <h1>Contact Us</h1>
-        {% if success %}
-        <p class="success">Thank you for your message! We'll get back to you soon.</p>
-        {% else %}
-        <form method="POST">
-            <label>Name: <input type="text" name="name" required></label>
-            <label>Email: <input type="email" name="email" required></label>
-            <label>Message: <textarea name="message" rows="5" required></textarea></label>
-            <button type="submit">Send</button>
-        </form>
-        {% endif %}
+        <div class="card">
+            <h1>Contact Support</h1>
+            <p>Have questions about your graphics vault access, download deliveries, or custom asset packages? Drop your details below and support will get back to you within 24 hours.</p>
+            <form action="#" method="POST">
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" placeholder="William" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="name@domain.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Message / Order Issue</label>
+                    <textarea rows="6" placeholder="How can we help you?" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Secure Message</button>
+            </form>
+        </div>
     </div>
+    <footer><p>&copy; 2026 WildBill's Vault. All Rights Reserved.</p></footer>
 </body>
 </html>
