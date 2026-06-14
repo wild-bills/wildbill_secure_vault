@@ -14,8 +14,8 @@ DB_PATH = os.path.join(BASE_DIR, 'database', 'store.db')
 app = Flask(__name__)
 
 # --- SECURE BACKBLAZE CLOUD STORAGE CONFIGURATION ---
-B2_KEY_ID = "005a9b63ec462530000000001"
-B2_APPLICATION_KEY = "K0057rOTHXvrIxMd8zwbGqXEqrLUMmQ"
+B2_KEY_ID = "005a9b63ec462530000000002"
+B2_APPLICATION_KEY = "K005l0PuojaZ6sv1IiHJgJAoJkxiDp8"
 B2_BUCKET_NAME = "wildbill-vault-zips"
 REGION = "us-west-004"
 B2_ENDPOINT_URL = "https://s3." + REGION + ".backblazeb2.com"
@@ -38,7 +38,7 @@ def get_db_connection():
     return conn
 
 # --- FRONTEND ROUTE: HOMEPAGE GALLERY ---
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
     conn = get_db_connection()
     products = conn.execute('SELECT * FROM products WHERE file_count > 0').fetchall()
@@ -48,7 +48,7 @@ def index():
     return render_template('index.html', products=products, themes=themes)
 
 # --- FRONTEND ROUTE: PRODUCT DETAIL VIEW ---
-@app.route('/product/<sku>')
+@app.route('/product/<sku>', methods=['GET'])
 def product_detail(sku):
     conn = get_db_connection()
     product = conn.execute('SELECT * FROM products WHERE sku = ?', (sku,)).fetchone()
@@ -58,7 +58,7 @@ def product_detail(sku):
     return render_template('product.html', product=product)
 
 # --- SECURE COMPLEMENTARY DOWNLOAD PATH ---
-@app.route('/download/<sku>')
+@app.route('/download/<sku>', methods=['GET', 'POST'])
 def secure_download(sku):
     user_key = request.args.get('key')
     MASTER_SECRET = "VaultPaid680"
@@ -86,7 +86,7 @@ def secure_download(sku):
         return "Secure Delivery Error", 500
 
 # --- SECURE BACKEND ROUTE: NEXAPAY TRANSACTION WEBHOOK ---
-@app.route('/nexapay-webhook', methods=['POST'])
+@app.route('/nexapay-webhook', methods=['GET', 'POST'])
 def nexapay_webhook():
     signature_header = request.headers.get('X-NexaPay-Signature')
     timestamp_header = request.headers.get('X-NexaPay-Timestamp')
@@ -149,13 +149,13 @@ def nexapay_webhook():
     return jsonify({"status": "verified"}), 200
 
 # --- STATIC FOOTER SUBPAGES ---
-@app.route('/contact')
+@app.route('/contact', methods=['GET', 'POST'])
 def contact(): return render_template('contact.html')
 
-@app.route('/privacy')
+@app.route('/privacy', methods=['GET'])
 def privacy(): return render_template('privacy.html')
 
-@app.route('/terms')
+@app.route('/terms', methods=['GET'])
 def terms(): return render_template('terms.html')
 
 if __name__ == '__main__':
