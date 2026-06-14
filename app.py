@@ -88,19 +88,56 @@ def secure_download(sku):
 # --- SECURE BACKEND ROUTE: NEXAPAY TRANSACTION WEBHOOK ---
 @app.route('/nexapay-webhook', methods=['POST'])
 def nexapay_webhook():
-    # Capture possible variations of NexaPay's verification header
-    incoming_signature = (
-        request.headers.get('X-NexaPay-Signature') or 
-        request.headers.get('x-nexapay-signature') or 
-        request.headers.get('X-Signature') or
-        request.headers.get('Authorization')
-    )
+    import hmac
+    import hashlib
+    import time
+    from flask import request, jsonify
     
-    # Block immediately if security tokens do not match
-    if incoming_signature != NEXAPAY_SECRET:
-        print(f"⚠️ Webhook Security Alert: Signature mismatch. Received: {incoming_signature}")
-        return "Unauthorized Request Source", 401
+    # 1. TRIPLE-CHECK THIS VALUE matches your NexaPay Webhook Secret box!
+    NEXAPAY_SECRET = "YOUR_NEXAPAY_WEBHOOK_SECRET_KEY"
+    
+    # 2. Extract the signature and timestamp headers from NexaPay
+    signature_header = request.headers.get('X-NexaPay-Signature')
+    timestamp_header = request.headers.get('X-NexaPay-Timestamp')
+    
+    if not signature_header or not timestamp_header:
+        print("⚠️ Missing NexaPay verification headers.")
+        return "Missing Verification Headers", 401
         
+    # 3. Replay Attack Protection: Reject if timestamp is older than 5 minutes (300 seconds)
+    try:
+        request_time = int(timestamp_header)
+        current_time = int(time.time())
+        if abs(current_time - request_time) > 300:
+            print("⚠️ Webhook rejected: Timestamp older than 5 minutes (Replay Attack Protection).")
+            return "Request Timed Out", 401
+    except ValueError:
+        print("⚠️ Webhook rejected: Invalid timestamp format.")
+        return "Invalid Timestamp Header", 400
+
+    # 4. Grab the raw unparsed text payload body sent by NexaPay
+    raw_payload = request.get_data(as_text=True)
+    
+    # 5. Re-create the signature format: timestamp + dot + payload string
+    message_to_sign = f"{timestamp_header}.{raw_payload}"
+    
+    # 6. Compute the secure HMAC-SHA256 hash using your secret
+    computed_hash = hmac.new(
+        NEXAPAY_SECRET.encode('utf-8'),
+        message_to_sign.encode('utf-8'),
+        hashlib.sha256
+    ).hexdigest()
+    
+    # NexaPay expects the comparison format: "sha256=computed_hash_hex"
+    expected_signature = f"sha256={computed_hash}"
+    
+    # 7. Securely compare the expected signature against the incoming header signature
+    if not hmac.compare_digest(signature_header, expected_signature):
+        print("⚠️ Webhook Security Alert: Cryptographic signature verification failed.")
+        return "Invalid Signature Token", 401
+        
+    # --- IF VERIFIED SUCCESSFULLY, PROCESS THE SECURE ASSET FULFILLMENT ---
+    print("✅ Webhook Cryptographically Validated Successfully!")
     data = request.get_json()
     
     if data and data.get('status') == 'success':
@@ -120,9 +157,7 @@ def nexapay_webhook():
                     Params={'Bucket': B2_BUCKET_NAME, 'Key': file_key},
                     ExpiresIn=86400
                 )
-                
-                # Verified checkout tracking log
-                print(f"💰 Order Confirmed: {sku} paid. Secure URL created for {customer_email}")
+                print(f"💰 Order Confirmed: Cryptographic link created for {customer_email}")
                 
             except Exception as e:
                 print(f"❌ Error generating post-purchase cloud link: {e}")
