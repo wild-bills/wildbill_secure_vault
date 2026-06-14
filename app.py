@@ -89,5 +89,47 @@ def privacy():
 def terms():
     return render_template('terms.html')
 
+    
+@app.route('/nexapay-webhook', methods=['POST'])
+def nexapay_webhook():
+    from flask import request, jsonify
+    
+    # 1. PASTE YOUR ACTUAL NEXAPAY WEBHOOK SECRET STRING BELOW:
+    NEXAPAY_SECRET = "whsec_267ef3c8ac5f12a5bce86f0489ea0963ffad0ca08cf7ade21e367c0ac7edf561"
+    
+    # Grab the cryptographic signature header NexaPay sends with the message
+    incoming_signature = request.headers.get('X-NexaPay-Signature')
+    
+    # Block the request immediately if the signatures do not match up
+    if incoming_signature != NEXAPAY_SECRET:
+        return "Unauthorized Request Source", 401
+        
+    data = request.get_json()
+    
+    if data and data.get('status') == 'success':
+        customer_email = data.get('customer_email')
+        sku = data.get('sku') 
+        
+        conn = get_db_connection()
+        product = conn.execute('SELECT * FROM products WHERE sku = ?', (sku,)).fetchone()
+        conn.close()
+        
+        if product:
+            file_key = product['name'] + ".zip"
+            try:
+                download_url = s3_client.generate_presigned_url(
+                    'get_object',
+                    Params={'Bucket': B2_BUCKET_NAME, 'Key': file_key},
+                    ExpiresIn=86400
+                )
+                # This safely triggers the file generation loop upon signature match
+                print(f"Verified payment! Link {download_url} created for {customer_email}")
+                
+            except Exception as e:
+                print(f"Processing error: {e}")
+                
+    return jsonify({"status": "verified"}), 200
+
 if __name__ == '__main__':
     app.run(debug=True)
+
