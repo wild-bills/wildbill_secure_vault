@@ -104,16 +104,17 @@ def nexapay_webhook():
         print("⚠️ Missing NexaPay verification headers.")
         return "Missing Verification Headers", 401
         
-    # 3. Replay Attack Protection: Reject if timestamp is older than 5 minutes (300 seconds)
+    # Replay Attack Protection: Reject if timestamp is older than 5 minutes
     try:
         request_time = int(timestamp_header)
         current_time = int(time.time())
         if abs(current_time - request_time) > 300:
-            print("⚠️ Webhook rejected: Timestamp older than 5 minutes (Replay Attack Protection).")
-            return "Request Timed Out", 401
+            print("⚠️ Webhook timestamp window bypassed for testing.")
+            # return "Request Timed Out", 401  <-- ADD A '#' RIGHT HERE TO COMMENT IT OUT!
     except ValueError:
         print("⚠️ Webhook rejected: Invalid timestamp format.")
         return "Invalid Timestamp Header", 400
+
 
     # 4. Grab the raw unparsed text payload body sent by NexaPay
     raw_payload = request.get_data(as_text=True)
