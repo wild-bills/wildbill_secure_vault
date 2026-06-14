@@ -153,8 +153,11 @@
                         <div class="price-value">${{ "%.2f"|format(product.price) if product.price is number else product.price }}</div>
                     </div>
                     <!-- Put your production download checkout URL inside the href below -->
-                    <a href="https://yourstorefront.com{{ product.sku }}" class="checkout-btn">
-                        Unlock & Download Pack
+                    <!-- UNIVERSAL NEXAPAY LINK BUTTON -->
+<a href="https://nexapay.one{{ product.sku }}&price={{ product.price }}" class="checkout-btn">
+    Unlock & Download Pack
+</a>
+
                     </a>
                 </div>
             </div>
