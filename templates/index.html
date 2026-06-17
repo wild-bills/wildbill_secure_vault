@@ -3,191 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WildBill's Vault</title>
+    <title>Wild Bill Vault - Premium Assets</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            background: linear-gradient(rgba(10, 10, 10, 0.93), rgba(10, 10, 10, 0.93)), url('/static/images/site_bg.jpg');
-            background-attachment: fixed;
-            background-size: cover;
-            background-position: center;
-            color: #f0f0f0; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            -webkit-font-smoothing: antialiased;
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #141b2d;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --accent: #00eaff;
+            --accent-hover: #00b8cc;
+            --border-color: #1e293b;
         }
-        nav { background: rgba(17, 17, 17, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 20px; display: flex; gap: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); justify-content: center; position: sticky; top: 0; z-index: 1000; }
-        nav a { color: #888; text-decoration: none; font-weight: 600; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
-        nav a:hover, nav a.active { color: #ffaa00; }
-        header { text-align: center; padding: 40px 20px 20px 20px; }
-        header h1 { color: #ffffff; font-size: 2.8rem; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 12px; text-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-        header p { color: #ffaa00; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; }
-        .container { max-width: 1240px; margin: 20px auto 60px auto; padding: 0 24px; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 32px; }
-        .product-card { background: rgba(20, 20, 20, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, box-shadow 0.3s ease; }
-        .product-card:hover { transform: translateY(-6px); border-color: rgba(255, 170, 0, 0.3); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6); }
-        .image-wrapper { width: 100%; height: 220px; overflow: hidden; border-radius: 10px; background-color: #141414; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.03); }
-        .product-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
-        .product-card:hover img { transform: scale(1.05); }
-        .product-info h3 { font-size: 1.2rem; font-weight: 700; color: #ffffff; margin-bottom: 10px; line-height: 1.4; letter-spacing: 0.5px; }
-        .product-card:hover .product-info h3 { color: #ffaa00; }
-        .product-info p { font-size: 0.85rem; color: #777; margin-bottom: 6px; }
-        .product-info .price { font-size: 1.4rem; color: #ffaa00; font-weight: 800; margin: 16px 0; }
-        .buy-now-btn { display: block; width: 100%; background: linear-gradient(135deg, #ffaa00 0%, #e09600 100%); color: #000000; text-decoration: none; text-align: center; font-weight: 700; border-radius: 8px; padding: 14px; text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.85rem; transition: background 0.2s, transform 0.1s; }
-        .buy-now-btn:hover { background: linear-gradient(135deg, #ffb733 0%, #ed9f00 100%); }
-        .buy-now-btn:active { transform: scale(0.98); }
-        footer { background: #0c0c0c; padding: 50px 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.03); margin-top: 100px; font-size: 0.9rem; }
-        footer p { color: #444; margin-bottom: 18px; }
-        footer div { display: flex; justify-content: center; gap: 24px; }
-        footer a { color: #777; text-decoration: none; font-weight: 500; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
-        footer a:hover { color: #ffaa00; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card h3 { font-size: 1.15rem; margin-bottom: 0.5rem; }
+        .price { color: var(--accent); font-weight: bold; font-size: 1.4rem; margin: 0.5rem 0; }
+        .btn {
+            display: block;
+            text-align: center;
+            background-color: var(--accent);
+            color: #000;
+            padding: 0.6rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+        }
+        .btn:hover { background-color: var(--accent-hover); }
     </style>
-
-<script src="https://paddle.com"></script>
-<script type="text/javascript">
-  Paddle.Setup({ 
-    token: 'live_811a82c6ed6dc0af52b24357002' // <-- Paste your exact Client-side Token here
-  });
-</script>
-
+    <!-- Paddle Setup integration -->
+    <script src="https://paddle.com"></script>
+    <script type="text/javascript">
+      Paddle.Setup({ token: 'live_token_here' }); // <-- Paste your Client-side Token here
+    </script>
 </head>
 <body>
-    <nav>
-        <a href="{{ url_for('index') }}" class="active">Home</a>
-        <a href="{{ url_for('contact') }}">Contact</a>
-        <a href="{{ url_for('privacy') }}">Privacy Policy</a>
-        <a href="{{ url_for('terms') }}">Terms of Service</a>
-    </nav>
-    <header>
-        <h1>WildBill's Vault</h1>
-        <p>Premium Digital Graphics Collections</p>
-    </header>
     <div class="container">
-        <!-- PROMO BANNER -->
-        <div style="background: linear-gradient(135deg, #120202 0%, #080000 100%); border: 2px solid #a61c1c; border-radius: 16px; padding: 35px; margin-bottom: 45px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 30px;">
-            <div style="flex: 1; min-width: 280px;">
-                <div style="display: inline-block; background: #a61c1c; color: #ffffff; font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;">Limited Launch Offer</div>
-                <h2 style="color: #ffffff; font-size: 1.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 8px;">Unlock the Entire 7,000+ File Vault</h2>
-                <p style="color: #888888; font-size: 0.95rem; margin-bottom: 15px;">Get lifetime all-access keys. Price increases permanently to $397 next week when 100 new bundles drop.</p>
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <span style="color: #555555; text-decoration: line-through; font-size: 1.5rem; font-weight: 700;">$597</span>
-                    <span style="color: #ffaa00; font-size: 2.6rem; font-weight: 900;">$297</span>
-                </div>
-            </div>
-            <div style="background: #050505; border: 1px solid #222222; padding: 25px; border-radius: 12px; text-align: center; min-width: 260px;">
-                <p style="color: #a61c1c; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 12px;">Vault Price Hikes In:</p>
-                <div id="vault-countdown" style="color: #ffffff; font-family: monospace; font-size: 2rem; font-weight: bold; margin-bottom: 15px;">00d : 00h : 00m : 00s</div>
-                <button class="btn" onclick="openCheckout('{{ product['paddle_price_id'] }}')" style="cursor: pointer; width: 100%; border: none;">
-    Purchase Bundle
-</button>
-
-
-        </div>
-        <!-- INTERACTIVE CATEGORIES FILTER BAR -->
-        <div style="margin-bottom: 40px; text-align: center;">
-            <p style="color: #666; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; font-weight: 700;">Filter By Vault Collection</p>
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 1000px; margin: 0 auto; padding: 10px; background: rgba(20, 20, 20, 0.4); border-radius: 12px; border: 1px solid rgba(255,255,255,0.02);">
-                <button class="filter-btn active" onclick="filterVault('all', this)" style="background: rgba(166, 28, 28, 0.2); border: 1px solid #a61c1c; color: #ffffff; padding: 10px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">Show All</button>
-                {% for theme_name in themes %}
-                <button class="filter-btn" onclick="filterVault('{{ theme_name }}', this)" style="background: rgba(30, 30, 30, 0.6); border: 1px solid rgba(255,255,255,0.05); color: #888888; padding: 10px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: all 0.2s;">{{ theme_name.replace('_', ' ') }}</button>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- MAIN PRODUCT GRID -->
-        <div class="product-grid">
-            {% for item in products %}
-            <div class="product-card js-vault-item" data-category="{{ item.theme }}">
+        <h1>Storefront Asset Gallery</h1>
+        
+        <div class="grid">
+            {% for product in products %}
+            <div class="card">
                 <div>
-                    <a href="{{ url_for('product_detail', sku=item.sku) }}">
-                        <div class="image-wrapper">
-                            <img src="{{ url_for('static', filename='images/' + item.name + '_preview.jpg') }}" alt="Preview">
-                        </div>
-                    </a>
-                    <div class="product-info">
-                        <a href="{{ url_for('product_detail', sku=item.sku) }}" style="text-decoration: none;">
-                            <h3>{{ item.name.replace('_', ' ') }}</h3>
-                        </a>
-                        <p style="text-transform: uppercase; font-size: 0.75rem; color: #555;">Theme: {{ item.theme.replace('_', ' ') }}</p>
-                        <p style="font-size: 0.75rem; color: #555;">SKU: {{ item.sku }}</p>
-                        <div class="price">${{ "%.2f"|format(item.price) if item.price is number else item.price }}</div>
-                    </div>
+                    <!-- Safe format substitution bypasses missing descriptions -->
+                    <h3>{{ product['name'].replace('_', ' ').title() }}</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">SKU: {{ product['sku'] }}</p>
+                    <div class="price">${{ product['price'] }} <span>USD</span></div>
                 </div>
-                <a href="{{ url_for('product_detail', sku=item.sku) }}" class="buy-now-btn">View Details</a>
+                <!-- Launches Paddle overlay directly using database keys -->
+                <button class="btn" onclick="openCheckout('{{ product['paddle_price_id'] }}')">
+                    Purchase Package
+                </button>
             </div>
             {% endfor %}
         </div>
     </div>
 
-    <footer>
-        <p>&copy; 2026 WildBill's Vault. All Rights Reserved.</p>
-        <div>
-            <a href="{{ url_for('contact') }}">Contact</a>
-            <a href="{{ url_for('privacy') }}">Privacy</a>
-            <a href="{{ url_for('terms') }}">Terms</a>
-        </div>
-    </footer>
-
-    <script>
-        function filterVault(themeSelection, clickedButton) {
-            const targetButtons = document.querySelectorAll('.filter-btn');
-            targetButtons.forEach(btn => {
-                btn.style.background = "rgba(30, 30, 30, 0.6)";
-                btn.style.borderColor = "rgba(255,255,255,0.05)";
-                btn.style.color = "#888888";
-            });
-            clickedButton.style.background = "rgba(166, 28, 28, 0.2)";
-            clickedButton.style.borderColor = "#a61c1c";
-            clickedButton.style.color = "#ffffff";
-
-            const vaultCards = document.querySelectorAll('.js-vault-item');
-            vaultCards.forEach(card => {
-                const cardTheme = card.getAttribute('data-category');
-                if (themeSelection === 'all' || cardTheme === themeSelection) {
-                    card.style.display = "flex";
-                } else {
-                    card.style.display = "none";
-                }
-            });
+    <script type="text/javascript">
+    function openCheckout(priceId) {
+        if (!priceId || priceId === 'None' || priceId === '') {
+            alert('Checkout key error. Please sync database records.');
+            return;
         }
-
-        function updateVaultTimer() {
-            const now = new Date();
-            const target = new Date();
-            target.setDate(now.getDate() + (7 - now.getDay()) % 7);
-            target.setHours(23, 59, 59, 999);
-            if (target <= now) { target.setDate(target.getDate() + 7); }
-            const diff = target - now;
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const secs = Math.floor((diff % (1000 * 60)) / 1000);
-            const pad = (num) => String(num).padStart(2, '0');
-            document.getElementById('vault-countdown').innerHTML = pad(days) + "d : " + pad(hours) + "h : " + pad(mins) + "m : " + pad(secs) + "s";
-        }
-        setInterval(updateVaultTimer, 1000);
-        updateVaultTimer();
-    </script>
-<footer style="margin-top: 5rem; padding: 2rem 0; border-top: 1px solid #1e293b; text-align: center; font-family: sans-serif;">
-    <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 1rem;">&copy; 2026 Wild Bill Pro Plans. All Rights Reserved.</p>
-    <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
-        <a href="/pricing.html" style="color: #00eaff; text-decoration: none; font-size: 0.85rem; font-weight: 500;">Pricing Plans</a>
-        <a href="/terms.html" style="color: #94a3b8; text-decoration: none; font-size: 0.85rem;">Terms of Service</a>
-        <a href="/privacy.html" style="color: #94a3b8; text-decoration: none; font-size: 0.85rem;">Privacy Policy</a>
-        <a href="/refund.html" style="color: #94a3b8; text-decoration: none; font-size: 0.85rem;">Refund Policy</a>
-        <a href="/contact" style="color: #94a3b8; text-decoration: none; font-size: 0.85rem;">Contact Support</a>
-    </div>
-</footer>
-<script type="text/javascript">
-function openCheckout(priceId) {
-    if (!priceId || priceId === 'None' || priceId === '') {
-        alert('Checkout key error. Please sync database records.');
-        return;
+        Paddle.Checkout.open({
+            items: [{ priceId: priceId, quantity: 1 }]
+        });
     }
-    Paddle.Checkout.open({
-        items: [{ priceId: priceId, quantity: 1 }]
-    });
-}
-</script>
-
+    </script>
 </body>
 </html>

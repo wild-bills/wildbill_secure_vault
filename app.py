@@ -69,14 +69,18 @@ def paddle_webhook():
 
 
 # --- FRONTEND ROUTE: HOMEPAGE GALLERY ---
+# --- FIXED FRONTEND ROUTE: HOMEPAGE GALLERY ---
 @app.route('/', methods=['GET'])
 def index():
     conn = get_db_connection()
-    products = conn.execute('SELECT * FROM products WHERE file_count > 0').fetchall()
+    # FIX: Selects all records directly to ignore the unpopulated file_count cells
+    products = conn.execute('SELECT * FROM products ORDER BY id DESC').fetchall()
     themes_query = conn.execute('SELECT DISTINCT theme FROM products WHERE theme IS NOT NULL AND theme != "" ORDER BY theme').fetchall()
     conn.close()
+    
     themes = [row['theme'] for row in themes_query]
     return render_template('index.html', products=products, themes=themes)
+
 
 # --- FRONTEND ROUTE: PRODUCT DETAIL VIEW ---
 @app.route('/product/<sku>', methods=['GET'])
