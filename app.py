@@ -187,11 +187,14 @@ Message:
 
     return render_template('contact.html')
 
-@app.route('/privacy', methods=['GET'])
+@app.route('/privacy.html', methods=['GET'])
 def privacy(): return render_template('privacy.html')
 
-@app.route('/terms', methods=['GET'])
+@app.route('/terms.html', methods=['GET'])
 def terms(): return render_template('terms.html')
+
+@app.route('/pricing.html', methods=['GET'])
+def pricing(): return render_template('pricing.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
