@@ -33,6 +33,14 @@
             flex-direction: column;
             justify-content: space-between;
         }
+        .thumbnail {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            background-color: #0b0f19;
+        }
         .card h3 { font-size: 1.15rem; margin-bottom: 0.5rem; }
         .price { color: var(--accent); font-weight: bold; font-size: 1.4rem; margin: 0.5rem 0; }
         .btn {
@@ -53,7 +61,7 @@
     <!-- Paddle Setup integration -->
     <script src="https://paddle.com"></script>
     <script type="text/javascript">
-      Paddle.Setup({ token: 'live_token_here' }); // <-- Paste your Client-side Token here
+      Paddle.Setup({ token: 'live_811a82c6ed6dc0af52b24357002' }); // <-- Put your real Paddle Client Token here!
     </script>
 </head>
 <body>
@@ -64,12 +72,15 @@
             {% for product in products %}
             <div class="card">
                 <div>
-                    <!-- Safe format substitution bypasses missing descriptions -->
+                    <!-- Render Cover Artwork Thumbnail Image -->
+                    {% if product['image_url'] %}
+                    <img src="{{ product['image_url'] }}" alt="{{ product['name'] }}" class="thumbnail">
+                    {% endif %}
+                    
                     <h3>{{ product['name'].replace('_', ' ').title() }}</h3>
                     <p style="color: var(--text-muted); font-size: 0.85rem;">SKU: {{ product['sku'] }}</p>
                     <div class="price">${{ product['price'] }} <span>USD</span></div>
                 </div>
-                <!-- Launches Paddle overlay directly using database keys -->
                 <button class="btn" onclick="openCheckout('{{ product['paddle_price_id'] }}')">
                     Purchase Package
                 </button>
