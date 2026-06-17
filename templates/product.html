@@ -3,56 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product['name'] }} - Details</title>
+    <title>{{ product['name'] }} Details</title>
     <style>
         body { font-family: sans-serif; background: #0b0f19; color: #fff; padding: 2rem; }
         .wrapper { max-width: 1000px; margin: 0 auto; background: #141b2d; padding: 2.5rem; border-radius: 12px; border: 1px solid #1e293b; }
-        h1 { color: #00eaff; margin-bottom: 0.5rem; }
+        h1 { color: #38bdf8; margin-bottom: 0.5rem; }
         .sku { color: #94a3b8; margin-bottom: 2rem; font-size: 0.9rem; }
         
-        /* --- 4-IMAGE SAMPLE PREVIEW DISPLAY GRID --- */
-        .preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
-        .preview-box { border-radius: 8px; overflow: hidden; border: 1px solid #1e293b; background: #070a12; height: 180px; }
-        .preview-box img { width: 100%; height: 100%; object-fit: cover; }
-        .preview-title { font-size: 0.8rem; color: #94a3b8; text-align: center; margin-top: 0.5rem; }
-
-        .buy-now-btn { background: #00eaff; color: #000; font-weight: bold; border: none; padding: 1rem 2rem; border-radius: 6px; cursor: pointer; font-size: 1.1rem; width: 100%; margin-top: 1rem; }
+        /* 4-IMAGE SAMPLE PREVIEW DISPLAY GRID - FIXED TO STRICT 2x2 */
+        .preview-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 1.5rem; 
+            margin: 2rem 0; 
+        }
+        .preview-box { border-radius: 8px; overflow: hidden; border: 1px solid #1e293b; background: #070a12; padding: 10px; }
+        .preview-box img { width: 100%; height: auto; object-fit: cover; border-radius: 4px; }
+        .preview-title { font-size: 0.9rem; color: #94a3b8; text-align: center; margin-top: 0.5rem; }
+        
+        .buy-now-btn { background: #38bdf8; color: #000; font-weight: bold; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-size: 1.1rem; width: 100%; margin-top: 1rem; }
+        .buy-now-btn:hover { background: #0ea5e9; }
     </style>
+    
     <script src="https://paddle.com"></script>
     <script type="text/javascript">
-      Paddle.Setup({ token: 'live_token_here' }); // <-- Paste your exact Paddle Client-side Token here
+        // !!! REPLACE 'live_token_here' WITH YOUR ACTUAL PADDLE CLIENT KEY !!!
+        Paddle.Setup({ token: 'live_811a82c6ed6dc0af52b24357002' }); 
     </script>
 </head>
 <body>
     <div class="wrapper">
         <h1>{{ product['name'] }}</h1>
-        <div class="sku">Product Inventory SKU Code reference: {{ product['sku'] }}</div>
+        <div class="sku">Product Inventory SKU Code Reference: {{ product['sku'] }}</div>
         
         <h3>Asset Bundle Contents Previews (1st, 3rd, 5th, & 7th Source Extracted Samples)</h3>
         
         <div class="preview-grid">
             {% if product['preview_1'] %}
-            <div><div class="preview-box"><img src="{{ product['preview_1'] }}"></div><div class="preview-title">Sample 1 (1st File)</div></div>
+            <div class="preview-box">
+                <img src="{{ product['preview_1'] }}" alt="Sample 1">
+                <div class="preview-title">Sample 1 (1st File)</div>
+            </div>
             {% endif %}
-            
+
             {% if product['preview_2'] %}
-            <div><div class="preview-box"><img src="{{ product['preview_2'] }}"></div><div class="preview-title">Sample 2 (3rd File)</div></div>
+            <div class="preview-box">
+                <img src="{{ product['preview_2'] }}" alt="Sample 2">
+                <div class="preview-title">Sample 2 (3rd File)</div>
+            </div>
             {% endif %}
-            
+
             {% if product['preview_3'] %}
-            <div><div class="preview-box"><img src="{{ product['preview_3'] }}"></div><div class="preview-title">Sample 3 (5th File)</div></div>
+            <div class="preview-box">
+                <img src="{{ product['preview_3'] }}" alt="Sample 3">
+                <div class="preview-title">Sample 3 (5th File)</div>
+            </div>
             {% endif %}
-            
+
             {% if product['preview_4'] %}
-            <div><div class="preview-box"><img src="{{ product['preview_4'] }}"></div><div class="preview-title">Sample 4 (7th File)</div></div>
+            <div class="preview-box">
+                <img src="{{ product['preview_4'] }}" alt="Sample 4">
+                <div class="preview-title">Sample 4 (7th File)</div>
+            </div>
             {% endif %}
         </div>
-
+        
         <button class="buy-now-btn" onclick="Paddle.Checkout.open({ items: [{ priceId: '{{ product['paddle_price_id'] }}', quantity: 1 }] })">
             Purchase This Full ZIP Collection ($10.00 USD)
         </button>
-        <br><br>
-        <a href="/" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem;">&larr; Back to Main Store Gallery</a>
     </div>
 </body>
 </html>
