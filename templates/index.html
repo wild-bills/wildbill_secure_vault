@@ -15,11 +15,7 @@
             --border-color: #1e293b;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -29,34 +25,12 @@
             padding: 2rem 1rem;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
 
-        /* --- POLISHED CENTERED HEADER --- */
-        .header-section {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding-top: 1rem;
-        }
+        .header-section { text-align: center; margin-bottom: 3rem; padding-top: 1rem; }
+        .header-section h1 { font-size: 2.75rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 0.5rem; }
+        .header-section p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 1.5rem auto; }
 
-        .header-section h1 {
-            font-size: 2.75rem;
-            font-weight: 800;
-            letter-spacing: -0.05em;
-            margin-bottom: 0.5rem;
-            color: var(--text-main);
-        }
-
-        .header-section p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto 1.5rem auto;
-        }
-
-        /* --- THEME FILTER CHIPS MENU BAR --- */
         .filter-nav {
             display: flex;
             justify-content: center;
@@ -75,7 +49,6 @@
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 500;
-            text-decoration: none;
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -86,11 +59,13 @@
             border-color: var(--accent);
         }
 
-        /* --- PRODUCT GRID LAYOUT --- */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+
+        /* Makes the entire card an interactive block link */
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
 
         .card {
@@ -98,13 +73,14 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 1.5rem;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
-        .card:hover {
+        .card-link:hover .card {
             transform: translateY(-4px);
             border-color: var(--accent);
         }
@@ -119,40 +95,12 @@
             border: 1px solid #1e293b;
         }
 
-        .thumbnail {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .thumbnail { width: 100%; height: 100%; object-fit: cover; }
 
-        .card-details h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.4rem;
-            line-height: 1.4;
-            color: var(--text-main);
-        }
-
-        .sku-label {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.75rem;
-        }
-
-        .price {
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 1.5rem;
-            margin: 0.75rem 0;
-        }
-
-        .price span {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
+        .card-details h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.4rem; line-height: 1.4; color: var(--text-main); }
+        .sku-label { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+        .price { color: var(--accent); font-weight: 700; font-size: 1.5rem; margin: 0.75rem 0; }
+        .price span { font-size: 0.9rem; color: var(--text-muted); font-weight: 400; }
 
         .btn {
             display: block;
@@ -161,55 +109,26 @@
             color: #000000;
             padding: 0.75rem;
             border-radius: 6px;
-            text-decoration: none;
             font-weight: 600;
             border: none;
             width: 100%;
+            margin-top: 1rem;
             cursor: pointer;
             transition: background-color 0.2s ease;
         }
 
-        .btn:hover {
-            background-color: var(--accent-hover);
-        }
+        .btn:hover { background-color: var(--accent-hover); }
 
-        /* --- MANDATORY COMPLIANCE FOOTER --- */
-        .footer-nav {
-            margin-top: 6rem;
-            padding: 2.5rem 0;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        .footer-nav p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.75rem;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: color 0.2s ease;
-        }
-
-        .footer-links a:hover {
-            color: var(--accent);
-        }
+        .footer-nav { margin-top: 6rem; padding: 2.5rem 0; border-top: 1px solid var(--border-color); text-align: center; }
+        .footer-nav p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
+        .footer-links { display: flex; justify-content: center; gap: 1.75rem; flex-wrap: wrap; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; }
+        .footer-links a:hover { color: var(--accent); }
     </style>
-    <!-- Paddle Checkout Core Integration Module -->
     <script src="https://paddle.com"></script>
     <script type="text/javascript">
       Paddle.Setup({ 
-        token: 'pdl_live_apikey_01kvasv79wgshpva5gt5ceqy1f_Ajn9QezGW97P2tjNEFBRn3_AwR' // <-- Your client verification signature string token
+        token: 'pdl_live_apikey_01kvasv79wgshpva5gt5ceqy1f_Ajn9QezGW97P2tjNEFBRn3_AwR'
       });
     </script>
 </head>
@@ -221,7 +140,6 @@
             <p>Premium dark-alternative design file bundles, vector art collections, and alternative streetwear layout mockups.</p>
         </div>
 
-        <!-- Dynamic Category Navigation Header Sorting Bar -->
         <div class="filter-nav">
             <button class="filter-btn active" onclick="filterTheme('all')">Show All Bundles</button>
             {% for theme in themes %}
@@ -231,27 +149,36 @@
 
         <div class="grid" id="product-grid">
             {% for product in products %}
-            <!-- Card wrapper stores target filter tokens dynamically -->
-            <div class="card" data-theme="{{ product['theme'] }}">
-                <div>
-                    <div class="thumbnail-wrapper">
-                        {% if product['image_url'] %}
-                        <img src="{{ product['image_url'] }}" alt="{{ product['name'] }}" class="thumbnail">
-                        {% else %}
-                        <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--text-muted); font-size:0.85rem;">Preview Artwork Offline</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="card-details">
-                        <h3>{{ product['name'].replace('_', ' ').title() }}</h3>
-                        <div class="sku-label">SKU: {{ product['sku'] }}</div>
-                        <div class="price">${{ product['price'] }} <span>USD</span></div>
-                    </div>
-                </div>
+            <div class="grid-item-container" data-theme="{{ product['theme'] }}">
+                <!-- Clickable link wraps the extended metadata display view -->
+                <a href="/product/{{ product['sku'] }}" class="card-link">
+                    <div class="card">
+                        <div>
+                            <div class="thumbnail-wrapper">
+                                <!-- Fixes path mapping to pull relative repository paths natively -->
+                                {% if product['image_url'] and not product['image_url'].startswith('/home/') %}
+                                <img src="{{ product['image_url'] }}" alt="{{ product['name'] }}" class="thumbnail">
+                                {% else %}
+                                <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--text-muted); font-size:0.85rem; text-align:center; padding:1rem;">
+                                    Preview Artwork Offline<br>
+                                    <span style="font-size:0.75rem; color:#f43f5e;">(Move files out of /home/wildbill/ to resolve)</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="card-details">
+                                <h3>{{ product['name'].replace('_', ' ').title() }}</h3>
+                                <div class="sku-label">SKU: {{ product['sku'] }}</div>
+                                <div class="price">${{ product['price'] }} <span>USD</span></div>
+                            </div>
+                        </div>
+                </a> <!-- End of clickable anchor wrapper -->
                 
+                <!-- Separate button layer specifically triggers Paddle transaction window without jumping pages -->
                 <button class="btn" onclick="openCheckout('{{ product['paddle_price_id'] }}')">
                     Purchase Asset Bundle
                 </button>
+                    </div>
             </div>
             {% endfor %}
         </div>
@@ -268,12 +195,11 @@
         </footer>
     </div>
 
-    <!-- Interactive Client Interface Controller scripts -->
     <script type="text/javascript">
-    // Secure billing trigger routine
     function openCheckout(priceId) {
+        event.stopPropagation(); // Stops the button click from activating the card link change path
         if (!priceId || priceId === 'None' || priceId === '') {
-            alert('Checkout link error: The billing mapping schema key for this product is unpopulated.');
+            alert('Checkout link error: The billing mapping schema key for this product is empty.');
             return;
         }
         Paddle.Checkout.open({
@@ -281,20 +207,18 @@
         });
     }
 
-    // Instantly filter elements on the client side without needing database re-queries
     function filterTheme(themeName) {
-        // Toggle active button button states visually
         const buttons = document.querySelectorAll('.filter-btn');
         buttons.forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
 
-        const cards = document.querySelectorAll('#product-grid .card');
-        cards.forEach(card => {
-            const itemTheme = card.getAttribute('data-theme');
+        const containers = document.querySelectorAll('#product-grid .grid-item-container');
+        containers.forEach(container => {
+            const itemTheme = container.getAttribute('data-theme');
             if (themeName === 'all' || itemTheme === themeName) {
-                card.style.display = 'flex';
+                container.style.display = 'block';
             } else {
-                card.style.display = 'none';
+                container.style.display = 'none';
             }
         });
     }
