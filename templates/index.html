@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wild Bill Vault - Premium Assets</title>
+    <title>Wild Bill Vault - Premium Gothic & Cyberpunk Assets</title>
     <style>
         :root {
             --bg-color: #0b0f19;
@@ -14,89 +14,288 @@
             --accent-hover: #00b8cc;
             --border-color: #1e293b;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             line-height: 1.5;
-            padding: 2rem;
+            padding: 2rem 1rem;
         }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- POLISHED CENTERED HEADER --- */
+        .header-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 1rem;
+        }
+
+        .header-section h1 {
+            font-size: 2.75rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .header-section p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        /* --- THEME FILTER CHIPS MENU BAR --- */
+        .filter-nav {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-btn {
+            background-color: #1e293b;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--accent);
+            color: #000000;
+            border-color: var(--accent);
+        }
+
+        /* --- PRODUCT GRID LAYOUT --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: transform 0.2s ease, border-color 0.2s ease;
         }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .thumbnail-wrapper {
+            width: 100%;
+            height: 220px;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #070a12;
+            margin-bottom: 1.25rem;
+            border: 1px solid #1e293b;
+        }
+
         .thumbnail {
             width: 100%;
-            height: 200px;
+            height: 100%;
             object-fit: cover;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            background-color: #0b0f19;
         }
-        .card h3 { font-size: 1.15rem; margin-bottom: 0.5rem; }
-        .price { color: var(--accent); font-weight: bold; font-size: 1.4rem; margin: 0.5rem 0; }
+
+        .card-details h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            line-height: 1.4;
+            color: var(--text-main);
+        }
+
+        .sku-label {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .price {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin: 0.75rem 0;
+        }
+
+        .price span {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
         .btn {
             display: block;
             text-align: center;
             background-color: var(--accent);
-            color: #000;
-            padding: 0.6rem;
-            border-radius: 4px;
+            color: #000000;
+            padding: 0.75rem;
+            border-radius: 6px;
             text-decoration: none;
             font-weight: 600;
             border: none;
             width: 100%;
             cursor: pointer;
+            transition: background-color 0.2s ease;
         }
-        .btn:hover { background-color: var(--accent-hover); }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* --- MANDATORY COMPLIANCE FOOTER --- */
+        .footer-nav {
+            margin-top: 6rem;
+            padding: 2.5rem 0;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .footer-nav p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.75rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
     </style>
-    <!-- Paddle Setup integration -->
+    <!-- Paddle Checkout Core Integration Module -->
     <script src="https://paddle.com"></script>
     <script type="text/javascript">
-      Paddle.Setup({ token: 'live_811a82c6ed6dc0af52b24357002' }); // <-- Put your real Paddle Client Token here!
+      Paddle.Setup({ 
+        token: 'pdl_live_apikey_01kvasv79wgshpva5gt5ceqy1f_Ajn9QezGW97P2tjNEFBRn3_AwR' // <-- Your client verification signature string token
+      });
     </script>
 </head>
 <body>
+
     <div class="container">
-        <h1>Storefront Asset Gallery</h1>
-        
-        <div class="grid">
+        <div class="header-section">
+            <h1>Wild Bill Storefront Vault</h1>
+            <p>Premium dark-alternative design file bundles, vector art collections, and alternative streetwear layout mockups.</p>
+        </div>
+
+        <!-- Dynamic Category Navigation Header Sorting Bar -->
+        <div class="filter-nav">
+            <button class="filter-btn active" onclick="filterTheme('all')">Show All Bundles</button>
+            {% for theme in themes %}
+            <button class="filter-btn" onclick="filterTheme('{{ theme }}')">{{ theme.replace('_', ' ').title() }}</button>
+            {% endfor %}
+        </div>
+
+        <div class="grid" id="product-grid">
             {% for product in products %}
-            <div class="card">
+            <!-- Card wrapper stores target filter tokens dynamically -->
+            <div class="card" data-theme="{{ product['theme'] }}">
                 <div>
-                    <!-- Render Cover Artwork Thumbnail Image -->
-                    {% if product['image_url'] %}
-                    <img src="{{ product['image_url'] }}" alt="{{ product['name'] }}" class="thumbnail">
-                    {% endif %}
+                    <div class="thumbnail-wrapper">
+                        {% if product['image_url'] %}
+                        <img src="{{ product['image_url'] }}" alt="{{ product['name'] }}" class="thumbnail">
+                        {% else %}
+                        <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--text-muted); font-size:0.85rem;">Preview Artwork Offline</div>
+                        {% endif %}
+                    </div>
                     
-                    <h3>{{ product['name'].replace('_', ' ').title() }}</h3>
-                    <p style="color: var(--text-muted); font-size: 0.85rem;">SKU: {{ product['sku'] }}</p>
-                    <div class="price">${{ product['price'] }} <span>USD</span></div>
+                    <div class="card-details">
+                        <h3>{{ product['name'].replace('_', ' ').title() }}</h3>
+                        <div class="sku-label">SKU: {{ product['sku'] }}</div>
+                        <div class="price">${{ product['price'] }} <span>USD</span></div>
+                    </div>
                 </div>
+                
                 <button class="btn" onclick="openCheckout('{{ product['paddle_price_id'] }}')">
-                    Purchase Package
+                    Purchase Asset Bundle
                 </button>
             </div>
             {% endfor %}
         </div>
+
+        <footer class="footer-nav">
+            <p>&copy; 2026 Wild Bill Pro Plans. All Rights Reserved.</p>
+            <div class="footer-links">
+                <a href="/pricing.html" style="color: var(--accent); font-weight: 500;">Pricing Tiers</a>
+                <a href="/terms.html">Terms of Service</a>
+                <a href="/privacy.html">Privacy Policy</a>
+                <a href="/refund.html">Refund Policy</a>
+                <a href="/contact">Contact Support Desk</a>
+            </div>
+        </footer>
     </div>
 
+    <!-- Interactive Client Interface Controller scripts -->
     <script type="text/javascript">
+    // Secure billing trigger routine
     function openCheckout(priceId) {
         if (!priceId || priceId === 'None' || priceId === '') {
-            alert('Checkout key error. Please sync database records.');
+            alert('Checkout link error: The billing mapping schema key for this product is unpopulated.');
             return;
         }
         Paddle.Checkout.open({
             items: [{ priceId: priceId, quantity: 1 }]
+        });
+    }
+
+    // Instantly filter elements on the client side without needing database re-queries
+    function filterTheme(themeName) {
+        // Toggle active button button states visually
+        const buttons = document.querySelectorAll('.filter-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        const cards = document.querySelectorAll('#product-grid .card');
+        cards.forEach(card => {
+            const itemTheme = card.getAttribute('data-theme');
+            if (themeName === 'all' || itemTheme === themeName) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
         });
     }
     </script>
