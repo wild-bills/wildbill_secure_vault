@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="https://paddle.com"></script>
-<script type="text/javascript">
-  Paddle.Setup({ 
-    token: 'live_811a82c6ed6dc0af52b24357002' // Replace with your actual live client token
-  });
-</script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pricing & Asset Bundles - Wild Bill Pro Plans</title>
@@ -22,49 +15,22 @@
             --border-color: #1e293b;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             line-height: 1.5;
             padding: 4rem 2rem;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            letter-spacing: -0.05em;
-        }
-
-        .header p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 2rem;
-        }
-
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 4rem; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 1rem; letter-spacing: -0.05em; }
+        .header p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; }
+        
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -76,60 +42,15 @@
             transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent);
-        }
-
-        .card-header h2 {
-            font-size: 1.35rem;
-            margin-bottom: 0.75rem;
-            line-height: 1.3;
-            text-transform: capitalize;
-        }
-
-        .price-tag {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin: 1rem 0;
-        }
-
-        .price-tag span {
-            font-size: 1rem;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        .description {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-            flex-grow: 1;
-        }
-
-        .features-list {
-            list-style: none;
-            margin-bottom: 2rem;
-            border-top: 1px solid var(--border-color);
-            padding-top: 1.1rem;
-        }
-
-        .features-list li {
-            font-size: 0.9rem;
-            color: var(--text-main);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .features-list li::before {
-            content: "✓";
-            color: var(--accent);
-            font-weight: bold;
-            margin-right: 8px;
-        }
-
+        .card:hover { transform: translateY(-4px); border-color: var(--accent); }
+        .card-header h2 { font-size: 1.35rem; margin-bottom: 0.75rem; line-height: 1.3; }
+        .price-tag { font-size: 2.5rem; font-weight: 700; color: var(--accent); margin: 1rem 0; }
+        .price-tag span { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
+        .description { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; flex-grow: 1; }
+        .features-list { list-style: none; margin-bottom: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.1rem; }
+        .features-list li { font-size: 0.9rem; color: var(--text-main); margin-bottom: 0.5rem; display: flex; align-items: center; }
+        .features-list li::before { content: "✓"; color: var(--accent); font-weight: bold; margin-right: 8px; }
+        
         .buy-btn {
             display: block;
             text-align: center;
@@ -138,73 +59,64 @@
             text-decoration: none;
             font-weight: 600;
             padding: 0.75rem;
+            border: none;
+            width: 100%;
             border-radius: 6px;
+            cursor: pointer;
             transition: background-color 0.2s ease;
         }
-
-        .buy-btn:hover {
-            background-color: var(--accent-hover);
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 5rem;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
+        .buy-btn:hover { background-color: var(--accent-hover); }
+        footer { text-align: center; margin-top: 5rem; color: var(--text-muted); font-size: 0.85rem; }
     </style>
+    <!-- Paddle Setup integration -->
+    <script src="https://paddle.com"></script>
+    <script type="text/javascript">
+      Paddle.Setup({ token: 'live_token_here' }); // <-- Paste your Client-side Token here
+    </script>
 </head>
 <body>
-
     <div class="container">
         <div class="header">
             <h1>Premium Digital Design Asset Bundles</h1>
             <p>High-quality artwork collections for commercial and personal projects. Clear pricing, instant ZIP downloads.</p>
         </div>
-
         <div class="grid">
             {% for bundle in bundles %}
             <div class="card">
                 <div class="card-header">
-                    <h2>{{ bundle['name'] }}</h2>
+                    <h2>{{ bundle['name'].replace('_', ' ').title() }}</h2>
                     <div class="price-tag">${{ bundle['price'] }}<span> USD</span></div>
-                    <p class="description">{{ bundle['description'] }}</p>
+                    <p class="description">Premium digital artwork source files. Immediate delivery download link archive package access.</p>
                 </div>
                 <ul class="features-list">
-                    {% if bundle['file_count'] %}
-                    <li>{{ bundle['file_count'] }} Premium Items Included</li>
-                    {% else %}
-                    <li>Premium High-Resolution Assets</li>
-                    {% endif %}
+                    <li>High-Resolution Digital Assets</li>
                     <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Archive Access</li>
+                    <li>Instant ZIP Download Access</li>
+                    <li>Full Commercial Usage Rights Included</li>
                 </ul>
-                <!-- Points to your existing dynamic detail view route -->
-                <!-- Enhanced dynamic button connected directly to your unique checkout item assets -->
-<button class="buy-btn" style="width: 100%; border: none; cursor: pointer;" 
-        onclick="openCheckout('{{ bundle['price_id'] }}')">
-    Purchase Package
-</button>
-
-<script type="text/javascript">
-function openCheckout(priceId) {
-  Paddle.Checkout.open({
-    items: [{
-      priceId: priceId, // Your dynamic Paddle product price identifier
-      quantity: 1
-    }]
-  });
-}
-</script>
-
+                <!-- Triggers your live Paddle checkout view using its unique pricing ID -->
+                <button class="buy-btn" onclick="openCheckout('{{ bundle['paddle_price_id'] }}')">
+                    Purchase Bundle
+                </button>
             </div>
             {% endfor %}
         </div>
+
+        <script type="text/javascript">
+        function openCheckout(priceId) {
+            if (!priceId || priceId === 'None' || priceId === '') {
+                alert('Checkout key error. Please sync database records.');
+                return;
+            }
+            Paddle.Checkout.open({
+                items: [{ priceId: priceId, quantity: 1 }]
+            });
+        }
+        </script>
 
         <footer>
             <p>&copy; 2026 Wild Bill Pro Plans. All rights reserved.</p>
         </footer>
     </div>
-
 </body>
 </html>
