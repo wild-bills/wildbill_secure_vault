@@ -149,8 +149,43 @@ def nexapay_webhook():
     return jsonify({"status": "verified"}), 200
 
 # --- STATIC FOOTER SUBPAGES ---
+import smtplib
+from email.mime.text import MIMEText
+
 @app.route('/contact', methods=['GET', 'POST'])
-def contact(): return render_template('contact.html')
+def contact():
+    if request.method == 'POST':
+        user_name = request.form.get('name')
+        user_email = request.form.get('email')
+        user_message = request.form.get('message')
+        
+        # Format the email body
+        email_body = f"""New Website Support Ticket
+
+From: {user_name}
+Reply-To Email: {user_email}
+
+Message:
+{user_message}
+"""
+        
+        msg = MIMEText(email_body)
+        msg['Subject'] = f"[Vault Support] New Message from {user_name}"
+        msg['From'] = 'wildbills1977@gmail.com'
+        msg['To'] = 'wildbills1977@gmail.com'
+        msg['Reply-To'] = user_email
+        
+        try:
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+                # Fetches password securely from Render Environment configuration
+                server.login('wildbills1977@gmail.com', os.environ.get('EMAIL_PASSWORD', ''))
+                server.send_message(msg)
+            return "Message sent successfully! We will get back to you shortly."
+        except Exception as e:
+            print(f"Email sending failure: {e}")
+            return f"Mail Delivery Error: {str(e)}", 500
+
+    return render_template('contact.html')
 
 @app.route('/privacy', methods=['GET'])
 def privacy(): return render_template('privacy.html')
