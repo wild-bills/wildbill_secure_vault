@@ -41,6 +41,14 @@
         footer a { color: #777; text-decoration: none; font-weight: 500; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
         footer a:hover { color: #ffaa00; }
     </style>
+
+<script src="https://paddle.com"></script>
+<script type="text/javascript">
+  Paddle.Setup({ 
+    token: 'live_811a82c6ed6dc0af52b24357002' // <-- Paste your exact Client-side Token here
+  });
+</script>
+
 </head>
 <body>
     <nav>
@@ -68,8 +76,11 @@
             <div style="background: #050505; border: 1px solid #222222; padding: 25px; border-radius: 12px; text-align: center; min-width: 260px;">
                 <p style="color: #a61c1c; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 12px;">Vault Price Hikes In:</p>
                 <div id="vault-countdown" style="color: #ffffff; font-family: monospace; font-size: 2rem; font-weight: bold; margin-bottom: 15px;">00d : 00h : 00m : 00s</div>
-                <a href="https://design.wildbillsproplans.com/nexapay-webhook" style="display: block; background: #a61c1c; color: #ffffff; text-decoration: none; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; padding: 12px 20px; border-radius: 6px;">Secure Lifetime Access</a>
-            </div>
+                <button class="btn" onclick="openCheckout('{{ product['paddle_price_id'] }}')" style="cursor: pointer; width: 100%; border: none;">
+    Purchase Bundle
+</button>
+
+
         </div>
         <!-- INTERACTIVE CATEGORIES FILTER BAR -->
         <div style="margin-bottom: 40px; text-align: center;">
@@ -166,6 +177,17 @@
         <a href="/contact" style="color: #94a3b8; text-decoration: none; font-size: 0.85rem;">Contact Support</a>
     </div>
 </footer>
+<script type="text/javascript">
+function openCheckout(priceId) {
+    if (!priceId || priceId === 'None' || priceId === '') {
+        alert('Checkout key error. Please sync database records.');
+        return;
+    }
+    Paddle.Checkout.open({
+        items: [{ priceId: priceId, quantity: 1 }]
+    });
+}
+</script>
 
 </body>
 </html>
