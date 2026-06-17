@@ -20,8 +20,6 @@ B2_BUCKET_NAME = "wildbill-vault-zips"
 REGION = "us-west-004"
 B2_ENDPOINT_URL = "https://s3." + REGION + ".backblazeb2.com"
 
-# --- NEXAPAY WEBHOOK SECURITY CONFIGURATION ---
-NEXAPAY_SECRET = "whsec_a2bc5ba20c61cdb749a5f74c566348f705894f475dd53842d527a8da3bf80312"
 
 # Initialize secure storage client
 s3_client = boto3.client(
@@ -36,6 +34,39 @@ def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
+
+@app.route('/paddle-webhook', methods=['POST'])
+def paddle_webhook():
+    payload_json = request.get_json()
+    event_type = payload_json.get('event_type')
+    
+    if event_type == "transaction.completed":
+        details = payload_json.get('data', {})
+        customer_email = details.get('customer', {}).get('email')
+        items = details.get('items', [])
+        
+        if items:
+            # Safely grab the first purchased checkout plan ID
+            completed_price_id = items[0].get('price', {}).get('id')
+            
+            # Query using your newly migrated column field name
+            conn = get_db_connection()
+            product = conn.execute('SELECT * FROM products WHERE paddle_price_id = ?', (completed_price_id,)).fetchone()
+            
+            if product:
+                file_key = product['name'] + ".zip"
+                download_link = s3_client.generate_presigned_url(
+                    'get_object',
+                    Params={'Bucket': B2_BUCKET_NAME, 'Key': file_key},
+                    ExpiresIn=86400
+                )
+                print(f"💰 Order verified for {customer_email}. Generated bucket download: {download_link}")
+            else:
+                print(f"⚠️ Warning: Received Paddle price ID {completed_price_id} but found no matching database entry.")
+            conn.close()
+            
+    return jsonify({"status": "success"}), 200
+
 
 # --- FRONTEND ROUTE: HOMEPAGE GALLERY ---
 @app.route('/', methods=['GET'])

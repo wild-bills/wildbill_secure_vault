@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="https://paddle.com"></script>
+<script type="text/javascript">
+  Paddle.Setup({ 
+    token: 'live_811a82c6ed6dc0af52b24357002' // Replace with your actual live client token
+  });
+</script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pricing & Asset Bundles - Wild Bill Pro Plans</title>
@@ -173,7 +180,23 @@
                     <li>Instant ZIP Archive Access</li>
                 </ul>
                 <!-- Points to your existing dynamic detail view route -->
-                <a href="/product/{{ bundle['sku'] }}" class="buy-btn">View Bundle details</a>
+                <!-- Enhanced dynamic button connected directly to your unique checkout item assets -->
+<button class="buy-btn" style="width: 100%; border: none; cursor: pointer;" 
+        onclick="openCheckout('{{ bundle['price_id'] }}')">
+    Purchase Package
+</button>
+
+<script type="text/javascript">
+function openCheckout(priceId) {
+  Paddle.Checkout.open({
+    items: [{
+      priceId: priceId, // Your dynamic Paddle product price identifier
+      quantity: 1
+    }]
+  });
+}
+</script>
+
             </div>
             {% endfor %}
         </div>
