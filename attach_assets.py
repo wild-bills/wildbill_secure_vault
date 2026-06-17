@@ -6,8 +6,6 @@ import time
 DB_PATH = "database/store.db"
 ROOT_ZIPS_DIR = "/home/wildbill/adult_clipart_factory/"
 PREVIEW_IMAGES_DIR = os.path.expanduser("~/wildbill_secure_vault/static/images/")
-
-# 1. PASTE YOUR GUMROAD ACCESS TOKEN INSIDE THE QUOTES BELOW:
 GUMROAD_ACCESS_TOKEN = "HbzMfBBfOpQinnnabZhlpS2P4ZjoagGpUcdsblZmBrQ"
 
 def get_db_products():
@@ -28,14 +26,14 @@ def attach_assets_via_curl():
         print("❌ No products available to process in database.")
         return
 
-    print(f"🚀 Starting database-driven uploader for {len(products)} vault packages...")
+    print(f"🚀 Starting direct asset uploader for {len(products)} packages...")
 
     for index, item in enumerate(products, 1):
         sku_id = item['sku']
         clean_name = item['name'].replace('_', ' ')
         db_filename = item['name']
         
-        print(f"\n📦 Processing [{index}/{len(products)}]: {clean_name} (SKU: {sku_id})")
+        print(f"\n📦 Processing [{index}/{len(products)}]: {clean_name}")
 
         # --- PART A: ATTACH THE PHYSICAL ZIP PACKAGE VIA CURL ---
         local_zip_path = None
@@ -46,9 +44,9 @@ def attach_assets_via_curl():
 
         if local_zip_path and os.path.exists(local_zip_path):
             print(f"   ⏳ Uploading ZIP archive: {db_filename}.zip...")
-            # We target the custom permalink (SKU) you generated in Make.com
+            # Targets the new prefix URL on the web, but finds your normal zip name locally
             upload_cmd = (
-                f"curl -s -X POST https://gumroad.com{sku_id}/attachments "
+                f"curl -s -X POST https://gumroad.com_{sku_id}/attachments "
                 f"-F \"access_token={GUMROAD_ACCESS_TOKEN}\" "
                 f"-F \"file=@{local_zip_path}\""
             )
@@ -64,7 +62,7 @@ def attach_assets_via_curl():
         if os.path.exists(local_img_path):
             print(f"   ⏳ Uploading Cover Thumbnail: {expected_img_name}...")
             cover_cmd = (
-                f"curl -s -X POST https://gumroad.com{sku_id}/cover "
+                f"curl -s -X POST https://gumroad.com_{sku_id}/cover "
                 f"-F \"access_token={GUMROAD_ACCESS_TOKEN}\" "
                 f"-F \"file=@{local_img_path}\""
             )
@@ -73,10 +71,9 @@ def attach_assets_via_curl():
         else:
             print(f"   ❌ Image Missing: {expected_img_name} not found.")
 
-        # Delay pass cushion
         time.sleep(2)
 
-    print("\n🎉 Process complete! Your files and graphics have been pushed to Gumroad.")
+    print("\n🎉 Complete! All files are attached to your live listings.")
 
 if __name__ == "__main__":
     attach_assets_via_curl()

@@ -18,7 +18,8 @@ conn.close()
 print(f"📦 Packaging {len(rows)} database rows for spreadsheet export...")
 
 with open(CSV_PATH, 'w', encoding='utf-8') as f:
-    f.write("Title,Price,Description,SKU\n")
+    # This names the column header precisely to map directly to Make.com
+    f.write("Title,PriceCents,Description,SKU\n")
     
     for item in rows:
         clean_name = item['name'].replace('_', ' ')
@@ -26,11 +27,11 @@ with open(CSV_PATH, 'w', encoding='utf-8') as f:
         
         file_qty = item['file_count']
         if file_qty <= 50:
-            price_text = "4.99"
+            price_text = "499"   
         elif file_qty > 50 and file_qty < 600:
-            price_text = "14.99"
+            price_text = "1499"  
         else:
-            price_text = "39.99"
+            price_text = "3999"  
 
         description_text = f"Premium {clean_name} asset pack. Category: {clean_theme}. Includes {file_qty} high-definition graphic assets with full commercial usage rights."
         

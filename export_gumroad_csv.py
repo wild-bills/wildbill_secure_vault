@@ -18,15 +18,14 @@ def export_vault_to_csv():
 
     print(f"📦 Compiling spreadsheet rows for {len(rows)} vault packages...")
 
-    # Write the spreadsheet format with correct column header labels
     with open(CSV_PATH, 'w', encoding='utf-8') as f:
-        f.write("Name,Price,Description,Permalink\n")
+        # These are the exact headers Gumroad's bulk tool looks for
+        f.write("Name,Price,Description,Custom Permalink\n")
         
         for item in rows:
             clean_name = item['name'].replace('_', ' ')
             clean_theme = item['theme'].replace('_', ' ')
             
-            # Apply your tiered price logic rules
             file_qty = item['file_count']
             if file_qty <= 50:
                 price_text = "4.99"
@@ -35,19 +34,17 @@ def export_vault_to_csv():
             else:
                 price_text = "39.99"
 
-            # Create product description text blocks
             desc = (
                 f"Unlock premium access to the {clean_name} collection! "
-                f"• Total high-definition graphics assets: {file_qty} files "
-                f"• Collection Category: {clean_theme} "
+                f"• Total assets: {file_qty} files "
+                f"• Category: {clean_theme} "
                 f"• Complete licensing usage rights included."
             )
-            # Remove line breaks or commas that could break cell spacing layout grids
             desc_clean = desc.replace('"', '""').replace('\n', ' ')
 
-            f.write(f'"{clean_name}","{price_text}","{desc_clean}","{item["sku"]}"\n')
+            f.write(f'"{clean_name}","{price_text}","{desc_clean}","wildbill_{item["sku"]}"\n')
 
-    print(f"🎉 Success! Spreadsheet generated perfectly at: {os.path.abspath(CSV_PATH)}")
+    print(f"🎉 Success! Spreadsheet saved to: {os.path.abspath(CSV_PATH)}")
 
 if __name__ == "__main__":
     export_vault_to_csv()
