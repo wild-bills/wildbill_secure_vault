@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wild Bill Vault - Premium Gothic & Cyberpunk Assets</title>
+    <title>Wild Bill Storefront - Premium Asset Collections</title>
     <style>
         :root {
             --bg-color: #0b0f19;
@@ -14,9 +14,7 @@
             --accent-hover: #00b8cc;
             --border-color: #1e293b;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
@@ -24,160 +22,91 @@
             line-height: 1.5;
             padding: 2rem 1rem;
         }
-
-        .container { max-width: 1200px; margin: 0 auto; }
-
-        .header-section { text-align: center; margin-bottom: 3rem; padding-top: 1rem; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header-section { text-align: center; margin-bottom: 3rem; }
         .header-section h1 { font-size: 2.75rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 0.5rem; }
-        .header-section p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 1.5rem auto; }
-
-        .filter-nav {
-            display: flex;
-            justify-content: center;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-bottom: 3rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .filter-btn {
-            background-color: #1e293b;
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .filter-btn:hover, .filter-btn.active {
-            background-color: var(--accent);
-            color: #000000;
-            border-color: var(--accent);
-        }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
-
-        /* Makes the entire card an interactive block link */
-        .card-link {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
+        .header-section p { color: var(--text-muted); font-size: 1.1rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
+        .card-link { text-decoration: none; color: inherit; display: block; }
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1.25rem;
             height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             transition: transform 0.2s ease, border-color 0.2s ease;
         }
-
-        .card-link:hover .card {
-            transform: translateY(-4px);
-            border-color: var(--accent);
-        }
-
+        .card-link:hover .card { transform: translateY(-4px); border-color: var(--accent); }
         .thumbnail-wrapper {
             width: 100%;
-            height: 220px;
+            height: 200px;
             border-radius: 8px;
             overflow: hidden;
             background-color: #070a12;
-            margin-bottom: 1.25rem;
+            margin-bottom: 1rem;
             border: 1px solid #1e293b;
         }
-
         .thumbnail { width: 100%; height: 100%; object-fit: cover; }
-
-        .card-details h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.4rem; line-height: 1.4; color: var(--text-main); }
-        .sku-label { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
-        .price { color: var(--accent); font-weight: 700; font-size: 1.5rem; margin: 0.75rem 0; }
-        .price span { font-size: 0.9rem; color: var(--text-muted); font-weight: 400; }
-
+        .card-details h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--text-main); text-transform: title; }
+        .sku-label { color: var(--text-muted); font-size: 0.8rem; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+        .price { color: var(--accent); font-weight: 700; font-size: 1.35rem; margin: 0.5rem 0; }
+        .price span { font-size: 0.85rem; color: var(--text-muted); font-weight: 400; }
         .btn {
             display: block;
             text-align: center;
             background-color: var(--accent);
             color: #000000;
-            padding: 0.75rem;
+            padding: 0.7rem;
             border-radius: 6px;
             font-weight: 600;
             border: none;
             width: 100%;
             margin-top: 1rem;
             cursor: pointer;
-            transition: background-color 0.2s ease;
         }
-
         .btn:hover { background-color: var(--accent-hover); }
-
         .footer-nav { margin-top: 6rem; padding: 2.5rem 0; border-top: 1px solid var(--border-color); text-align: center; }
-        .footer-nav p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
-        .footer-links { display: flex; justify-content: center; gap: 1.75rem; flex-wrap: wrap; }
+        .footer-links { display: flex; justify-content: center; gap: 1.75rem; flex-wrap: wrap; margin-top: 1rem; }
         .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; }
         .footer-links a:hover { color: var(--accent); }
     </style>
     <script src="https://paddle.com"></script>
     <script type="text/javascript">
-      Paddle.Setup({ 
-        token: 'live_811a82c6ed6dc0af52b24357002'
-      });
+      Paddle.Setup({ token: 'live_token_here' }); // <-- Replace with your real live_token_... key from Paddle
     </script>
 </head>
 <body>
-
     <div class="container">
         <div class="header-section">
             <h1>Wild Bill Storefront Vault</h1>
-            <p>Premium dark-alternative design file bundles, vector art collections, and alternative streetwear layout mockups.</p>
-        </div>
-
-        <div class="filter-nav">
-            <button class="filter-btn active" onclick="filterTheme('all')">Show All Bundles</button>
-            {% for theme in themes %}
-            <button class="filter-btn" onclick="filterTheme('{{ theme }}')">{{ theme.replace('_', ' ').title() }}</button>
-            {% endfor %}
+            <p>Premium artwork design bundles and structural layout vector asset packages.</p>
         </div>
 
         <div class="grid" id="product-grid">
             {% for product in products %}
-            <div class="grid-item-container" data-theme="{{ product['theme'] }}">
-                <!-- Clickable link wraps the extended metadata display view -->
+            <div class="grid-item-container">
                 <a href="/product/{{ product['sku'] }}" class="card-link">
                     <div class="card">
                         <div>
                             <div class="thumbnail-wrapper">
-                                <!-- Fixes path mapping to pull relative repository paths natively -->
-                                {% if product['image_url'] and not product['image_url'].startswith('/home/') %}
-                                <img src="{{ product['image_url'] }}" alt="{{ product['name'] }}" class="thumbnail">
+                                <!-- Loads your 1st extracted image preview as the layout cover thumbnail -->
+                                {% if product['preview_1'] %}
+                                <img src="{{ product['preview_1'] }}" alt="{{ product['name'] }}" class="thumbnail">
                                 {% else %}
-                                <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--text-muted); font-size:0.85rem; text-align:center; padding:1rem;">
-                                    Preview Artwork Offline<br>
-                                    <span style="font-size:0.75rem; color:#f43f5e;">(Move files out of /home/wildbill/ to resolve)</span>
-                                </div>
+                                <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--text-muted); font-size:0.85rem;">Preview Offline</div>
                                 {% endif %}
                             </div>
-                            
                             <div class="card-details">
                                 <h3>{{ product['name'].replace('_', ' ').title() }}</h3>
                                 <div class="sku-label">SKU: {{ product['sku'] }}</div>
                                 <div class="price">${{ product['price'] }} <span>USD</span></div>
                             </div>
                         </div>
-                </a> <!-- End of clickable anchor wrapper -->
-                
-                <!-- Separate button layer specifically triggers Paddle transaction window without jumping pages -->
-                <button class="btn" onclick="openCheckout('{{ product['paddle_price_id'] }}')">
-                    Purchase Asset Bundle
-                </button>
+                </a>
+                <button class="btn" onclick="openCheckout('{{ product['paddle_price_id'] }}')">Purchase Bundle</button>
                     </div>
             </div>
             {% endfor %}
@@ -190,37 +119,19 @@
                 <a href="/terms.html">Terms of Service</a>
                 <a href="/privacy.html">Privacy Policy</a>
                 <a href="/refund.html">Refund Policy</a>
-                <a href="/contact">Contact Support Desk</a>
+                <a href="/contact">Contact Support</a>
             </div>
         </footer>
     </div>
 
     <script type="text/javascript">
     function openCheckout(priceId) {
-        event.stopPropagation(); // Stops the button click from activating the card link change path
+        event.stopPropagation();
         if (!priceId || priceId === 'None' || priceId === '') {
-            alert('Checkout link error: The billing mapping schema key for this product is empty.');
+            alert('Checkout notice: This product is pending live Paddle catalog code approval.');
             return;
         }
-        Paddle.Checkout.open({
-            items: [{ priceId: priceId, quantity: 1 }]
-        });
-    }
-
-    function filterTheme(themeName) {
-        const buttons = document.querySelectorAll('.filter-btn');
-        buttons.forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-
-        const containers = document.querySelectorAll('#product-grid .grid-item-container');
-        containers.forEach(container => {
-            const itemTheme = container.getAttribute('data-theme');
-            if (themeName === 'all' || itemTheme === themeName) {
-                container.style.display = 'block';
-            } else {
-                container.style.display = 'none';
-            }
-        });
+        Paddle.Checkout.open({ items: [{ priceId: priceId, quantity: 1 }] });
     }
     </script>
 </body>

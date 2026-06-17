@@ -3,184 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product.name.replace('_', ' ') }} - WildBill's Vault</title>
+    <title>{{ product['name'] }} - Details</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            background: linear-gradient(rgba(10, 10, 10, 0.93), rgba(10, 10, 10, 0.93)), url('/static/images/site_bg.jpg');
-            background-attachment: fixed;
-            background-size: cover;
-            background-position: center;
-            color: #f0f0f0; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-font-smoothing: antialiased;
-        }
+        body { font-family: sans-serif; background: #0b0f19; color: #fff; padding: 2rem; }
+        .wrapper { max-width: 1000px; margin: 0 auto; background: #141b2d; padding: 2.5rem; border-radius: 12px; border: 1px solid #1e293b; }
+        h1 { color: #00eaff; margin-bottom: 0.5rem; }
+        .sku { color: #94a3b8; margin-bottom: 2rem; font-size: 0.9rem; }
         
-        nav { 
-            background: rgba(17, 17, 17, 0.85); 
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 20px; 
-            display: flex; 
-            gap: 30px; 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
-            justify-content: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        nav a { color: #888; text-decoration: none; font-weight: 600; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
-        nav a:hover { color: #ffaa00; }
+        /* --- 4-IMAGE SAMPLE PREVIEW DISPLAY GRID --- */
+        .preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .preview-box { border-radius: 8px; overflow: hidden; border: 1px solid #1e293b; background: #070a12; height: 180px; }
+        .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+        .preview-title { font-size: 0.8rem; color: #94a3b8; text-align: center; margin-top: 0.5rem; }
 
-        .container { max-width: 1140px; margin: 40px auto 80px auto; padding: 0 24px; }
-        
-        .back-link { display: inline-block; color: #ffaa00; text-decoration: none; margin-bottom: 24px; font-weight: 600; font-size: 0.9rem; letter-spacing: 0.5px; transition: color 0.2s; }
-        .back-link:hover { color: #ffffff; text-decoration: none; }
-
-        .product-wrapper { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 48px; 
-            background: rgba(18, 18, 18, 0.80); 
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.04); 
-            border-radius: 20px; 
-            padding: 48px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6); 
-        }
-        
-        .product-image-column { flex: 1.1; min-width: 320px; }
-        .image-box { width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.04); background: #111; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
-        .image-box img { width: 100%; height: auto; display: block; object-fit: contain; }
-
-        .product-info-column { flex: 1; min-width: 320px; display: flex; flex-direction: column; justify-content: space-between; }
-        
-        .product-meta h1 { color: #ffffff; font-size: 2.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; line-height: 1.2; }
-        .theme-tag { display: inline-block; background: rgba(255, 170, 0, 0.07); border: 1px solid rgba(255, 170, 0, 0.15); color: #ffaa00; padding: 6px 14px; border-radius: 6px; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 28px; }
-        
-        .spec-list { border-top: 1px solid rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.04); padding: 16px 0; margin-bottom: 32px; }
-        .spec-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.02); padding: 12px 0; font-size: 0.95rem; }
-        .spec-item:last-child { border-bottom: none; }
-        .spec-item .label { color: #666; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-        .spec-item .value { color: #ffffff; font-weight: 500; }
-
-        .price-box { margin-bottom: 32px; }
-        .price-label { font-size: 0.8rem; color: #555; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 4px; }
-        .price-value { font-size: 2.4rem; color: #ffaa00; font-weight: 800; letter-spacing: -0.5px; }
-
-        .checkout-btn { 
-            display: block; 
-            width: 100%; 
-            background: linear-gradient(135deg, #ffaa00 0%, #e09600 100%); 
-            color: #000000; 
-            text-decoration: none; 
-            text-align: center; 
-            font-weight: 700; 
-            border-radius: 8px; 
-            padding: 16px; 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px; 
-            font-size: 0.95rem; 
-            box-shadow: 0 4px 16px rgba(255, 170, 0, 0.2);
-            transition: background 0.2s, transform 0.1s, box-shadow 0.2s; 
-        }
-        .checkout-btn:hover { 
-            background: linear-gradient(135deg, #ffb733 0%, #ed9f00 100%); 
-            box-shadow: 0 6px 20px rgba(255, 170, 0, 0.35);
-            transform: translateY(-1px);
-        }
-        .checkout-btn:active { transform: scale(0.99); }
-
-        footer { background: #0c0c0c; padding: 50px 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.03); margin-top: 100px; font-size: 0.9rem; }
-        footer p { color: #444; margin-bottom: 18px; letter-spacing: 0.5px; }
-        footer div { display: flex; justify-content: center; gap: 24px; }
-        footer a { color: #777; text-decoration: none; font-weight: 500; transition: color 0.2s; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
-        footer a:hover { color: #ffaa00; }
+        .buy-now-btn { background: #00eaff; color: #000; font-weight: bold; border: none; padding: 1rem 2rem; border-radius: 6px; cursor: pointer; font-size: 1.1rem; width: 100%; margin-top: 1rem; }
     </style>
+    <script src="https://paddle.com"></script>
+    <script type="text/javascript">
+      Paddle.Setup({ token: 'live_token_here' }); // <-- Paste your exact Paddle Client-side Token here
+    </script>
 </head>
 <body>
-
-    <nav>
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('contact') }}">Contact</a>
-        <a href="{{ url_for('privacy') }}">Privacy Policy</a>
-        <a href="{{ url_for('terms') }}">Terms of Service</a>
-    </nav>
-
-    <div class="container">
-        <a href="{{ url_for('index') }}" class="back-link">&larr; Return to Vault</a>
-
-        <div class="product-wrapper">
-            <!-- Left Side: Asset Preview Image -->
-            <div class="product-image-column">
-                <div class="image-box">
-                    <img src="{{ url_for('static', filename='images/' + product.name + '_preview.jpg') }}" alt="Product Image">
-                </div>
-            </div>
-
-            <!-- Right Side: Details & Action -->
-            <div class="product-info-column">
-                <div class="product-meta">
-                    <h1>{{ product.name.replace('_', ' ') }}</h1>
-                    <div class="theme-tag">{{ product.theme.replace('_', ' ') }}</div>
-                    
-                    <div class="spec-list">
-                        <div class="spec-item">
-                            <span class="label">Files Contained:</span>
-                            <span class="value" style="color: #ffaa00; font-weight: bold;">
-                                {{ product.file_count if product.file_count > 0 else "Full Library" }} Assets
-                            </span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="label">SKU:</span>
-                            <span class="value">{{ product.sku }}</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="label">Access Type:</span>
-                            <span class="value">Instant .ZIP Archive</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="label">Format:</span>
-                            <span class="value">High-Definition Graphics</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="price-box">
-                        <div class="price-label">Vault Access Price</div>
-                        <div class="price-value">${{ "%.2f"|format(product.price) if product.price is number else product.price }}</div>
-                    </div>
-                    <!-- Put your production download checkout URL inside the href below -->
-                    <!-- UNIVERSAL NEXAPAY LINK BUTTON -->
-
-https://
-wildbill3.
-gumroad.
-com/
-l/
-{{ product.sku }}
-
-</a>
-
-
-</a>
-
-                    </a>
-                </div>
-            </div>
+    <div class="wrapper">
+        <h1>{{ product['name'] }}</h1>
+        <div class="sku">Product Inventory SKU Code reference: {{ product['sku'] }}</div>
+        
+        <h3>Asset Bundle Contents Previews (1st, 3rd, 5th, & 7th Source Extracted Samples)</h3>
+        
+        <div class="preview-grid">
+            {% if product['preview_1'] %}
+            <div><div class="preview-box"><img src="{{ product['preview_1'] }}"></div><div class="preview-title">Sample 1 (1st File)</div></div>
+            {% endif %}
+            
+            {% if product['preview_2'] %}
+            <div><div class="preview-box"><img src="{{ product['preview_2'] }}"></div><div class="preview-title">Sample 2 (3rd File)</div></div>
+            {% endif %}
+            
+            {% if product['preview_3'] %}
+            <div><div class="preview-box"><img src="{{ product['preview_3'] }}"></div><div class="preview-title">Sample 3 (5th File)</div></div>
+            {% endif %}
+            
+            {% if product['preview_4'] %}
+            <div><div class="preview-box"><img src="{{ product['preview_4'] }}"></div><div class="preview-title">Sample 4 (7th File)</div></div>
+            {% endif %}
         </div>
+
+        <button class="buy-now-btn" onclick="Paddle.Checkout.open({ items: [{ priceId: '{{ product['paddle_price_id'] }}', quantity: 1 }] })">
+            Purchase This Full ZIP Collection ($10.00 USD)
+        </button>
+        <br><br>
+        <a href="/" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem;">&larr; Back to Main Store Gallery</a>
     </div>
-
-    <footer>
-        <p>&copy; 2026 WildBill's Vault. All Rights Reserved.</p>
-        <div>
-            <a href="{{ url_for('contact') }}">Contact</a>
-            <a href="{{ url_for('privacy') }}">Privacy</a>
-            <a href="{{ url_for('terms') }}">Terms</a>
-        </div>
-    </footer>
-
 </body>
 </html>
