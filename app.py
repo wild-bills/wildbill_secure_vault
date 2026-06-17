@@ -196,5 +196,14 @@ def terms(): return render_template('terms.html')
 @app.route('/pricing.html', methods=['GET'])
 def pricing(): return render_template('pricing.html')
 
+# --- DYNAMIC PRICING PAGE ROUTE ---
+@app.route('/pricing.html', methods=['GET'])
+def pricing_page():
+    conn = get_db_connection()
+    # Fetches all bundles from your product table to display as pricing tiers
+    bundles = conn.execute('SELECT * FROM products ORDER BY sku ASC').fetchall()
+    conn.close()
+    return render_template('pricing.html', bundles=bundles)
+
 if __name__ == '__main__':
     app.run(debug=True)

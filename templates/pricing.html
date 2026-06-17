@@ -54,7 +54,7 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 2rem;
         }
 
@@ -78,6 +78,7 @@
             font-size: 1.35rem;
             margin-bottom: 0.75rem;
             line-height: 1.3;
+            text-transform: capitalize;
         }
 
         .price-tag {
@@ -155,154 +156,26 @@
         </div>
 
         <div class="grid">
-            <!-- Item 1 -->
+            {% for bundle in bundles %}
             <div class="card">
                 <div class="card-header">
-                    <h2>Bundle 4 Neon Alternative Gothic</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
+                    <h2>{{ bundle['name'] }}</h2>
+                    <div class="price-tag">${{ bundle['price'] }}<span> USD</span></div>
+                    <p class="description">{{ bundle['description'] }}</p>
                 </div>
                 <ul class="features-list">
-                    <li>10 Premium Items</li>
+                    {% if bundle['file_count'] %}
+                    <li>{{ bundle['file_count'] }} Premium Items Included</li>
+                    {% else %}
+                    <li>Premium High-Resolution Assets</li>
+                    {% endif %}
                     <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
+                    <li>Instant ZIP Archive Access</li>
                 </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
+                <!-- Points to your existing dynamic detail view route -->
+                <a href="/product/{{ bundle['sku'] }}" class="buy-btn">View Bundle details</a>
             </div>
-
-            <!-- Item 2 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 211 Neon Alternative Gothic</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>32 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 3 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 47 Grimy Streetwear Alternative</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>18 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 4 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 165 Dark Luxury Red & Matte Black</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>32 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 5 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 122 Industrial Metal & Lace</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>33 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-            <!-- Item 6 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 56 Midnight Garden Escape Room</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>18 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 7 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 195 Crimson Catacombs</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>18 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 8 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 39 Crimson Cyberpunk Fetish</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>18 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 9 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 81 Dreamy Enchanted Garden</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>17 Premium Items</li>
-                    <li>Formats: PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 10 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 150 Gothic Luxury Velvet</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>32 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
+            {% endfor %}
         </div>
 
         <footer>
