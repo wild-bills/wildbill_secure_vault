@@ -24,11 +24,23 @@
         .buy-now-btn { background: #38bdf8; color: #000; font-weight: bold; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-size: 1.1rem; width: 100%; margin-top: 1rem; }
         .buy-now-btn:hover { background: #0ea5e9; }
     </style>
+<!-- 1. Load the official Paddle library first -->
+<script src="https://paddle.com"></script>
+
+<!-- 2. Wait until the window completely finishes loading, then run setup -->
+<script type="text/javascript">
+    window.addEventListener('load', function() {
+        if (typeof Paddle !== 'undefined') {
+            // !!! MAKE SURE TO REPLACE 'live_token_here' WITH YOUR TRUE PADDLE CLIENT KEY !!!
+            Paddle.Setup({ token: 'live_token_here' });
+            console.log("Paddle script initialized successfully.");
+        } else {
+            console.error("Paddle failed to load from CDN.");
+        }
+    });
+</script>
     
-    <script src="https://paddle.com"></script>
-    <script type="text/javascript">
-        // !!! REPLACE 'live_token_here' WITH YOUR ACTUAL PADDLE CLIENT KEY !!!
-        Paddle.Setup({ token: 'live_811a82c6ed6dc0af52b24357002' }); 
+
     </script>
 </head>
 <body>
