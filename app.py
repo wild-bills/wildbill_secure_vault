@@ -196,6 +196,10 @@ def terms(): return render_template('terms.html')
 @app.route('/pricing.html', methods=['GET'])
 def pricing(): return render_template('pricing.html')
 
+@app.route('/refund.html', methods=['GET'])
+def refund_page():
+    return render_template('refund.html')
+
 # --- DYNAMIC PRICING PAGE ROUTE ---
 @app.route('/pricing.html', methods=['GET'])
 def pricing_page():
