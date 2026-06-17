@@ -68,8 +68,10 @@
             {% endif %}
         </div>
         
-        <button class="buy-now-btn" onclick="Paddle.Checkout.open({ items: [{ priceId: '{{ product['paddle_price_id'] }}', quantity: 1 }] })">
+        <button class="buy-now-btn" onclick="Paddle.Checkout.open({ items: [{ priceId: '{{ product['paddle_price_id'] or product['price_id'] or 'YOUR_DEFAULT_PRICE_ID' }}', quantity: 1 }] })">
             Purchase This Full ZIP Collection ($10.00 USD)
+        </button>
+
         </button>
     </div>
 </body>
