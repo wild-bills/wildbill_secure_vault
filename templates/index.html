@@ -73,7 +73,7 @@
         .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; }
         .footer-links a:hover { color: var(--accent); }
     </style>
-    <script src="https://paddle.com"></script>
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
     <script type="text/javascript">
       Paddle.Setup({ token: 'live_811a82c6ed6dc0af52b24357002' }); // <-- Replace with your real live_token_... key from Paddle
     </script>
@@ -88,6 +88,17 @@
 </script>
 
 
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script type="text/javascript">
+    window.addEventListener('load', function() {
+        if (typeof Paddle !== 'undefined') {
+            Paddle.Initialize({
+                token: 'live_811a02c6ed6dc0af52b24357002'
+            });
+            console.log("Paddle V2 initialized on index.");
+        }
+    });
+</script>
 </head>
 <body>
     <div class="container">
