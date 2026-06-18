@@ -25,17 +25,21 @@
         .buy-now-btn:hover { background: #0ea5e9; }
     </style>
 <!-- 1. Load the official Paddle library first -->
-<script src="/static/js/paddle.js"></script>
+<script src="{{ url_for('static', filename='js/paddle.js') }}"></script>
+
+
+<!-- 2. Wait until the window completely finishes loading, then run setup -->
+<!-- 1. Load the official Paddle library first -->
+<script src="{{ url_for('static', filename='js/paddle.js') }}"></script>
 
 <!-- 2. Wait until the window completely finishes loading, then run setup -->
 <script type="text/javascript">
     window.addEventListener('load', function() {
         if (typeof Paddle !== 'undefined') {
-            // !!! MAKE SURE TO REPLACE 'live_token_here' WITH YOUR TRUE PADDLE CLIENT KEY !!!
-            Paddle.Setup({ token: 'live_811a82c6ed6dc0af52b24357002' });
+            Paddle.Setup({ token: 'live_811a02c6ed6dc0af52b24357002' });
             console.log("Paddle script initialized successfully.");
         } else {
-            console.error("Paddle failed to load from CDN.");
+            console.error("Paddle failed to load.");
         }
     });
 </script>
