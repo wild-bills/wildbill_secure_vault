@@ -47,8 +47,7 @@ def paddle_webhook():
         
         if items:
             # Safely grab the first purchased checkout plan ID
-            completed_price_id = items[0].get('price', {}).get('id')
-            
+            completed_price_id = items[0].get('price_id')             
             # Query using your newly migrated column field name
             conn = get_db_connection()
             product = conn.execute('SELECT * FROM products WHERE paddle_price_id = ?', (completed_price_id,)).fetchone()

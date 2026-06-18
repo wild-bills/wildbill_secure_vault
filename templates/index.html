@@ -5,73 +5,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wild Bill Storefront - Premium Asset Collections</title>
     <style>
-        :root {
-            --bg-color: #0b0f19;
-            --card-bg: #141b2d;
-            --text-main: #ffffff;
-            --text-muted: #94a3b8;
-            --accent: #00eaff;
-            --accent-hover: #00b8cc;
-            --border-color: #1e293b;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.5;
-            padding: 2rem 1rem;
-        }
-        .container { max-width: 1400px; margin: 0 auto; }
-        .header-section { text-align: center; margin-bottom: 3rem; }
-        .header-section h1 { font-size: 2.75rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 0.5rem; }
-        .header-section p { color: var(--text-muted); font-size: 1.1rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
-        .card-link { text-decoration: none; color: inherit; display: block; }
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.25rem;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s ease, border-color 0.2s ease;
-        }
-        .card-link:hover .card { transform: translateY(-4px); border-color: var(--accent); }
-        .thumbnail-wrapper {
-            width: 100%;
-            height: 200px;
-            border-radius: 8px;
-            overflow: hidden;
-            background-color: #070a12;
-            margin-bottom: 1rem;
-            border: 1px solid #1e293b;
-        }
-        .thumbnail { width: 100%; height: 100%; object-fit: cover; }
-        .card-details h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--text-main); text-transform: title; }
-        .sku-label { color: var(--text-muted); font-size: 0.8rem; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
-        .price { color: var(--accent); font-weight: 700; font-size: 1.35rem; margin: 0.5rem 0; }
-        .price span { font-size: 0.85rem; color: var(--text-muted); font-weight: 400; }
-        .btn {
-            display: block;
-            text-align: center;
-            background-color: var(--accent);
-            color: #000000;
-            padding: 0.7rem;
-            border-radius: 6px;
-            font-weight: 600;
-            border: none;
-            width: 100%;
-            margin-top: 1rem;
-            cursor: pointer;
-        }
-        .btn:hover { background-color: var(--accent-hover); }
-        .footer-nav { margin-top: 6rem; padding: 2.5rem 0; border-top: 1px solid var(--border-color); text-align: center; }
-        .footer-links { display: flex; justify-content: center; gap: 1.75rem; flex-wrap: wrap; margin-top: 1rem; }
-        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; }
-        .footer-links a:hover { color: var(--accent); }
+    /* --- MODERN RESET & CORE THEME VARIABLES --- */
+:root {
+  --bg-primary: #0a0505;
+  --bg-card: #140b0b;
+  --accent-neon: #ff1e27;
+  --accent-glow: rgba(255, 30, 39, 0.15);
+  --text-main: #f5f5f5;
+  --text-muted: #a39797;
+  --border-color: #261213;
+}
+
+/* --- THE HIGH-END SEMI-TRANSPARENT NEON BACKGROUND GRAPHIC --- */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Procedural grid overlay mapping */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    linear-gradient(var(--border-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Radial light glow vignette centered over the background */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: radial-gradient(circle at 50% 50%, transparent 20%, var(--bg-primary) 80%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* --- ULTRA-MODERN FLUID CARD OVERHAUL --- */
+.item-container, .grid-item, .card {
+  position: relative;
+  z-index: 2; /* Forces content over the background grids */
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Premium card hover state */
+.card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-neon);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+/* --- THE CYBERPUNK BUY BUTTON --- */
+.buy-now-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #cc1117 0%, var(--accent-neon) 100%);
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+  border-radius: 6px;
+  padding: 14px 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(255, 30, 39, 0.3);
+}
+
+.buy-now-btn:hover {
+  transform: scale(1.02);
+  background: linear-gradient(135deg, var(--accent-neon) 0%, #ff4f55 100%);
+  box-shadow: 0 6px 20px rgba(255, 30, 39, 0.5);
+}
+
+.buy-now-btn:active {
+  transform: scale(0.98);
+}
+
+        
     </style>
     <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
     <script type="text/javascript">
