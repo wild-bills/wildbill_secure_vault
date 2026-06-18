@@ -93,6 +93,7 @@
     window.addEventListener('load', function() {
         if (typeof Paddle !== 'undefined') {
             Paddle.Initialize({
+                environment: 'production',
                 token: 'live_811a02c6ed6dc0af52b24357002'
             });
             console.log("Paddle V2 initialized on index.");
