@@ -73,12 +73,36 @@
             </div>
             {% endif %}
         </div>
-        
-        <button class="buy-now-btn" onclick="Paddle.Checkout.open({ items: [{ priceId: '{{ product['paddle_price_id'] or product['price_id'] or 'YOUR_DEFAULT_PRICE_ID' }}', quantity: 1 }] })">
-            Purchase This Full ZIP Collection ($10.00 USD)
-        </button>
+        <button class="buy-now-btn" onclick="openVaultCheckout('{{ product.paddle_price_id or product.price_id or product.paddle_plan_id }}')">Purchase This Full ZIP Collection ($10.00 USD)</button>
 
-        </button>
+        
+</button>
     </div>
 </body>
 </html>
+<!-- ========================================== -->
+<!--  PADDLE PAYMENT SYSTEM INTEGRATION SCRIPT  -->
+<!-- ========================================== -->
+<script src="https://paddle.com"></script>
+<script>
+  Paddle.Initialize({ 
+    // FOR TESTING: If you want sandbox simulation, use your pdl_sdbx_ token here!
+    token: "pdl_live_apikey_01kvcm8smzkd2er8yf56pdfps8_kSggBxB3y88sXVNTSTPvSr_A3j" 
+  });
+
+  function openVaultCheckout(priceId) {
+    Paddle.Checkout.open({
+      settings: {
+        displayMode: "overlay",
+        theme: "dark",
+        locale: "en"
+      },
+      items: [
+        {
+          priceId: priceId,
+          quantity: 1
+        }
+      ]
+    });
+  }
+</script>
