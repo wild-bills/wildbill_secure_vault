@@ -128,9 +128,11 @@
                             </div>
                         </div>
                 </a>
-                <button class="btn" onclick="openCheckout('{{ product['paddle_price_id'] }}')">Purchase Bundle</button>
+
                     </div>
-            </div>
+        <button class="buy-now-btn" onclick="Paddle.Checkout.open({ items: [{ priceId: '{{ product['paddle_price_id'] or product['price_id'] }}', quantity: 1 }] })">Purchase Bundle</button>
+    
+        </div>
             {% endfor %}
         </div>
 
@@ -146,15 +148,3 @@
         </footer>
     </div>
 
-    <script type="text/javascript">
-    function openCheckout(priceId) {
-        event.stopPropagation();
-        if (!priceId || priceId === 'None' || priceId === '') {
-            alert('Checkout notice: This product is pending live Paddle catalog code approval.');
-            return;
-        }
-        Paddle.Checkout.open({ items: [{ priceId: priceId, quantity: 1 }] });
-    }
-    </script>
-</body>
-</html>
