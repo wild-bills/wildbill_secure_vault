@@ -131,8 +131,7 @@
                 </a>
 
                     </div>
-        <button class="buy-now-btn" onclick="Paddle.Checkout.open({ items: [{ priceId: '{{ product['paddle_price_id'] or product['price_id'] }}', quantity: 1 }] })">Purchase Bundle</button>
-    
+            <button class="buy-now-btn" onclick="openVaultCheckout('{{ product.paddle_price_id or product.price_id or product.paddle_plan_id }}')">purchase Bundle</button>  
         </div>
             {% endfor %}
         </div>
@@ -148,4 +147,36 @@
             </div>
         </footer>
     </div>
+
+<!-- ========================================== -->
+<!--  PADDLE PAYMENT SYSTEM INTEGRATION SCRIPT  -->
+<!-- ========================================== -->
+
+<!-- 1. Fetch the official secure engine script -->
+<script src="https://paddle.com"></script>
+
+<!-- 2. Power your buy buttons -->
+<script>
+  // Authenticate with your exact live key structure
+  Paddle.Initialize({ 
+    token: "pdl_live_apikey_01kvcm8smzkd2er8yf56pdfps8_kSggBxB3y88sXVNTSTPvSr_A3j" 
+  });
+
+  // This function executes the dark overlay popup on click
+  function openVaultCheckout(priceId) {
+    Paddle.Checkout.open({
+      settings: {
+        displayMode: "overlay",
+        theme: "dark",
+        locale: "en"
+      },
+      items: [
+        {
+          priceId: priceId, // Safely pulls your pri_xxxx ID from your template block
+          quantity: 1
+        }
+      ]
+    });
+  }
+</script>
 
