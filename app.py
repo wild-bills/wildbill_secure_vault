@@ -120,22 +120,6 @@ def secure_download(sku):
     except Exception as e:
         return "Secure Delivery Error", 500
 
-# --- SECURE BACKEND ROUTE: NEXAPAY TRANSACTION WEBHOOK ---
-@app.route('/nexapay-webhook', methods=['GET', 'POST'])
-def nexapay_webhook():
-    signature_header = request.headers.get('X-NexaPay-Signature')
-    timestamp_header = request.headers.get('X-NexaPay-Timestamp')
-    user_agent = request.headers.get('User-Agent', '')
-    
-    # SYSTEM TEST BOT BYPASS: Automatically pass if it's the dashboard testing bot
-    if "NexaPay-Webhook-Bot" in user_agent:
-        print("✅ Webhook Validated Successfully (Dashboard Test Bot Bypass Active)!")
-        return jsonify({"status": "verified"}), 200
-
-    if not signature_header or not timestamp_header:
-        print("⚠️ Missing NexaPay verification headers.")
-        return "Missing Verification Headers", 401
-        
     try:
         request_time = int(timestamp_header)
         current_time = int(time.time())
@@ -243,6 +227,14 @@ def pricing_page():
     bundles = conn.execute('SELECT * FROM products ORDER BY sku ASC').fetchall()
     conn.close()
     return render_template('pricing.html', bundles=bundles)
+from flask import send_from_directory
+import os
+
+@app.route('/static/js/<path:filename>')
+def serve_paddle_js(filename):
+    js_dir = os.path.join(app.root_path, 'static', 'js')
+    return send_from_directory(js_dir, filename, mimetype='application/javascript')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
