@@ -95,7 +95,9 @@
                     <li>Full Commercial Usage Rights Included</li>
                 </ul>
                 <!-- Triggers your live Paddle checkout view using its unique pricing ID -->
-                <button class="buy-btn" onclick="openCheckout('{{ bundle['paddle_price_id'] }}')">
+                <button class="buy-btn" onclick="Paddle.Checkout.open({ items: [{ priceId: '{{ bundle['paddle_price_id'] }}', quantity: 1 }] })">
+
+
                     Purchase Bundle
                 </button>
             </div>
@@ -103,15 +105,7 @@
         </div>
 
         <script type="text/javascript">
-        function openCheckout(priceId) {
-            if (!priceId || priceId === 'None' || priceId === '') {
-                alert('Checkout key error. Please sync database records.');
-                return;
-            }
-            Paddle.Checkout.open({
-                items: [{ priceId: priceId, quantity: 1 }]
-            });
-        }
+        
         </script>
 
         <footer>
