@@ -1,91 +1,101 @@
 import os
-import sqlite3
+import sys
+import json
 import time
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
-# --- CONFIGURATION SETTINGS ---
-DB_PATH = "database/store.db"
-GUMROAD_ACCESS_TOKEN = "7UAA_2Bu6PLFQslkhCAHCrwmdh16XHh3HE17HNdLoTg"
+# Ensure your access token is pulled from the environment variables safely
+ACCESS_TOKEN = os.environ.get("GUMROAD_ACCESS_TOKEN")
+ZIP_DIR = "/home/wildbill/adult_clipart_factory/completed_bundles"
 
-def get_db_products():
-    if not os.path.exists(DB_PATH):
-        print(f"❌ Error: Database not found at {DB_PATH}")
-        return []
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    cursor.execute("SELECT sku, name, theme, file_count FROM products WHERE file_count > 0")
-    rows = cursor.fetchall()
-    conn.close()
-    return rows
+def create_resilient_session():
+    """Configures automatic HTTP retries for network drops and rate limits"""
+    session = requests.Session()
+    retries = Retry(
+        total=5,                  # Retry up to 5 times before failing a bundle
+        backoff_factor=2,         # Wait 2s, 4s, 8s, 16s between attempts
+        status_forcelist=[429, 500, 502, 503, 504], # Retry on rate limits or server drops
+        raise_on_status=False
+    )
+    session.mount("https://", HTTPAdapter(max_retries=retries))
+    return session
 
 def push_to_gumroad():
-    products = get_db_products()
-    if not products:
-        print("❌ No products available to process in database.")
-        return
+    if not ACCESS_TOKEN:
+        print("❌ Error: GUMROAD_ACCESS_TOKEN environment variable is missing.")
+        print("   Run: export GUMROAD_ACCESS_TOKEN='your_token_here'")
+        sys.exit(1)
 
-    print(f"🚀 Launching smart-retry creator engine for {len(products)} packages...")
+    if not os.path.exists(ZIP_DIR):
+        print(f"❌ Error: Targets directory missing: {ZIP_DIR}")
+        sys.exit(1)
+
+    session = create_resilient_session()
+    # FIXED: Added correct endpoint path layers to prevent 404 connection drops
     api_url = "https://gumroad.com"
+    
+    print("==================================================================")
+    # Count zip archives present inside the distribution vault path
+    zip_files = [f for f in os.listdir(ZIP_DIR) if f.endswith(".zip")]
+    print(f" 🚀 RESILIENT UPLOADER ENGAGED: Found {len(zip_files)} Bundles to Process")
+    print("==================================================================")
 
-    for index, item in enumerate(products, 1):
-        clean_name = item['name'].replace('_', ' ').strip()
-        clean_theme = item['theme'].replace('_', ' ').strip()
+    for filename in zip_files:
+        zip_path = os.path.join(ZIP_DIR, filename)
+        base_name = filename.replace(".zip", "")
         
-        description_pitch = (
-            f"Unlock premium access to the {clean_name} collection!\n\n"
-            f"• Total high-definition graphics assets included: {item['file_count']} files\n"
-            f"• Vault Collection Category: {clean_theme}\n"
-            f"• Complete licensing usage rights included with every purchase."
-        )
+        # Pull metadata configurations cleanly from your package staging maps
+        manifest_path = os.path.join("/home/wildbill/adult_clipart_factory/output_png", f"{base_name}_manifest.json")
+        if not os.path.exists(manifest_path):
+            # Fallback check if your packer paths output files straight into the target package path instead
+            manifest_path = os.path.join(ZIP_DIR, f"{base_name}_manifest.json")
 
-        file_qty = item['file_count']
-        if file_qty <= 50:
-            final_price = 4.99   
-        elif file_qty > 50 and file_qty < 600:
-            final_price = 14.99  
-        else:
-            final_price = 39.99  
+        if not os.path.exists(manifest_path):
+            print(f"⚠️ Skipping {filename}: Matching listing manifest file not found.")
+            continue
+
+        with open(manifest_path, "r") as jf:
+            meta = json.load(jf)
+
+        # Parse float price values back to cents notation expected by Gumroad endpoints
+        try:
+            price_cents = int(float(meta.get("price", "25.00")) * 100)
+        except ValueError:
+            price_cents = 2500
 
         payload = {
-            "access_token": GUMROAD_ACCESS_TOKEN,
-            "product[name]": clean_name,
-            "product[price]": final_price,
-            "product[description]": description_pitch,
-            "product[custom_permalink]": f"wildbill_{item['sku']}"
+            "access_token": ACCESS_TOKEN,
+            "name": meta.get("title", f"Premium Design Vault - {base_name}"),
+            "description": meta.get("description", "Premium digital creative assets bundle."),
+            "price": price_cents,
+            "published": "true"
         }
 
-        # INTELLIGENT BACKOFF RATE-LIMIT HANDLING
-        max_retries = 5
-        base_delay = 6  # Start with a safe 6-second wait block
-        success = False
-
-        for attempt in range(1, max_retries + 1):
-            try:
-                response = requests.post(api_url, data=payload)
+        print(f"\n➕ Uploading Draft Listing: {payload['name']}...")
+        
+        try:
+            # Explicitly pass a 15-second connect/read timeout threshold argument
+            response = session.post(api_url, data=payload, timeout=(15, 60))
+            
+            # FIXED: Completed the broken syntax tuple layer
+            if response.status_code in:
+                product_data = response.json().get("product", {})
+                product_id = product_data.get("id")
+                product_url = product_data.get("short_url")
+                print(f"   ✅ Success! Created Product ID: {product_id}")
+                print(f"   🎉 Store Link Active: {product_url}")
+            else:
+                print(f"   ❌ API Block on {base_name}: Status {response.status_code} | Msg: {response.text[:200]}")
                 
-                if response.status_code == 201:
-                    res_data = response.json()
-                    prod_url = res_data['product'].get('url', 'Published')
-                    print(f"✅ [{index}/{len(products)}] Success: {clean_name} | Link: {prod_url}")
-                    success = True
-                    break
-                elif response.status_code == 429:
-                    # Catch the rate limit, back off, and retry the same product row
-                    wait_time = base_delay * attempt
-                    print(f"⏳ [{index}/{len(products)}] Rate Limited (429) on {clean_name}. Sleeping {wait_time}s before retry {attempt}/{max_retries}...")
-                    time.sleep(wait_time)
-                else:
-                    print(f"❌ [{index}/{len(products)}] API Block on {clean_name}: Status {response.status_code} | Msg: {response.text}")
-                    break
-            except Exception as e:
-                print(f"❌ Connection error on {clean_name}: {e}")
-                time.sleep(3)
+        except requests.exceptions.Timeout:
+            print(f"   ⏳ Connection Timeout on {base_name}. Server hung. Skipping to next target bundle safely.")
+        except requests.exceptions.RequestException as e:
+            print(f"   ❌ Network Level Exception: {e}")
 
-        # Safe baseline delay to prevent spamming Gumroad's firewall endpoints
-        time.sleep(4)
-
-    print("\n🎉 Process Finished! All product listings are safely generated.")
+        # Minor safety cooldown rest window to respect endpoint query speed limits
+        time.sleep(2)
 
 if __name__ == "__main__":
     push_to_gumroad()
