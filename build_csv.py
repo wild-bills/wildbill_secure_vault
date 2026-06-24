@@ -1,68 +1,82 @@
+import os
 import csv
+import re
 
-# ----------------- CONFIGURATION -----------------
-# 1. Replace with your exact Backblaze Bucket URL prefix
-# Crucial: Do not include a trailing slash at the end
-BACKBLAZE_BASE_URL = "https://backblazeb2.com"
+# ----------------- CONFIGURATION ----------------- #
+TARGET_DIR = "/home/wildbill/adult_clipart_factory/completed_bundles"
+OUTPUT_CSV = "products.csv"
+DEFAULT_PRICE = "15.00"  # Set your standard product price here
+DEFAULT_DESC = "High-quality premium digital asset pack collection bundle."
+# ------------------------------------------------- #
 
-# 2. Define the output CSV name (Must match your upload script)
-OUTPUT_CSV_NAME = "products.csv"
+def clean_title(filename):
+    # Remove file extension
+    name_without_ext = os.path.splitext(filename)[0]
+    # Replace underscores, hyphens, or dots with spaces
+    spaced_name = re.sub(r'[_.\-]+', ' ', name_without_ext)
+    # Capitalize the words nicely
+    return spaced_name.strip().title()
 
-# 3. Total number of products to generate rows for
-TOTAL_PRODUCTS = 250
+def generate_csv():
+    print(f"📂 Scanning directory: {TARGET_DIR}")
+    
+    if not os.path.exists(TARGET_DIR):
+        print(f"❌ Error: The directory '{TARGET_DIR}' does not exist.")
+        return
 
-# 4. Set a default price for your items (e.g., 10.00 for $10.00)
-# You can change these values manually in Excel/Google Sheets later
-DEFAULT_PRICE = "10.00"
-# -------------------------------------------------
+    # Gather all files in the folder
+    all_files = os.listdir(TARGET_DIR)
+    
+    # Filter out zip files and image files
+    zip_files = [f for f in all_files if f.lower().endswith('.zip')]
+    image_extensions = ('.png', '.jpg', '.jpeg', '.webp', '.gif')
+    image_files = [f for f in all_files if f.lower().endswith(image_extensions)]
 
+    print(f"📦 Found {len(zip_files)} ZIP files and {len(image_files)} potential preview images.")
 
-def generate_gumroad_csv():
-    print(f"📁 Generating CSV grid layout for {TOTAL_PRODUCTS} items...")
+    products_data = []
 
+    for zip_file in sorted(zip_files):
+        base_name = os.path.splitext(zip_file)[0]
+        title = clean_title(zip_file)
+        
+        # Smart Matching: Look for an image that shares the same base name
+        preview_file = ""
+        for img in image_files:
+            img_base = os.path.splitext(img)[0]
+            if img_base.lower() == base_name.lower():
+                preview_file = img
+                break
+        
+        # Fallback: If no direct match, check if the image name is "contained" within it
+        if not preview_file:
+            for img in image_files:
+                img_base = os.path.splitext(img)[0]
+                if img_base.lower() in base_name.lower() or base_name.lower() in img_base.lower():
+                    preview_file = img
+                    break
+
+        # If still no preview image found, alert the user but add the row anyway
+        if not preview_file:
+            print(f"⚠️ Warning: No matching preview image found for '{zip_file}'")
+            preview_file = "MISSING_PREVIEW.png"
+
+        products_data.append({
+            "Title": title,
+            "Description": DEFAULT_DESC,
+            "Price": DEFAULT_PRICE,
+            "Zip_URL": zip_file,       # Saves just the filename for upload_local_zips.py
+            "Preview_URL": preview_file # Saves just the filename for upload_local_zips.py
+        })
+
+    # Write everything to your products.csv spreadsheet
     headers = ["Title", "Description", "Price", "Zip_URL", "Preview_URL"]
+    with open(OUTPUT_CSV, mode="w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=headers)
+        writer.writeheader()
+        writer.writerows(products_data)
 
-    try:
-        with open(
-            OUTPUT_CSV_NAME, mode="w", newline="", encoding="utf-8"
-        ) as file:
-            writer = csv.writer(file)
-
-            # Write the column headers first
-            writer.writerow(headers)
-
-            for i in range(1, TOTAL_PRODUCTS + 1):
-                # Create 3-digit padded numbers (001, 002, ... 250)
-                padded_number = f"{i:03d}"
-
-                # Generate titles and generic descriptions
-                # Modify these placeholder text strings as needed
-                title = f"Digital Asset Pack #{padded_number}"
-                description = (
-                    f"Premium creative asset bundle #{padded_number}. "
-                    "Includes high-resolution assets and multi-format support."
-                )
-
-                # Construct your Backblaze URLs dynamically based on your naming convention
-                zip_url = (
-                    f"{BACKBLAZE_BASE_URL}/{padded_number}_product.zip"
-                )
-                preview_url = (
-                    f"{BACKBLAZE_BASE_URL}/{padded_number}_preview.jpg"
-                )
-
-                # Assemble the row data
-                row = [title, description, DEFAULT_PRICE, zip_url, preview_url]
-                writer.writerow(row)
-
-        print(f"🎉 Success! '{OUTPUT_CSV_NAME}' has been built successfully.")
-        print("💡 Tip: You can now open this file in Excel or Google Sheets to:")
-        print("   - Customize unique titles/prices for individual rows.")
-        print("   - Check that the Backblaze links load properly.")
-
-    except Exception as e:
-        print(f"❌ Error building the CSV sheet: {e}")
-
+    print(f"\n🏁 Success! Created '{OUTPUT_CSV}' with {len(products_data)} matched product rows.")
 
 if __name__ == "__main__":
-    generate_gumroad_csv()
+    generate_csv()

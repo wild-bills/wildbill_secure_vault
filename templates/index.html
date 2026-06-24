@@ -4,207 +4,248 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wild Bill Storefront - Premium Asset Collections</title>
+    <!-- Injects Alpine.js Framework to render the store without server-side Python -->
+    <script defer src="https://jsdelivr.net"></script>
     <style>
-    /* --- MODERN RESET & CORE THEME VARIABLES --- */
-:root {
-  --bg-primary: #0a0505;
-  --bg-card: #140b0b;
-  --accent-neon: #ff1e27;
-  --accent-glow: rgba(255, 30, 39, 0.15);
-  --text-main: #f5f5f5;
-  --text-muted: #a39797;
-  --border-color: #261213;
-}
-
-/* --- THE HIGH-END SEMI-TRANSPARENT NEON BACKGROUND GRAPHIC --- */
-body {
-  background-color: var(--bg-primary);
-  color: var(--text-main);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
-}
-
-/* Procedural grid overlay mapping */
-body::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-image: 
-    linear-gradient(var(--border-color) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: center;
-  opacity: 0.4;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Radial light glow vignette centered over the background */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  background: radial-gradient(circle at 50% 50%, transparent 20%, var(--bg-primary) 80%);
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* --- ULTRA-MODERN FLUID CARD OVERHAUL --- */
-.item-container, .grid-item, .card {
-  position: relative;
-  z-index: 2; /* Forces content over the background grids */
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 20px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-}
-
-/* Premium card hover state */
-.card:hover {
-  transform: translateY(-5px);
-  border-color: var(--accent-neon);
-  box-shadow: 0 0 20px var(--accent-glow);
-}
-
-/* --- THE CYBERPUNK BUY BUTTON --- */
-.buy-now-btn {
-  width: 100%;
-  background: linear-gradient(135deg, #cc1117 0%, var(--accent-neon) 100%);
-  color: #fff;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border: none;
-  border-radius: 6px;
-  padding: 14px 24px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(255, 30, 39, 0.3);
-}
-
-.buy-now-btn:hover {
-  transform: scale(1.02);
-  background: linear-gradient(135deg, var(--accent-neon) 0%, #ff4f55 100%);
-  box-shadow: 0 6px 20px rgba(255, 30, 39, 0.5);
-}
-
-.buy-now-btn:active {
-  transform: scale(0.98);
-}
-
+        /* --- MODERN RESET & CORE THEME VARIABLES --- */
+        :root {
+            --bg-primary: #0a0505;
+            --bg-card: #140b0b;
+            --accent-neon: #ff1e27;
+            --accent-glow: rgba(255, 30, 39, 0.15);
+            --text-main: #f5f5f5;
+            --text-muted: #a39797;
+            --border-color: #261213;
+        }
         
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: linear-gradient(var(--border-color) 1px, transparent 1px), linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center;
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 50%, transparent 20%, var(--bg-primary) 80%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header-section h1 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-section p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* --- STUNNING CYBERPUNK GRID --- */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-neon);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .thumbnail-wrapper {
+            width: 100%;
+            height: 220px;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover .thumbnail {
+            transform: scale(1.05);
+        }
+
+        .card-details {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-details h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .price {
+            font-size: 1.4rem;
+            color: var(--accent-neon);
+            font-weight: 700;
+            margin-top: 15px;
+        }
+
+        .price span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* --- THE CYBERPUNK BUY BUTTON --- */
+        .buy-now-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #cc1117 0%, var(--accent-neon) 100%);
+            color: #fff;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            border-radius: 6px;
+            padding: 14px 24px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(255, 30, 39, 0.3);
+        }
+
+        .buy-now-btn:hover {
+            transform: scale(1.02);
+            background: linear-gradient(135deg, var(--accent-neon) 0%, #ff4f55 100%);
+            box-shadow: 0 6px 20px rgba(255, 30, 39, 0.5);
+        }
+
+        .footer-nav {
+            text-align: center;
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-neon);
+        }
     </style>
-    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-    <script type="text/javascript">
-      Paddle.Setup({ token: 'live_811a82c6ed6dc0af52b24357002' }); // <-- Replace with your real live_token_... key from Paddle
-    </script>
-<script src="/static/js/paddle.js"></script>
-<script type="text/javascript">
-    window.addEventListener('load', function() {
-        if (typeof Paddle !== 'undefined') {
-            Paddle.Setup({ token: 'live_811a82c6ed6dc0af52b24357002' }); // Replace with your real Paddle Client Token
-            console.log("Paddle loaded on index page!");
-        }
-    });
-</script>
-
-
-<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-<script type="text/javascript">
-    window.addEventListener('load', function() {
-        if (typeof Paddle !== 'undefined') {
-            Paddle.Initialize({
-                environment: 'production',
-                token: 'live_811a02c6ed6dc0af52b24357002'
-            });
-            console.log("Paddle V2 initialized on index.");
-        }
-    });
-</script>
 </head>
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d2b96141366040a28eccd498dda98633"}'></script><!-- End Cloudflare Web Analytics -->
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d2b96141366040a28eccd498dda98633"}'></script>
 <body>
-    <div class="container">
+    <!-- Alpine.js Application Context Component Wrapper -->
+    <div class="container" x-data="{ products: [] }" x-init="fetch('/products.json').then(r => r.json()).then(d => products = d)">
         <div class="header-section">
             <h1>Wild Bill Storefront Vault</h1>
-            <p>Premium artwork design bundles and structural layout vector asset packages.</p>
+            <p>Premium theme-specific graphic artwork design bundles and structural master packages.</p>
         </div>
 
-        <div class="grid" id="product-grid">
-            {% for product in products %}
-            <div class="grid-item-container">
-                <a href="/product/{{ product['sku'] }}" class="card-link">
-                    <div class="card">
-                        <div>
-                            <div class="thumbnail-wrapper">
-                                <!-- Loads your 1st extracted image preview as the layout cover thumbnail -->
-                                {% if product['preview_1'] %}
-                                <img src="{{ product['preview_1'] }}" alt="{{ product['name'] }}" class="thumbnail">
-                                {% else %}
-                                <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--text-muted); font-size:0.85rem;">Preview Offline</div>
-                                {% endif %}
-                            </div>
-                            <div class="card-details">
-                                <h3>{{ product['name'].replace('_', ' ').title() }}</h3>
-                                <div class="sku-label">SKU: {{ product['sku'] }}</div>
-                                <div class="price">${{ product['price'] }} <span>USD</span></div>
-                            </div>
-                        </div>
-                </a>
-
+        <!-- Dynamic Client-Side Array Iteration Loop -->
+        <div class="product-grid">
+            <template x-for="product in products" :key="product.Title">
+                <div class="card">
+                    <div class="thumbnail-wrapper">
+                        <img :src="product.Preview_URL" :alt="product.Title" class="thumbnail" onerror="this.style.display='none'">
                     </div>
-            <button class="buy-now-btn" onclick="openVaultCheckout('{{ product.paddle_price_id or product.price_id or product.paddle_plan_id }}')">purchase Bundle</button>  
-        </div>
-            {% endfor %}
+                    <div class="card-details">
+                        <div>
+                            <h3 x-text="product.Title"></h3>
+                            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 5px 0 0 0;" x-text="product.Description"></p>
+                        </div>
+                        <div>
+                            <div class="price">$<span x-text="product.Price"></span> <span>USD</span></div>
+                            <!-- Direct Download / Purchase Route Option -->
+                            <button class="buy-now-btn">Download Bundle</button>
+                        </div>
+                    </div>
+                </div>
+            </template>
         </div>
 
         <footer class="footer-nav">
             <p>&copy; 2026 Wild Bill Pro Plans. All Rights Reserved.</p>
             <div class="footer-links">
-                <a href="/pricing.html" style="color: var(--accent); font-weight: 500;">Pricing Tiers</a>
+                <a href="/pricing.html">Pricing Tiers</a>
                 <a href="/terms.html">Terms of Service</a>
                 <a href="/privacy.html">Privacy Policy</a>
                 <a href="/refund.html">Refund Policy</a>
-                <a href="/contact">Contact Support</a>
+            </a href="/contact">Contact Support</a>
             </div>
         </footer>
     </div>
-
-<!-- ========================================== -->
-<!--  PADDLE PAYMENT SYSTEM INTEGRATION SCRIPT  -->
-<!-- ========================================== -->
-
-<!-- 1. Fetch the official secure engine script -->
-<script src="https://paddle.com"></script>
-
-<!-- 2. Power your buy buttons -->
-<script>
-  // Authenticate with your exact live key structure
-  Paddle.Initialize({ 
-    token: "pdl_live_apikey_01kvcm8smzkd2er8yf56pdfps8_kSggBxB3y88sXVNTSTPvSr_A3j" 
-  });
-
-  // This function executes the dark overlay popup on click
-  function openVaultCheckout(priceId) {
-    Paddle.Checkout.open({
-      settings: {
-        displayMode: "overlay",
-        theme: "dark",
-        locale: "en"
-      },
-      items: [
-        {
-          priceId: priceId, // Safely pulls your pri_xxxx ID from your template block
-          quantity: 1
-        }
-      ]
-    });
-  }
-</script>
-
+</body>
+</html>

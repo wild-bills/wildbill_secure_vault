@@ -1,119 +1,105 @@
 import csv
 import time
+import os
 import requests
 
-# ----------------- CONFIGURATION -----------------
-# Paste your token from Gumroad Advanced Settings here
+# ----------------- CONFIGURATION ----------------- #
 GUMROAD_TOKEN = "7UAA_2Bu6PLFQslkhCAHCrwmdh16XHh3HE17HNdLoTg"
-
-# The CSV file containing your product information
 CSV_FILE_NAME = "products.csv"
+BASE_URL = "https://gumroad.com"
+LOG_FILE_NAME = "uploaded_log.txt"
+# ------------------------------------------------- #
 
-BASE_URL = "https://api.gumroad.com/v2"
-# -------------------------------------------------
+def load_uploaded_log():
+    if not os.path.exists(LOG_FILE_NAME):
+        return set()
+    with open(LOG_FILE_NAME, "r") as f:
+        return set(line.strip() for line in f if line.strip())
 
+def log_success(title):
+    with open(LOG_FILE_NAME, "a") as f:
+        f.write(f"{title}\n")
 
 def upload_catalog():
-    print("🚀 Initializing bulk upload sequence to Gumroad...")
+    print("🚀 Initializing Gumroad Resumable Bulk Uploader...")
+    uploaded_items = load_uploaded_log()
+    print(f"📋 Found {len(uploaded_items)} items already uploaded in previous runs.")
+
+    headers = {
+        "Authorization": f"Bearer {GUMROAD_TOKEN}"
+    }
 
     try:
         with open(CSV_FILE_NAME, mode="r", encoding="utf-8") as file:
             reader = csv.DictReader(file)
-
-            # Safety check for correct headers
-            required_headers = [
-                "Title",
-                "Description",
-                "Price",
-                "Zip_URL",
-                "Preview_URL",
-            ]
+            
+            required_headers = ["Title", "Description", "Price", "Zip_URL", "Preview_URL"]
             if not all(h in reader.fieldnames for h in required_headers):
-                print(
-                    f"❌ Error: Your CSV columns must match exactly: {required_headers}"
-                )
+                print(f"❌ Error: Your CSV columns must match exactly: {required_headers}")
                 return
 
             success_count = 0
-
             for index, row in enumerate(reader, start=1):
                 title = row["Title"]
+                
+                # Check if this precise item was already created
+                if title in uploaded_items:
+                    continue
+
                 description = row["Description"]
-                # Gumroad API prices are integers in cents (e.g., $10.00 is 1000)
                 price_cents = int(float(row["Price"]) * 100)
                 zip_url = row["Zip_URL"]
                 preview_url = row["Preview_URL"]
 
-                print(
-                    f"\n📦 Processing [{index}]: Processing '{title}'..."
-                )
+                print(f"\n📦 Processing Row [{index}]: '{title}'...")
 
-                # STEP 1: Create the baseline digital product draft listing
                 create_payload = {
-                    "access_token": GUMROAD_TOKEN,
                     "name": title,
                     "description": description,
                     "price": price_cents,
-                    "file_url": zip_url,  # Clones ZIP straight from Backblaze
+                    "product_type": "digital",
+                    "file_url": zip_url
                 }
+                
+                prod_response = requests.post(f"{BASE_URL}/products", headers=headers, data=create_payload)
+                
+                # Handle active rate-limits cleanly
+                if prod_response.status_code == 429:
+                    print("⚠️ Daily limit or speed limit hit. Pausing for 60 seconds...")
+                    time.sleep(60)
+                    prod_response = requests.post(f"{BASE_URL}/products", headers=headers, data=create_payload)
 
-                prod_response = requests.post(
-                    f"{BASE_URL}/products", data=create_payload
-                )
+                # If Gumroad locks down due to the 100-item limit, stop cleanly
+                if prod_response.status_code == 404 or "limit" in prod_response.text.lower():
+                    print("\n🛑 Gumroad's 100-per-day upload limit has been reached for this account.")
+                    print("Please run this script again in 24 hours! Your progress has been saved.")
+                    break
 
-                if prod_response.status_code != 200:
-                    print(
-                        f"❌ Failed to create '{title}'. Status: {prod_response.status_code}"
-                    )
-                    print(f"Details: {prod_response.text}")
+                if prod_response.status_code != 200 and prod_response.status_code != 201:
+                    print(f"❌ Failed to create '{title}'. Code: {prod_response.status_code}")
                     continue
 
-                # Extract product data and the unique product ID
-                product_data = prod_response.json().get("product", {})
+                # Safely parse response data even if structures fluctuate
+                response_json = prod_response.json()
+                product_data = response_json.get("product", response_json)
                 product_id = product_data.get("id")
 
-                if not product_id:
-                    print(
-                        f"❌ Could not retrieve unique product ID for '{title}'."
-                    )
-                    continue
+                if product_id:
+                    # Attach Thumbnail Cover
+                    thumb_payload = {"url": preview_url}
+                    requests.post(f"{BASE_URL}/products/{product_id}/thumbnail", headers=headers, data=thumb_payload)
+                
+                print(f"✅ Success! '{title}' uploaded.")
+                log_success(title)
+                success_count += 1
 
-                # STEP 2: Attach the Backblaze preview thumbnail via the specific cover endpoint
-                # Gumroad downloads the remote link server-side instantly
-                thumb_payload = {
-                    "access_token": GUMROAD_TOKEN,
-                    "url": preview_url,
-                }
+                # Safe pacing delay
+                time.sleep(6)
 
-                thumb_response = requests.post(
-                    f"{BASE_URL}/products/{product_id}/thumbnail",
-                    data=thumb_payload,
-                )
-
-                if thumb_response.status_code in [200, 201]:
-                    print(
-                        f"✅ Success! '{title}' created with preview attached."
-                    )
-                    success_count += 1
-                else:
-                    print(
-                        f"⚠️ Base listing created for '{title}', but thumbnail upload failed."
-                    )
-                    print(f"Details: {thumb_response.text}")
-
-                # STEP 3: API rate limiting defense cushion
-                # Keeps the loops steady so Gumroad doesn't block the network request
-                time.sleep(2)
-
-            print(
-                f"\n🎉 Sequence complete. Successfully uploaded {success_count} listings out of {index} items as Drafts."
-            )
+            print(f"\n🏁 Run complete. Successfully uploaded {success_count} listings in this session.")
 
     except FileNotFoundError:
-        print(
-            f"❌ Script Error: Could not find the file '{CSV_FILE_NAME}' in this directory."
-        )
-
+        print(f"❌ Script Error: Could not find the file '{CSV_FILE_NAME}' in this directory.")
 
 if __name__ == "__main__":
     upload_catalog()
