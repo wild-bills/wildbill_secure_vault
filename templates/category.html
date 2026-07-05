@@ -317,6 +317,10 @@
                         .replace(/^-+|-+$/g, '') || 'other';
                 }
 
+                function normalizePreviewUrl(previewUrl) {
+                    return String(previewUrl || '').replace(/^\/static\/previews\//, '/previews/');
+                }
+
                 function deriveTheme(title) {
                     const value = String(title || '').trim();
                     const separators = [' Vol', ' vol', ' Collection', ' collection'];
