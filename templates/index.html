@@ -230,6 +230,7 @@
 
         /* --- THE CYBERPUNK BUY BUTTON --- */
         .buy-now-btn {
+            display: block;
             width: 100%;
             background: linear-gradient(135deg, #cc1117 0%, var(--accent-neon) 100%);
             color: #fff;
@@ -243,6 +244,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 4px 14px rgba(255, 30, 39, 0.3);
+            text-decoration: none;
         }
 
         .buy-now-btn:hover {
@@ -292,8 +294,53 @@
             <p>Premium theme-specific graphic artwork design bundles and structural master packages.</p>
         </div>
 
-        <div id="product-grid" class="product-grid">
-            <div class="empty-state">Loading catalog...</div>
+        <div class="catalog-list">
+            {% if catalog_sections %}
+                {% for section in catalog_sections %}
+                <section class="theme-section">
+                    <details open>
+                        <summary>
+                            <span class="theme-title">{{ section['theme'] }}</span>
+                            <span class="theme-meta">{{ section['items']|length }} bundle{% if section['items']|length != 1 %}s{% endif %}</span>
+                        </summary>
+                        <div class="theme-content">
+                            <div class="theme-preview-strip">
+                                {% for item in section['items'][:4] %}
+                                {% set preview_url = item['previews'][0] if item['previews'] else '' %}
+                                <div class="theme-preview-thumb">
+                                    <img src="{{ preview_url }}" alt="{{ item['name'] }} preview" onerror="this.style.display='none'">
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="theme-card-grid">
+                                {% for item in section['items'] %}
+                                <div class="card">
+                                    <div class="thumbnail-wrapper">
+                                        {% set thumbnail_url = item['previews'][0] if item['previews'] else '' %}
+                                        <img src="{{ thumbnail_url }}" alt="{{ item['name'] }}" class="thumbnail" onerror="this.style.display='none'">
+                                    </div>
+                                    <div class="card-details">
+                                        <div>
+                                            <h3>{{ item['name'] }}</h3>
+                                            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 5px 0 0 0;">Theme: {{ item['theme'] }}</p>
+                                        </div>
+                                        <div>
+                                            <div class="price">${{ item['price'] }} <span>USD</span></div>
+                                            {% set preview_link = item['previews'][0] if item['previews'] else '/contact' %}
+                                            <a class="buy-now-btn" href="{{ preview_link }}">Open Preview</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </details>
+                </section>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">No products found.</div>
+            {% endif %}
         </div>
 
         <footer class="footer-nav">
@@ -307,117 +354,5 @@
             </div>
         </footer>
     </div>
-
-    <script>
-        const grid = document.getElementById('product-grid');
-
-        function escapeHtml(value) {
-            return String(value)
-                .replaceAll('&', '&amp;')
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')
-                .replaceAll('"', '&quot;')
-                .replaceAll("'", '&#39;');
-        }
-
-        function deriveTheme(product) {
-            const title = String(product.Title || '').trim();
-            const description = String(product.Description || '').trim();
-            const themeFromDescription = description.match(/theme[d]?\s+([^\.]+)/i);
-            if (themeFromDescription && themeFromDescription[1]) {
-                return themeFromDescription[1].trim();
-            }
-
-            const separators = [' Vol', ' vol', ' Collection', ' collection'];
-            for (const separator of separators) {
-                const index = title.indexOf(separator);
-                if (index > 0) {
-                    return title.slice(0, index).trim();
-                }
-            }
-
-            return title.split(' ').slice(0, 4).join(' ').trim() || 'Other';
-        }
-
-        function renderCard(product) {
-            const previewUrl = product.Preview_URL || '';
-            const title = product.Title || 'Untitled Bundle';
-            const description = product.Description || 'Premium digital asset pack collection.';
-            const price = product.Price || '15.00';
-            const previewHref = previewUrl || '/contact';
-
-            return `
-                <div class="card">
-                    <div class="thumbnail-wrapper">
-                        <img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(title)}" class="thumbnail" onerror="this.style.display='none'">
-                    </div>
-                    <div class="card-details">
-                        <div>
-                            <h3>${escapeHtml(title)}</h3>
-                            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 5px 0 0 0;">${escapeHtml(description)}</p>
-                        </div>
-                        <div>
-                            <div class="price">$${escapeHtml(price)} <span>USD</span></div>
-                            <button class="buy-now-btn" onclick="window.location.href='${escapeHtml(previewHref)}'">Open Preview</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderThemeSection(themeName, items) {
-            const previewItems = items.slice(0, 4).map((product) => `
-                <div class="theme-preview-thumb">
-                    <img src="${escapeHtml(product.Preview_URL || '')}" alt="${escapeHtml(product.Title || themeName)} preview" onerror="this.style.display='none'">
-                </div>
-            `).join('');
-
-            return `
-                <section class="theme-section">
-                    <details open>
-                        <summary>
-                            <span class="theme-title">${escapeHtml(themeName)}</span>
-                            <span class="theme-meta">${items.length} bundle${items.length === 1 ? '' : 's'}</span>
-                        </summary>
-                        <div class="theme-content">
-                            <div class="theme-preview-strip">
-                                ${previewItems}
-                            </div>
-                            <div class="theme-card-grid">
-                                ${items.map(renderCard).join('')}
-                            </div>
-                        </div>
-                    </details>
-                </section>
-            `;
-        }
-
-        fetch('/products.json')
-            .then((response) => response.json())
-            .then((products) => {
-                if (!Array.isArray(products) || products.length === 0) {
-                    grid.innerHTML = '<div class="empty-state">No products found.</div>';
-                    return;
-                }
-
-                const grouped = products.reduce((accumulator, product) => {
-                    const themeName = deriveTheme(product);
-                    if (!accumulator[themeName]) {
-                        accumulator[themeName] = [];
-                    }
-                    accumulator[themeName].push(product);
-                    return accumulator;
-                }, {});
-
-                const orderedThemes = Object.keys(grouped).sort((left, right) => {
-                    return grouped[right].length - grouped[left].length || left.localeCompare(right);
-                });
-
-                grid.innerHTML = orderedThemes.map((themeName) => renderThemeSection(themeName, grouped[themeName])).join('');
-            })
-            .catch(() => {
-                grid.innerHTML = '<div class="empty-state">Catalog unavailable right now.</div>';
-            });
-    </script>
 </body>
 </html>

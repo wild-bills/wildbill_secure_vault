@@ -69,13 +69,52 @@ def paddle_webhook():
 @app.route('/', methods=['GET'])
 def index():
     conn = get_db_connection()
-    # FIX: Selects all records directly to ignore the unpopulated file_count cells
     products = conn.execute('SELECT * FROM products ORDER BY id DESC').fetchall()
-    themes_query = conn.execute('SELECT DISTINCT theme FROM products WHERE theme IS NOT NULL AND theme != "" ORDER BY theme').fetchall()
     conn.close()
     
-    themes = [row['theme'] for row in themes_query]
-    return render_template('index.html', products=products, themes=themes)
+    def derive_theme(product):
+        theme = (product['theme'] or '').strip()
+        if theme:
+            return theme.title()
+
+        name = (product['name'] or '').strip()
+        if name:
+            return name.split()[0].title()
+
+        return 'Other'
+
+    def preview_paths(product):
+        previews = []
+        for field in ('preview_1', 'preview_2', 'preview_3', 'preview_4'):
+            value = product[field]
+            if value:
+                previews.append(value)
+        if not previews and product['image_url']:
+            previews.append(product['image_url'])
+        return previews[:4]
+
+    grouped = {}
+    for product in products:
+        theme_name = derive_theme(product)
+        grouped.setdefault(theme_name, []).append({
+            'sku': product['sku'],
+            'name': product['name'],
+            'price': product['price'],
+            'theme': theme_name,
+            'preview_1': product['preview_1'],
+            'preview_2': product['preview_2'],
+            'preview_3': product['preview_3'],
+            'preview_4': product['preview_4'],
+            'image_url': product['image_url'],
+            'previews': preview_paths(product),
+        })
+
+    catalog_sections = [
+        {'theme': theme_name, 'items': items}
+        for theme_name, items in sorted(grouped.items(), key=lambda item: (-len(item[1]), item[0].lower()))
+    ]
+
+    return render_template('index.html', catalog_sections=catalog_sections)
 
 
 @app.route('/products.json', methods=['GET'])
