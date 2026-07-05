@@ -1,11 +1,8 @@
 import os
 import sqlite3
-from flask import Flask, render_template, g, redirect, request, jsonify
+from flask import Flask, render_template, redirect, request, jsonify, send_from_directory
 import boto3
 from botocore.config import Config
-import hmac
-import hashlib
-import time
 
 # --- PATH & APP CONFIGURATION ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -119,53 +116,6 @@ def secure_download(sku):
     except Exception as e:
         return "Secure Delivery Error", 500
 
-    try:
-        request_time = int(timestamp_header)
-        current_time = int(time.time())
-        if abs(current_time - request_time) > 300:
-            print("⚠️ Webhook timestamp window bypassed for testing.")
-    except ValueError:
-        return "Invalid Timestamp Header", 400
-
-    raw_payload = request.get_data(as_text=True)
-    message_to_sign = f"{timestamp_header}.{raw_payload}"
-    
-    computed_hash = hmac.new(
-        NEXAPAY_SECRET.encode('utf-8'),
-        message_to_sign.encode('utf-8'),
-        hashlib.sha256
-    ).hexdigest()
-    
-    expected_signature = f"sha256={computed_hash}"
-    
-    if not hmac.compare_digest(signature_header, expected_signature):
-        print("⚠️ Webhook Security Alert: Cryptographic signature verification failed.")
-        return "Invalid Signature Token", 401
-        
-    data = request.get_json()
-    
-    if data and data.get('status') == 'success':
-        customer_email = data.get('customer_email')
-        sku = data.get('sku')
-        
-        conn = get_db_connection()
-        product = conn.execute('SELECT * FROM products WHERE sku = ?', (sku,)).fetchone()
-        conn.close()
-        
-        if product:
-            file_key = product['name'] + ".zip"
-            try:
-                download_url = s3_client.generate_presigned_url(
-                    'get_object',
-                    Params={'Bucket': B2_BUCKET_NAME, 'Key': file_key},
-                    ExpiresIn=86400
-                )
-                print(f"💰 Order Confirmed: Link created for {customer_email}")
-            except Exception as e:
-                print(f"❌ Error: {e}")
-                
-    return jsonify({"status": "verified"}), 200
-
 # --- STATIC FOOTER SUBPAGES ---
 import smtplib
 from email.mime.text import MIMEText
@@ -211,9 +161,6 @@ def privacy(): return render_template('privacy.html')
 @app.route('/terms.html', methods=['GET'])
 def terms(): return render_template('terms.html')
 
-@app.route('/pricing.html', methods=['GET'])
-def pricing(): return render_template('pricing.html')
-
 @app.route('/refund.html', methods=['GET'])
 def refund_page():
     return render_template('refund.html')
@@ -226,8 +173,6 @@ def pricing_page():
     bundles = conn.execute('SELECT * FROM products ORDER BY sku ASC').fetchall()
     conn.close()
     return render_template('pricing.html', bundles=bundles)
-from flask import send_from_directory
-import os
 
 @app.route('/static/js/<path:filename>')
 def serve_paddle_js(filename):

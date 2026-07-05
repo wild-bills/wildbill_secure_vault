@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wild Bill Storefront - Premium Asset Collections</title>
-    <!-- Injects Alpine.js Framework to render the store without server-side Python -->
-    <script defer src="https://jsdelivr.net"></script>
     <style>
         /* --- MODERN RESET & CORE THEME VARIABLES --- */
         :root {
@@ -207,33 +205,30 @@
 <!-- Cloudflare Web Analytics -->
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d2b96141366040a28eccd498dda98633"}'></script>
 <body>
-    <!-- Alpine.js Application Context Component Wrapper -->
-    <div class="container" x-data="{ products: [] }" x-init="fetch('/products.json').then(r => r.json()).then(d => products = d)">
+    <div class="container">
         <div class="header-section">
             <h1>Wild Bill Storefront Vault</h1>
             <p>Premium theme-specific graphic artwork design bundles and structural master packages.</p>
         </div>
 
-        <!-- Dynamic Client-Side Array Iteration Loop -->
         <div class="product-grid">
-            <template x-for="product in products" :key="product.Title">
-                <div class="card">
-                    <div class="thumbnail-wrapper">
-                        <img :src="product.Preview_URL" :alt="product.Title" class="thumbnail" onerror="this.style.display='none'">
+            {% for product in products %}
+            <div class="card">
+                <div class="thumbnail-wrapper">
+                    <img src="{{ product['preview_1'] or product['image_url'] or '' }}" alt="{{ product['name'] }}" class="thumbnail" onerror="this.style.display='none'">
+                </div>
+                <div class="card-details">
+                    <div>
+                        <h3>{{ product['name'].replace('_', ' ').title() }}</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin: 5px 0 0 0;">Theme: {{ product['theme'] or 'General' }}</p>
                     </div>
-                    <div class="card-details">
-                        <div>
-                            <h3 x-text="product.Title"></h3>
-                            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 5px 0 0 0;" x-text="product.Description"></p>
-                        </div>
-                        <div>
-                            <div class="price">$<span x-text="product.Price"></span> <span>USD</span></div>
-                            <!-- Direct Download / Purchase Route Option -->
-                            <button class="buy-now-btn">Download Bundle</button>
-                        </div>
+                    <div>
+                        <div class="price">${{ product['price'] }} <span>USD</span></div>
+                        <button class="buy-now-btn" onclick="window.location.href='/product/{{ product['sku'] }}'">View Bundle</button>
                     </div>
                 </div>
-            </template>
+            </div>
+            {% endfor %}
         </div>
 
         <footer class="footer-nav">
@@ -243,7 +238,7 @@
                 <a href="/terms.html">Terms of Service</a>
                 <a href="/privacy.html">Privacy Policy</a>
                 <a href="/refund.html">Refund Policy</a>
-            </a href="/contact">Contact Support</a>
+                <a href="/contact">Contact Support</a>
             </div>
         </footer>
     </div>
