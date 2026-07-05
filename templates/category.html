@@ -175,16 +175,19 @@
                     border: 1px solid var(--border-color);
                     border-radius: 18px;
                     overflow: hidden;
-                    background: #000;
+                    background: linear-gradient(180deg, #1a1414 0%, #080505 100%);
                     min-height: 170px;
                     box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35);
+                    padding: 10px;
                 }
 
                 .preview-thumb img {
                     display: block;
                     width: 100%;
                     height: 100%;
-                    object-fit: cover;
+                    object-fit: contain;
+                    background: rgba(255, 255, 255, 0.03);
+                    border-radius: 10px;
                 }
 
                 .cards-grid {
@@ -210,15 +213,18 @@
 
                 .thumb {
                     height: 210px;
-                    background: #000;
+                    background: linear-gradient(180deg, #1a1414 0%, #080505 100%);
                     overflow: hidden;
+                    padding: 10px;
                 }
 
                 .thumb img {
                     width: 100%;
                     height: 100%;
-                    object-fit: cover;
+                    object-fit: contain;
                     display: block;
+                    background: rgba(255, 255, 255, 0.03);
+                    border-radius: 10px;
                 }
 
                 .card-body {
@@ -347,7 +353,7 @@
                                 <h2>${escapeHtml(title)}</h2>
                                 <p class="meta">${escapeHtml(description)}</p>
                                 <div class="price">$${escapeHtml(price)} USD</div>
-                                <a class="preview-btn" href="${previewUrl || 'contact.html'}">Open Preview</a>
+                                <a class="preview-btn" href="${previewUrl || 'contact.html'}" target="_blank" rel="noopener">Open Preview</a>
                             </div>
                         </article>
                     `;
