@@ -272,6 +272,10 @@
                 .replace(/^-+|-+$/g, '') || 'other';
         }
 
+        function normalizePreviewUrl(previewUrl) {
+            return String(previewUrl || '').replace(/^\/static\/previews\//, '/previews/');
+        }
+
         function deriveTheme(title) {
             const value = String(title || '').trim();
             const separators = [' Vol', ' vol', ' Collection', ' collection'];
@@ -285,8 +289,8 @@
         }
 
         function renderCategoryCard(category) {
-            const previewUrl = category.preview || '';
-            const href = `category.html?theme=${encodeURIComponent(category.slug)}`;
+            const previewUrl = normalizePreviewUrl(category.preview || '');
+            const href = `/category?theme=${encodeURIComponent(category.slug)}`;
             return `
                 <a class="category-card" href="${href}">
                     <div class="category-thumb">

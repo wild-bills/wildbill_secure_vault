@@ -144,9 +144,20 @@ def category_view(theme_slug):
     return render_template('category.html', category=category)
 
 
+@app.route('/category', methods=['GET'])
+def category_query_view():
+    return render_template('category.html')
+
+
 @app.route('/category.html', methods=['GET'])
 def category_page():
     return render_template('category.html')
+
+
+@app.route('/previews/<path:filename>', methods=['GET'])
+def serve_preview_image(filename):
+    previews_dir = os.path.join(BASE_DIR, 'static', 'previews')
+    return send_from_directory(previews_dir, filename)
 
 
 @app.route('/products.json', methods=['GET'])

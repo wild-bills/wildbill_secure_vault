@@ -339,7 +339,7 @@
                 }
 
                 function renderPreviewCard(product) {
-                    const previewUrl = product.Preview_URL || '';
+                    const previewUrl = normalizePreviewUrl(product.Preview_URL || '');
                     const title = product.Title || 'Untitled Bundle';
                     const description = product.Description || 'Premium digital asset pack collection.';
                     const price = product.Price || '15.00';
@@ -360,7 +360,7 @@
                 }
 
                 function renderPreviewThumb(product) {
-                    const previewUrl = product.Preview_URL || '';
+                    const previewUrl = normalizePreviewUrl(product.Preview_URL || '');
                     const title = product.Title || 'Preview';
                     return `
                         <div class="preview-thumb">
