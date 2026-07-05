@@ -78,6 +78,11 @@ def index():
     return render_template('index.html', products=products, themes=themes)
 
 
+@app.route('/products.json', methods=['GET'])
+def products_json():
+    return send_from_directory(BASE_DIR, 'products.json', mimetype='application/json')
+
+
 # --- FRONTEND ROUTE: PRODUCT DETAIL VIEW ---
 @app.route('/product/<sku>', methods=['GET'])
 def product_detail(sku):

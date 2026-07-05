@@ -67,6 +67,7 @@
             letter-spacing: 2px;
             margin-bottom: 10px;
             background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -200,10 +201,15 @@
         .footer-links a:hover {
             color: var(--accent-neon);
         }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--text-muted);
+        }
     </style>
 </head>
-<!-- Cloudflare Web Analytics -->
-<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d2b96141366040a28eccd498dda98633"}'></script>
 <body>
     <div class="container">
         <div class="header-section">
@@ -211,24 +217,8 @@
             <p>Premium theme-specific graphic artwork design bundles and structural master packages.</p>
         </div>
 
-        <div class="product-grid">
-            {% for product in products %}
-            <div class="card">
-                <div class="thumbnail-wrapper">
-                    <img src="{{ product['preview_1'] or product['image_url'] or '' }}" alt="{{ product['name'] }}" class="thumbnail" onerror="this.style.display='none'">
-                </div>
-                <div class="card-details">
-                    <div>
-                        <h3>{{ product['name'].replace('_', ' ').title() }}</h3>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin: 5px 0 0 0;">Theme: {{ product['theme'] or 'General' }}</p>
-                    </div>
-                    <div>
-                        <div class="price">${{ product['price'] }} <span>USD</span></div>
-                        <button class="buy-now-btn" onclick="window.location.href='/product/{{ product['sku'] }}'">View Bundle</button>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+        <div id="product-grid" class="product-grid">
+            <div class="empty-state">Loading catalog...</div>
         </div>
 
         <footer class="footer-nav">
@@ -242,5 +232,58 @@
             </div>
         </footer>
     </div>
+
+    <script>
+        const grid = document.getElementById('product-grid');
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        function renderCard(product) {
+            const previewUrl = product.Preview_URL || '';
+            const title = product.Title || 'Untitled Bundle';
+            const description = product.Description || 'Premium digital asset pack collection.';
+            const price = product.Price || '15.00';
+            const zipName = product.Zip_Path ? product.Zip_Path.split('/').pop() : '';
+            const downloadHref = zipName ? `/downloads/${encodeURIComponent(zipName)}` : '/contact';
+
+            return `
+                <div class="card">
+                    <div class="thumbnail-wrapper">
+                        <img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(title)}" class="thumbnail" onerror="this.style.display='none'">
+                    </div>
+                    <div class="card-details">
+                        <div>
+                            <h3>${escapeHtml(title)}</h3>
+                            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 5px 0 0 0;">${escapeHtml(description)}</p>
+                        </div>
+                        <div>
+                            <div class="price">$${escapeHtml(price)} <span>USD</span></div>
+                            <button class="buy-now-btn" onclick="window.location.href='${downloadHref}'">View Bundle</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        fetch('/products.json')
+            .then((response) => response.json())
+            .then((products) => {
+                if (!Array.isArray(products) || products.length === 0) {
+                    grid.innerHTML = '<div class="empty-state">No products found.</div>';
+                    return;
+                }
+                grid.innerHTML = products.map(renderCard).join('');
+            })
+            .catch(() => {
+                grid.innerHTML = '<div class="empty-state">Catalog unavailable right now.</div>';
+            });
+    </script>
 </body>
 </html>
