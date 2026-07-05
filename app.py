@@ -1,4 +1,5 @@
 import os
+import re
 import sqlite3
 from flask import Flask, render_template, redirect, request, jsonify, send_from_directory
 import boto3
@@ -31,6 +32,68 @@ def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def normalize_theme(product):
+    theme = (product['theme'] or '').strip()
+    if theme:
+        return theme.title()
+
+    name = (product['name'] or '').strip()
+    if name:
+        return name.split()[0].title()
+
+    return 'Other'
+
+
+def slugify_theme(theme_name):
+    slug = re.sub(r'[^a-z0-9]+', '-', theme_name.lower()).strip('-')
+    return slug or 'other'
+
+
+def product_previews(product):
+    previews = []
+    for field in ('preview_1', 'preview_2', 'preview_3', 'preview_4'):
+        value = product[field]
+        if value:
+            previews.append(value)
+
+    if not previews and product['image_url']:
+        previews.append(product['image_url'])
+
+    return previews[:4]
+
+
+def build_catalog_sections():
+    conn = get_db_connection()
+    products = conn.execute('SELECT * FROM products ORDER BY id DESC').fetchall()
+    conn.close()
+
+    grouped = {}
+    for product in products:
+        theme_name = normalize_theme(product)
+        theme_slug = slugify_theme(theme_name)
+        grouped.setdefault(theme_slug, {
+            'slug': theme_slug,
+            'theme': theme_name,
+            'items': [],
+        })
+        grouped[theme_slug]['items'].append({
+            'sku': product['sku'],
+            'name': product['name'],
+            'price': product['price'],
+            'theme': theme_name,
+            'previews': product_previews(product),
+        })
+
+    sections = sorted(grouped.values(), key=lambda section: (-len(section['items']), section['theme'].lower()))
+
+    for section in sections:
+        first_item = section['items'][0] if section['items'] else None
+        section['count'] = len(section['items'])
+        section['preview'] = first_item['previews'][0] if first_item and first_item['previews'] else ''
+
+    return sections
 
 @app.route('/paddle-webhook', methods=['POST'])
 def paddle_webhook():
@@ -68,53 +131,17 @@ def paddle_webhook():
 # --- FIXED FRONTEND ROUTE: HOMEPAGE GALLERY ---
 @app.route('/', methods=['GET'])
 def index():
-    conn = get_db_connection()
-    products = conn.execute('SELECT * FROM products ORDER BY id DESC').fetchall()
-    conn.close()
-    
-    def derive_theme(product):
-        theme = (product['theme'] or '').strip()
-        if theme:
-            return theme.title()
+    return render_template('index.html', categories=build_catalog_sections())
 
-        name = (product['name'] or '').strip()
-        if name:
-            return name.split()[0].title()
 
-        return 'Other'
+@app.route('/category/<theme_slug>', methods=['GET'])
+def category_view(theme_slug):
+    sections = build_catalog_sections()
+    category = next((section for section in sections if section['slug'] == theme_slug), None)
+    if category is None:
+        return "Category not found", 404
 
-    def preview_paths(product):
-        previews = []
-        for field in ('preview_1', 'preview_2', 'preview_3', 'preview_4'):
-            value = product[field]
-            if value:
-                previews.append(value)
-        if not previews and product['image_url']:
-            previews.append(product['image_url'])
-        return previews[:4]
-
-    grouped = {}
-    for product in products:
-        theme_name = derive_theme(product)
-        grouped.setdefault(theme_name, []).append({
-            'sku': product['sku'],
-            'name': product['name'],
-            'price': product['price'],
-            'theme': theme_name,
-            'preview_1': product['preview_1'],
-            'preview_2': product['preview_2'],
-            'preview_3': product['preview_3'],
-            'preview_4': product['preview_4'],
-            'image_url': product['image_url'],
-            'previews': preview_paths(product),
-        })
-
-    catalog_sections = [
-        {'theme': theme_name, 'items': items}
-        for theme_name, items in sorted(grouped.items(), key=lambda item: (-len(item[1]), item[0].lower()))
-    ]
-
-    return render_template('index.html', catalog_sections=catalog_sections)
+    return render_template('category.html', category=category)
 
 
 @app.route('/products.json', methods=['GET'])

@@ -26,6 +26,10 @@
             position: relative;
             overflow-x: hidden;
         }
+
+        * {
+            box-sizing: border-box;
+        }
         
         body::before {
             content: "";
@@ -51,22 +55,55 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 32px 20px 56px;
             position: relative;
             z-index: 2;
         }
 
+        .hero-panel {
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            background:
+                linear-gradient(180deg, rgba(255, 30, 39, 0.12), rgba(20, 11, 11, 0.88)),
+                rgba(20, 11, 11, 0.9);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+            padding: 2rem;
+            margin-bottom: 1.75rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero-panel::after {
+            content: "";
+            position: absolute;
+            inset: -40% auto auto 55%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(255, 30, 39, 0.14), transparent 70%);
+            pointer-events: none;
+        }
+
+        .eyebrow {
+            margin: 0 0 0.6rem 0;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.76rem;
+            color: var(--accent-neon);
+            font-weight: 700;
+        }
+
         .header-section {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 0;
         }
 
         .header-section h1 {
-            font-size: 2.5rem;
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            letter-spacing: 0.08em;
+            line-height: 1.02;
+            margin: 0 0 0.75rem 0;
+            background: linear-gradient(135deg, #fff 0%, #e7b7bb 45%, var(--text-muted) 100%);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -74,161 +111,113 @@
 
         .header-section p {
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1.05rem;
+            max-width: 680px;
+            margin: 0 auto;
         }
 
-        /* --- STUNNING CYBERPUNK GRID --- */
-        .product-grid {
+        .category-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.25rem;
         }
 
-        .theme-section {
-            margin-bottom: 2.5rem;
-        }
-
-        .theme-section details {
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            background: rgba(20, 11, 11, 0.9);
-            overflow: hidden;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
-        }
-
-        .theme-section summary {
-            list-style: none;
-            cursor: pointer;
-            padding: 1.15rem 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            border-bottom: 1px solid transparent;
-        }
-
-        .theme-section summary::-webkit-details-marker {
-            display: none;
-        }
-
-        .theme-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-        }
-
-        .theme-meta {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            white-space: nowrap;
-        }
-
-        .theme-content {
-            padding: 1.25rem;
-        }
-
-        .theme-preview-strip {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .theme-preview-thumb {
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            background: #000;
-            min-height: 120px;
-        }
-
-        .theme-preview-thumb img {
-            width: 100%;
-            height: 100%;
+        .category-card {
             display: block;
-            object-fit: cover;
-        }
-
-        .theme-card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1rem;
-        }
-
-        .theme-card-grid .card {
-            min-height: 100%;
-        }
-
-        .card {
+            text-decoration: none;
+            color: inherit;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 0;
+            border-radius: 20px;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            position: relative;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
+        .category-card:hover {
+            transform: translateY(-4px);
             border-color: var(--accent-neon);
             box-shadow: 0 0 20px var(--accent-glow);
         }
 
-        .thumbnail-wrapper {
-            width: 100%;
-            height: 220px;
+        .category-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.18) 100%);
+            pointer-events: none;
+        }
+
+        .category-thumb {
+            height: 210px;
             background: #000;
             overflow: hidden;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-bottom: 1px solid var(--border-color);
+            position: relative;
         }
 
-        .thumbnail {
+        .category-thumb img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            display: block;
+            transform: scale(1.01);
+            transition: transform 0.35s ease;
         }
 
-        .card:hover .thumbnail {
-            transform: scale(1.05);
+        .category-card:hover .category-thumb img {
+            transform: scale(1.06);
         }
 
-        .card-details {
-            padding: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+        .category-body {
+            padding: 1.1rem 1.15rem 1.2rem;
         }
 
-        .card-details h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.2rem;
-            font-weight: 600;
-            line-height: 1.4;
+        .category-body h2 {
+            margin: 0 0 0.4rem 0;
+            font-size: 1.12rem;
+            letter-spacing: 0.01em;
         }
 
-        .price {
-            font-size: 1.4rem;
-            color: var(--accent-neon);
-            font-weight: 700;
-            margin-top: 15px;
-        }
-
-        .price span {
-            font-size: 0.8rem;
+        .category-body p {
+            margin: 0;
             color: var(--text-muted);
-            font-weight: 400;
+            font-size: 0.95rem;
         }
 
-        /* --- THE CYBERPUNK BUY BUTTON --- */
+        .category-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.9rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(255, 30, 39, 0.12);
+            color: var(--accent-neon);
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .category-count {
+            display: inline-block;
+            margin-top: 0.5rem;
+            color: #f2c7ca;
+            font-size: 0.84rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: rgba(20, 11, 11, 0.8);
+        }
+
         .buy-now-btn {
             display: block;
             width: 100%;
@@ -244,7 +233,6 @@
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 4px 14px rgba(255, 30, 39, 0.3);
-            text-decoration: none;
         }
 
         .buy-now-btn:hover {
@@ -255,8 +243,8 @@
 
         .footer-nav {
             text-align: center;
-            margin-top: 80px;
-            padding-top: 40px;
+            margin-top: 2rem;
+            padding-top: 1.75rem;
             border-top: 1px solid var(--border-color);
             color: var(--text-muted);
             font-size: 0.9rem;
@@ -267,6 +255,7 @@
             display: flex;
             justify-content: center;
             gap: 20px;
+            flex-wrap: wrap;
         }
 
         .footer-links a {
@@ -278,70 +267,38 @@
         .footer-links a:hover {
             color: var(--accent-neon);
         }
-
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 4rem 1rem;
-            color: var(--text-muted);
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header-section">
-            <h1>Wild Bill Storefront Vault</h1>
-            <p>Premium theme-specific graphic artwork design bundles and structural master packages.</p>
+        <div class="hero-panel">
+            <div class="header-section">
+                <p class="eyebrow">Catalog categories</p>
+                <h1>Browse Categories</h1>
+                <p>Select a category to open its preview cards. Each section contains the bundle previews for that theme.</p>
+            </div>
         </div>
 
-        <div class="catalog-list">
-            {% if catalog_sections %}
-                {% for section in catalog_sections %}
-                <section class="theme-section">
-                    <details open>
-                        <summary>
-                            <span class="theme-title">{{ section['theme'] }}</span>
-                            <span class="theme-meta">{{ section['items']|length }} bundle{% if section['items']|length != 1 %}s{% endif %}</span>
-                        </summary>
-                        <div class="theme-content">
-                            <div class="theme-preview-strip">
-                                {% for item in section['items'][:4] %}
-                                {% set preview_url = item['previews'][0] if item['previews'] else '' %}
-                                <div class="theme-preview-thumb">
-                                    <img src="{{ preview_url }}" alt="{{ item['name'] }} preview" onerror="this.style.display='none'">
-                                </div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="theme-card-grid">
-                                {% for item in section['items'] %}
-                                <div class="card">
-                                    <div class="thumbnail-wrapper">
-                                        {% set thumbnail_url = item['previews'][0] if item['previews'] else '' %}
-                                        <img src="{{ thumbnail_url }}" alt="{{ item['name'] }}" class="thumbnail" onerror="this.style.display='none'">
-                                    </div>
-                                    <div class="card-details">
-                                        <div>
-                                            <h3>{{ item['name'] }}</h3>
-                                            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 5px 0 0 0;">Theme: {{ item['theme'] }}</p>
-                                        </div>
-                                        <div>
-                                            <div class="price">${{ item['price'] }} <span>USD</span></div>
-                                            {% set preview_link = item['previews'][0] if item['previews'] else '/contact' %}
-                                            <a class="buy-now-btn" href="{{ preview_link }}">Open Preview</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </details>
-                </section>
-                {% endfor %}
-            {% else %}
-                <div class="empty-state">No products found.</div>
-            {% endif %}
+        {% if categories %}
+        <div class="category-grid">
+            {% for category in categories %}
+            <a class="category-card" href="{{ url_for('category_view', theme_slug=category['slug']) }}">
+                <div class="category-thumb">
+                    {% if category['preview'] %}
+                    <img src="{{ category['preview'] }}" alt="{{ category['theme'] }} preview">
+                    {% endif %}
+                </div>
+                <div class="category-body">
+                    <h2>{{ category['theme'] }}</h2>
+                    <p class="category-count">{{ category['count'] }} preview card{% if category['count'] != 1 %}s{% endif %}</p>
+                    <span class="category-pill">Open category</span>
+                </div>
+            </a>
+            {% endfor %}
         </div>
+        {% else %}
+        <div class="empty-state">No categories found.</div>
+        {% endif %}
 
         <footer class="footer-nav">
             <p>&copy; 2026 Wild Bill Pro Plans. All Rights Reserved.</p>
