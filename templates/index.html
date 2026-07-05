@@ -84,6 +84,81 @@
             gap: 30px;
         }
 
+        .theme-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .theme-section details {
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: rgba(20, 11, 11, 0.9);
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .theme-section summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 1.15rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            border-bottom: 1px solid transparent;
+        }
+
+        .theme-section summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .theme-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .theme-meta {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .theme-content {
+            padding: 1.25rem;
+        }
+
+        .theme-preview-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .theme-preview-thumb {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+            min-height: 120px;
+        }
+
+        .theme-preview-thumb img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .theme-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+
+        .theme-card-grid .card {
+            min-height: 100%;
+        }
+
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -245,13 +320,31 @@
                 .replaceAll("'", '&#39;');
         }
 
+        function deriveTheme(product) {
+            const title = String(product.Title || '').trim();
+            const description = String(product.Description || '').trim();
+            const themeFromDescription = description.match(/theme[d]?\s+([^\.]+)/i);
+            if (themeFromDescription && themeFromDescription[1]) {
+                return themeFromDescription[1].trim();
+            }
+
+            const separators = [' Vol', ' vol', ' Collection', ' collection'];
+            for (const separator of separators) {
+                const index = title.indexOf(separator);
+                if (index > 0) {
+                    return title.slice(0, index).trim();
+                }
+            }
+
+            return title.split(' ').slice(0, 4).join(' ').trim() || 'Other';
+        }
+
         function renderCard(product) {
             const previewUrl = product.Preview_URL || '';
             const title = product.Title || 'Untitled Bundle';
             const description = product.Description || 'Premium digital asset pack collection.';
             const price = product.Price || '15.00';
-            const zipName = product.Zip_Path ? product.Zip_Path.split('/').pop() : '';
-            const downloadHref = zipName ? `/downloads/${encodeURIComponent(zipName)}` : '/contact';
+            const previewHref = previewUrl || '/contact';
 
             return `
                 <div class="card">
@@ -265,10 +358,37 @@
                         </div>
                         <div>
                             <div class="price">$${escapeHtml(price)} <span>USD</span></div>
-                            <button class="buy-now-btn" onclick="window.location.href='${downloadHref}'">View Bundle</button>
+                            <button class="buy-now-btn" onclick="window.location.href='${escapeHtml(previewHref)}'">Open Preview</button>
                         </div>
                     </div>
                 </div>
+            `;
+        }
+
+        function renderThemeSection(themeName, items) {
+            const previewItems = items.slice(0, 4).map((product) => `
+                <div class="theme-preview-thumb">
+                    <img src="${escapeHtml(product.Preview_URL || '')}" alt="${escapeHtml(product.Title || themeName)} preview" onerror="this.style.display='none'">
+                </div>
+            `).join('');
+
+            return `
+                <section class="theme-section">
+                    <details open>
+                        <summary>
+                            <span class="theme-title">${escapeHtml(themeName)}</span>
+                            <span class="theme-meta">${items.length} bundle${items.length === 1 ? '' : 's'}</span>
+                        </summary>
+                        <div class="theme-content">
+                            <div class="theme-preview-strip">
+                                ${previewItems}
+                            </div>
+                            <div class="theme-card-grid">
+                                ${items.map(renderCard).join('')}
+                            </div>
+                        </div>
+                    </details>
+                </section>
             `;
         }
 
@@ -279,7 +399,21 @@
                     grid.innerHTML = '<div class="empty-state">No products found.</div>';
                     return;
                 }
-                grid.innerHTML = products.map(renderCard).join('');
+
+                const grouped = products.reduce((accumulator, product) => {
+                    const themeName = deriveTheme(product);
+                    if (!accumulator[themeName]) {
+                        accumulator[themeName] = [];
+                    }
+                    accumulator[themeName].push(product);
+                    return accumulator;
+                }, {});
+
+                const orderedThemes = Object.keys(grouped).sort((left, right) => {
+                    return grouped[right].length - grouped[left].length || left.localeCompare(right);
+                });
+
+                grid.innerHTML = orderedThemes.map((themeName) => renderThemeSection(themeName, grouped[themeName])).join('');
             })
             .catch(() => {
                 grid.innerHTML = '<div class="empty-state">Catalog unavailable right now.</div>';
