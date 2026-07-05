@@ -267,6 +267,24 @@
         .footer-links a:hover {
             color: var(--accent-neon);
         }
+
+        .collection-note {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            color: #d8a5aa;
+            font-size: 0.9rem;
+        }
+
+        .note-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 999px;
+            background: var(--accent-neon);
+            box-shadow: 0 0 12px rgba(255, 30, 39, 0.8);
+        }
     </style>
 </head>
 <body>
@@ -276,29 +294,13 @@
                 <p class="eyebrow">Catalog categories</p>
                 <h1>Browse Categories</h1>
                 <p>Select a category to open its preview cards. Each section contains the bundle previews for that theme.</p>
+                <div class="collection-note"><span class="note-dot"></span><span>Cards are grouped from the catalog data and open into a dedicated preview page.</span></div>
             </div>
         </div>
 
-        {% if categories %}
-        <div class="category-grid">
-            {% for category in categories %}
-            <a class="category-card" href="{{ url_for('category_view', theme_slug=category['slug']) }}">
-                <div class="category-thumb">
-                    {% if category['preview'] %}
-                    <img src="{{ category['preview'] }}" alt="{{ category['theme'] }} preview">
-                    {% endif %}
-                </div>
-                <div class="category-body">
-                    <h2>{{ category['theme'] }}</h2>
-                    <p class="category-count">{{ category['count'] }} preview card{% if category['count'] != 1 %}s{% endif %}</p>
-                    <span class="category-pill">Open category</span>
-                </div>
-            </a>
-            {% endfor %}
+        <div id="category-grid" class="category-grid">
+            <div class="empty-state">Loading categories...</div>
         </div>
-        {% else %}
-        <div class="empty-state">No categories found.</div>
-        {% endif %}
 
         <footer class="footer-nav">
             <p>&copy; 2026 Wild Bill Pro Plans. All Rights Reserved.</p>
@@ -311,5 +313,90 @@
             </div>
         </footer>
     </div>
+
+    <script>
+        const categoryGrid = document.getElementById('category-grid');
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        function slugifyTheme(themeName) {
+            return String(themeName || 'other')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '') || 'other';
+        }
+
+        function deriveTheme(title) {
+            const value = String(title || '').trim();
+            const separators = [' Vol', ' vol', ' Collection', ' collection'];
+            for (const separator of separators) {
+                const index = value.indexOf(separator);
+                if (index > 0) {
+                    return value.slice(0, index).trim();
+                }
+            }
+            return value.split(' ').slice(0, 4).join(' ').trim() || 'Other';
+        }
+
+        function renderCategoryCard(category) {
+            const previewUrl = category.preview || '';
+            const href = `category.html?theme=${encodeURIComponent(category.slug)}`;
+            return `
+                <a class="category-card" href="${href}">
+                    <div class="category-thumb">
+                        ${previewUrl ? `<img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(category.theme)} preview">` : ''}
+                    </div>
+                    <div class="category-body">
+                        <h2>${escapeHtml(category.theme)}</h2>
+                        <p class="category-count">${category.count} preview card${category.count === 1 ? '' : 's'}</p>
+                        <span class="category-pill">Open category</span>
+                    </div>
+                </a>
+            `;
+        }
+
+        fetch('/products.json')
+            .then((response) => response.json())
+            .then((products) => {
+                if (!Array.isArray(products) || products.length === 0) {
+                    categoryGrid.innerHTML = '<div class="empty-state">No categories found.</div>';
+                    return;
+                }
+
+                const grouped = products.reduce((accumulator, product) => {
+                    const theme = deriveTheme(product.Title);
+                    const slug = slugifyTheme(theme);
+                    if (!accumulator[slug]) {
+                        accumulator[slug] = {
+                            slug,
+                            theme,
+                            count: 0,
+                            preview: product.Preview_URL || '',
+                        };
+                    }
+                    accumulator[slug].count += 1;
+                    if (!accumulator[slug].preview && product.Preview_URL) {
+                        accumulator[slug].preview = product.Preview_URL;
+                    }
+                    return accumulator;
+                }, {});
+
+                const categories = Object.values(grouped).sort((left, right) => {
+                    return right.count - left.count || left.theme.localeCompare(right.theme);
+                });
+
+                categoryGrid.innerHTML = categories.map(renderCategoryCard).join('');
+            })
+            .catch(() => {
+                categoryGrid.innerHTML = '<div class="empty-state">Catalog unavailable right now.</div>';
+            });
+    </script>
 </body>
 </html>

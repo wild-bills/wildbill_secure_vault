@@ -144,6 +144,11 @@ def category_view(theme_slug):
     return render_template('category.html', category=category)
 
 
+@app.route('/category.html', methods=['GET'])
+def category_page():
+    return render_template('category.html')
+
+
 @app.route('/products.json', methods=['GET'])
 def products_json():
     return send_from_directory(BASE_DIR, 'products.json', mimetype='application/json')

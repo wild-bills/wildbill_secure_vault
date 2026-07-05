@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ category['theme'] }} Preview Cards - Wild Bill Pro Plans</title>
+    <title>Category Preview Cards - Wild Bill Pro Plans</title>
     <style>
         :root {
             --bg-primary: #0a0505;
@@ -72,6 +72,13 @@
         .back-link:hover {
             color: var(--accent-neon);
             border-color: var(--accent-neon);
+        }
+
+        .theme-summary {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .hero {
@@ -225,50 +232,166 @@
             letter-spacing: 0.16em;
             font-weight: 700;
         }
+
+        .theme-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.85rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(255, 30, 39, 0.12);
+            color: #f3b8bd;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .theme-chip strong {
+            color: var(--accent-neon);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="topbar">
-            <a class="back-link" href="{{ url_for('index') }}">Back to categories</a>
+            <a class="back-link" href="index.html">Back to categories</a>
         </div>
 
         <section class="hero">
             <div class="hero-badge">Category preview cards</div>
-            <h1>{{ category['theme'] }}</h1>
-            <p>{{ category['count'] }} preview card{% if category['count'] != 1 %}s{% endif %} in this category.</p>
+            <h1 id="theme-title">Loading category...</h1>
+            <p id="theme-description">Fetching preview cards for the selected category.</p>
+            <div class="theme-chip" id="theme-chip" style="display:none;"><strong id="theme-count">0</strong> cards in this category</div>
         </section>
 
-        {% if category['items'] %}
-        <div class="preview-strip">
-            {% for item in category['items'][:4] %}
-            <div class="preview-thumb">
-                {% set preview_url = item['previews'][0] if item['previews'] else '' %}
-                <img src="{{ preview_url }}" alt="{{ item['name'] }} preview" onerror="this.style.display='none'">
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="cards-grid">
-            {% for item in category['items'] %}
-            <article class="card">
-                <div class="thumb">
-                    {% set preview_url = item['previews'][0] if item['previews'] else '' %}
-                    <img src="{{ preview_url }}" alt="{{ item['name'] }}" onerror="this.style.display='none'">
-                </div>
-                <div class="card-body">
-                    <h2>{{ item['name'] }}</h2>
-                    <p class="meta">Theme: {{ item['theme'] }}</p>
-                    <div class="price">${{ item['price'] }} USD</div>
-                    {% set preview_link = item['previews'][0] if item['previews'] else '/contact' %}
-                    <a class="preview-btn" href="{{ preview_link }}">Open Preview</a>
-                </div>
-            </article>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state">No preview cards found in this category.</div>
-        {% endif %}
+        <div id="preview-strip" class="preview-strip"></div>
+        <div id="cards-grid" class="cards-grid"></div>
     </div>
+
+    <script>
+        const previewStrip = document.getElementById('preview-strip');
+        const cardsGrid = document.getElementById('cards-grid');
+        const themeTitle = document.getElementById('theme-title');
+        const themeDescription = document.getElementById('theme-description');
+        const themeChip = document.getElementById('theme-chip');
+        const themeCount = document.getElementById('theme-count');
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        function slugifyTheme(themeName) {
+            return String(themeName || 'other')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '') || 'other';
+        }
+
+        function deriveTheme(title) {
+            const value = String(title || '').trim();
+            const separators = [' Vol', ' vol', ' Collection', ' collection'];
+            for (const separator of separators) {
+                const index = value.indexOf(separator);
+                if (index > 0) {
+                    return value.slice(0, index).trim();
+                }
+            }
+            return value.split(' ').slice(0, 4).join(' ').trim() || 'Other';
+        }
+
+        function parseThemeParam() {
+            const queryTheme = new URLSearchParams(window.location.search).get('theme');
+            if (queryTheme) {
+                return queryTheme;
+            }
+            const pathTheme = window.location.pathname.split('/').filter(Boolean).pop();
+            return pathTheme || 'other';
+        }
+
+        function renderPreviewCard(product) {
+            const previewUrl = product.Preview_URL || '';
+            const title = product.Title || 'Untitled Bundle';
+            const description = product.Description || 'Premium digital asset pack collection.';
+            const price = product.Price || '15.00';
+
+            return `
+                <article class="card">
+                    <div class="thumb">
+                        ${previewUrl ? `<img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(title)}" onerror="this.style.display='none'">` : ''}
+                    </div>
+                    <div class="card-body">
+                        <h2>${escapeHtml(title)}</h2>
+                        <p class="meta">${escapeHtml(description)}</p>
+                        <div class="price">$${escapeHtml(price)} USD</div>
+                        <a class="preview-btn" href="${previewUrl || 'contact.html'}">Open Preview</a>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderPreviewThumb(product) {
+            const previewUrl = product.Preview_URL || '';
+            const title = product.Title || 'Preview';
+            return `
+                <div class="preview-thumb">
+                    ${previewUrl ? `<img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(title)} preview" onerror="this.style.display='none'">` : ''}
+                </div>
+            `;
+        }
+
+        const themeSlug = parseThemeParam();
+
+        fetch('/products.json')
+            .then((response) => response.json())
+            .then((products) => {
+                if (!Array.isArray(products) || products.length === 0) {
+                    themeTitle.textContent = 'No category found';
+                    themeDescription.textContent = 'There are no products available in the catalog.';
+                    cardsGrid.innerHTML = '<div class="empty-state">No preview cards found in this category.</div>';
+                    return;
+                }
+
+                const grouped = products.reduce((accumulator, product) => {
+                    const theme = deriveTheme(product.Title);
+                    const slug = slugifyTheme(theme);
+                    if (!accumulator[slug]) {
+                        accumulator[slug] = {
+                            slug,
+                            theme,
+                            items: [],
+                        };
+                    }
+                    accumulator[slug].items.push(product);
+                    return accumulator;
+                }, {});
+
+                const category = grouped[themeSlug] || Object.values(grouped).find((entry) => entry.theme.toLowerCase() === themeSlug.toLowerCase());
+
+                if (!category) {
+                    themeTitle.textContent = 'Category not found';
+                    themeDescription.textContent = 'The selected category could not be located in the catalog.';
+                    cardsGrid.innerHTML = '<div class="empty-state">No preview cards found in this category.</div>';
+                    return;
+                }
+
+                themeTitle.textContent = category.theme;
+                themeDescription.textContent = `${category.items.length} preview card${category.items.length === 1 ? '' : 's'} in this category.`;
+                themeCount.textContent = category.items.length;
+                themeChip.style.display = 'inline-flex';
+
+                previewStrip.innerHTML = category.items.slice(0, 4).map(renderPreviewThumb).join('');
+                cardsGrid.innerHTML = category.items.map(renderPreviewCard).join('');
+            })
+            .catch(() => {
+                themeTitle.textContent = 'Catalog unavailable';
+                themeDescription.textContent = 'Unable to load the product catalog right now.';
+                cardsGrid.innerHTML = '<div class="empty-state">No preview cards found in this category.</div>';
+            });
+    </script>
 </body>
 </html>
