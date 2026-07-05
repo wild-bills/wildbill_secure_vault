@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wild Bill Storefront - Premium Asset Collections</title>
+    <title>Browse Categories - Wild Bill Pro Plans</title>
     <style>
-        /* --- MODERN RESET & CORE THEME VARIABLES --- */
         :root {
             --bg-primary: #0a0505;
             --bg-card: #140b0b;
@@ -15,66 +14,54 @@
             --text-muted: #a39797;
             --border-color: #261213;
         }
-        
+
+        * { box-sizing: border-box; }
+
         body {
-            background-color: var(--bg-primary);
-            color: var(--text-main);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
-            padding: 0;
             min-height: 100vh;
-            position: relative;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top, rgba(255, 30, 39, 0.15), transparent 26%),
+                linear-gradient(180deg, #0a0505 0%, #090505 100%);
             overflow-x: hidden;
         }
 
-        * {
-            box-sizing: border-box;
-        }
-        
         body::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            content: '';
+            position: fixed;
+            inset: 0;
             background-image: linear-gradient(var(--border-color) 1px, transparent 1px), linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
             background-size: 40px 40px;
-            background-position: center;
-            opacity: 0.4;
+            opacity: 0.32;
             pointer-events: none;
-            z-index: 0;
-        }
-        
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle at 50% 50%, transparent 20%, var(--bg-primary) 80%);
-            pointer-events: none;
-            z-index: 1;
         }
 
         .container {
-            max-width: 1200px;
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
             margin: 0 auto;
             padding: 32px 20px 56px;
-            position: relative;
-            z-index: 2;
         }
 
-        .hero-panel {
+        .hero {
             border: 1px solid var(--border-color);
             border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 1.75rem;
             background:
                 linear-gradient(180deg, rgba(255, 30, 39, 0.12), rgba(20, 11, 11, 0.88)),
                 rgba(20, 11, 11, 0.9);
             box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
-            padding: 2rem;
-            margin-bottom: 1.75rem;
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
+            text-align: center;
         }
 
-        .hero-panel::after {
-            content: "";
+        .hero::after {
+            content: '';
             position: absolute;
             inset: -40% auto auto 55%;
             width: 320px;
@@ -92,28 +79,41 @@
             font-weight: 700;
         }
 
-        .header-section {
-            text-align: center;
-            margin-bottom: 0;
-        }
-
-        .header-section h1 {
+        h1 {
+            margin: 0 0 0.8rem 0;
             font-size: clamp(2.2rem, 5vw, 3.8rem);
+            line-height: 1.02;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            line-height: 1.02;
-            margin: 0 0 0.75rem 0;
             background: linear-gradient(135deg, #fff 0%, #e7b7bb 45%, var(--text-muted) 100%);
-            background-clip: text;
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .header-section p {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            max-width: 680px;
+        .hero p {
             margin: 0 auto;
+            max-width: 720px;
+            color: var(--text-muted);
+            font-size: 1.02rem;
+        }
+
+        .collection-note {
+            display: inline-flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            color: #d8a5aa;
+            font-size: 0.9rem;
+        }
+
+        .note-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 999px;
+            background: var(--accent-neon);
+            box-shadow: 0 0 12px rgba(255, 30, 39, 0.8);
         }
 
         .category-grid {
@@ -124,14 +124,14 @@
 
         .category-card {
             display: block;
-            text-decoration: none;
             color: inherit;
+            text-decoration: none;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
             position: relative;
         }
 
@@ -141,23 +141,11 @@
             box-shadow: 0 0 20px var(--accent-glow);
         }
 
-        .category-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.18) 100%);
-            pointer-events: none;
-        }
-
         .category-thumb {
             height: 210px;
             background: #000;
             overflow: hidden;
             border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
         }
 
         .category-thumb img {
@@ -183,10 +171,10 @@
             letter-spacing: 0.01em;
         }
 
-        .category-body p {
+        .category-count {
             margin: 0;
-            color: var(--text-muted);
-            font-size: 0.95rem;
+            color: #f2c7ca;
+            font-size: 0.84rem;
         }
 
         .category-pill {
@@ -202,13 +190,6 @@
             font-weight: 700;
         }
 
-        .category-count {
-            display: inline-block;
-            margin-top: 0.5rem;
-            color: #f2c7ca;
-            font-size: 0.84rem;
-        }
-
         .empty-state {
             text-align: center;
             padding: 4rem 1rem;
@@ -216,29 +197,6 @@
             border: 1px solid var(--border-color);
             border-radius: 16px;
             background: rgba(20, 11, 11, 0.8);
-        }
-
-        .buy-now-btn {
-            display: block;
-            width: 100%;
-            background: linear-gradient(135deg, #cc1117 0%, var(--accent-neon) 100%);
-            color: #fff;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border: none;
-            border-radius: 6px;
-            padding: 14px 24px;
-            margin-top: 15px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 14px rgba(255, 30, 39, 0.3);
-        }
-
-        .buy-now-btn:hover {
-            transform: scale(1.02);
-            background: linear-gradient(135deg, var(--accent-neon) 0%, #ff4f55 100%);
-            box-shadow: 0 6px 20px rgba(255, 30, 39, 0.5);
         }
 
         .footer-nav {
@@ -264,55 +222,33 @@
             transition: color 0.2s ease;
         }
 
-        .footer-links a:hover {
-            color: var(--accent-neon);
-        }
-
-        .collection-note {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-            color: #d8a5aa;
-            font-size: 0.9rem;
-        }
-
-        .note-dot {
-            width: 0.5rem;
-            height: 0.5rem;
-            border-radius: 999px;
-            background: var(--accent-neon);
-            box-shadow: 0 0 12px rgba(255, 30, 39, 0.8);
-        }
+        .footer-links a:hover { color: var(--accent-neon); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="hero-panel">
-            <div class="header-section">
-                <p class="eyebrow">Catalog categories</p>
-                <h1>Browse Categories</h1>
-                <p>Select a category to open its preview cards. Each section contains the bundle previews for that theme.</p>
-                <div class="collection-note"><span class="note-dot"></span><span>Cards are grouped from the catalog data and open into a dedicated preview page.</span></div>
-            </div>
-        </div>
+    <main class="container">
+        <section class="hero">
+            <p class="eyebrow">Catalog categories</p>
+            <h1>Browse Categories</h1>
+            <p>Select a category to open its preview cards. Each card groups related bundles by theme and opens a dedicated preview page.</p>
+            <div class="collection-note"><span class="note-dot"></span><span>Categories are built from <strong>products.json</strong> in the browser, so this works even on static hosting.</span></div>
+        </section>
 
-        <div id="category-grid" class="category-grid">
+        <section id="category-grid" class="category-grid">
             <div class="empty-state">Loading categories...</div>
-        </div>
+        </section>
 
         <footer class="footer-nav">
             <p>&copy; 2026 Wild Bill Pro Plans. All Rights Reserved.</p>
             <div class="footer-links">
-                <a href="/pricing.html">Pricing Tiers</a>
-                <a href="/terms.html">Terms of Service</a>
-                <a href="/privacy.html">Privacy Policy</a>
-                <a href="/refund.html">Refund Policy</a>
-                <a href="/contact">Contact Support</a>
+                <a href="pricing.html">Pricing Tiers</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="refund.html">Refund Policy</a>
+                <a href="contact.html">Contact Support</a>
             </div>
         </footer>
-    </div>
+    </main>
 
     <script>
         const categoryGrid = document.getElementById('category-grid');
@@ -362,7 +298,7 @@
             `;
         }
 
-        fetch('/products.json')
+        fetch('products.json')
             .then((response) => response.json())
             .then((products) => {
                 if (!Array.isArray(products) || products.length === 0) {
