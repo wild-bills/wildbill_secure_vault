@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Categories - Wild Bill Pro Plans</title>
+    <style>
+        :root {
+            --bg-primary: #0a0505;
+            --bg-card: #140b0b;
+            --accent-neon: #ff1e27;
+            --accent-glow: rgba(255, 30, 39, 0.15);
+            --text-main: #f5f5f5;
+            --text-muted: #a39797;
+            --border-color: #261213;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top, rgba(255, 30, 39, 0.15), transparent 26%),
+                linear-gradient(180deg, #0a0505 0%, #090505 100%);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(var(--border-color) 1px, transparent 1px), linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.32;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 20px 56px;
+        }
+
+        .hero {
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 1.75rem;
+            background:
+                linear-gradient(180deg, rgba(255, 30, 39, 0.12), rgba(20, 11, 11, 0.88)),
+                rgba(20, 11, 11, 0.9);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: -40% auto auto 55%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(255, 30, 39, 0.14), transparent 70%);
+            pointer-events: none;
+        }
+
+        .eyebrow {
+            margin: 0 0 0.6rem 0;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.76rem;
+            color: var(--accent-neon);
+            font-weight: 700;
+        }
+
+        h1 {
+            margin: 0 0 0.8rem 0;
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            line-height: 1.02;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: linear-gradient(135deg, #fff 0%, #e7b7bb 45%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            margin: 0 auto;
+            max-width: 720px;
+            color: var(--text-muted);
+            font-size: 1.02rem;
+        }
+
+        .collection-note {
+            display: inline-flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            color: #d8a5aa;
+            font-size: 0.9rem;
+        }
+
+        .note-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 999px;
+            background: var(--accent-neon);
+            box-shadow: 0 0 12px rgba(255, 30, 39, 0.8);
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .category-card {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-neon);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .category-thumb {
+            height: 210px;
+            background: #000;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .category-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transform: scale(1.01);
+            transition: transform 0.35s ease;
+        }
+
+        .category-card:hover .category-thumb img {
+            transform: scale(1.06);
+        }
+
+        .category-body {
+            padding: 1.1rem 1.15rem 1.2rem;
+        }
+
+        .category-body h2 {
+            margin: 0 0 0.4rem 0;
+            font-size: 1.12rem;
+            letter-spacing: 0.01em;
+        }
+
+        .category-count {
+            margin: 0;
+            color: #f2c7ca;
+            font-size: 0.84rem;
+        }
+
+        .category-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.9rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(255, 30, 39, 0.12);
+            color: var(--accent-neon);
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: rgba(20, 11, 11, 0.8);
+        }
+
+        .footer-nav {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.75rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover { color: var(--accent-neon); }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <section class="hero">
+            <p class="eyebrow">Catalog categories</p>
+            <h1>Browse Categories</h1>
+            <p>Select a category to open its preview cards. Each card groups related bundles by theme and opens a dedicated preview page.</p>
+            <div class="collection-note"><span class="note-dot"></span><span>Categories are built from <strong>products.json</strong> in the browser, so this works even on static hosting.</span></div>
+        </section>
+
+        <section id="category-grid" class="category-grid">
+            <div class="empty-state">Loading categories...</div>
+        </section>
+
+        <footer class="footer-nav">
+            <p>&copy; 2026 Wild Bill Pro Plans. All Rights Reserved.</p>
+            <div class="footer-links">
+                <a href="pricing.html">Pricing Tiers</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="refund.html">Refund Policy</a>
+                <a href="contact.html">Contact Support</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        const categoryGrid = document.getElementById('category-grid');
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        function slugifyTheme(themeName) {
+            return String(themeName || 'other')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '') || 'other';
+        }
+
+        function deriveTheme(title) {
+            const value = String(title || '').trim();
+            const separators = [' Vol', ' vol', ' Collection', ' collection'];
+            for (const separator of separators) {
+                const index = value.indexOf(separator);
+                if (index > 0) {
+                    return value.slice(0, index).trim();
+                }
+            }
+            return value.split(' ').slice(0, 4).join(' ').trim() || 'Other';
+        }
+
+        function renderCategoryCard(category) {
+            const previewUrl = category.preview || '';
+            const href = `category.html?theme=${encodeURIComponent(category.slug)}`;
+            return `
+                <a class="category-card" href="${href}">
+                    <div class="category-thumb">
+                        ${previewUrl ? `<img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(category.theme)} preview">` : ''}
+                    </div>
+                    <div class="category-body">
+                        <h2>${escapeHtml(category.theme)}</h2>
+                        <p class="category-count">${category.count} preview card${category.count === 1 ? '' : 's'}</p>
+                        <span class="category-pill">Open category</span>
+                    </div>
+                </a>
+            `;
+        }
+
+        fetch('products.json')
+            .then((response) => response.json())
+            .then((products) => {
+                if (!Array.isArray(products) || products.length === 0) {
+                    categoryGrid.innerHTML = '<div class="empty-state">No categories found.</div>';
+                    return;
+                }
+
+                const grouped = products.reduce((accumulator, product) => {
+                    const theme = deriveTheme(product.Title);
+                    const slug = slugifyTheme(theme);
+                    if (!accumulator[slug]) {
+                        accumulator[slug] = {
+                            slug,
+                            theme,
+                            count: 0,
+                            preview: product.Preview_URL || '',
+                        };
+                    }
+                    accumulator[slug].count += 1;
+                    if (!accumulator[slug].preview && product.Preview_URL) {
+                        accumulator[slug].preview = product.Preview_URL;
+                    }
+                    return accumulator;
+                }, {});
+
+                const categories = Object.values(grouped).sort((left, right) => {
+                    return right.count - left.count || left.theme.localeCompare(right.theme);
+                });
+
+                categoryGrid.innerHTML = categories.map(renderCategoryCard).join('');
+            })
+            .catch(() => {
+                categoryGrid.innerHTML = '<div class="empty-state">Catalog unavailable right now.</div>';
+            });
+    </script>
+</body>
+</html>

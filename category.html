@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Preview Cards - Wild Bill Pro Plans</title>
+    <style>
+        :root {
+            --bg-primary: #0a0505;
+            --bg-card: #140b0b;
+            --accent-neon: #ff1e27;
+            --accent-glow: rgba(255, 30, 39, 0.15);
+            --text-main: #f5f5f5;
+            --text-muted: #a39797;
+            --border-color: #261213;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top, rgba(255, 30, 39, 0.15), transparent 28%),
+                linear-gradient(180deg, #0a0505 0%, #090505 100%);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(var(--border-color) 1px, transparent 1px), linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.34;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 20px 56px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.1rem;
+            flex-wrap: wrap;
+        }
+
+        .back-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            background: rgba(20, 11, 11, 0.78);
+            padding: 0.75rem 1rem;
+            border-radius: 999px;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
+        }
+
+        .back-link:hover {
+            color: var(--accent-neon);
+            border-color: var(--accent-neon);
+        }
+
+        .hero {
+            background: rgba(20, 11, 11, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            padding: 1.6rem 1.6rem 1.8rem;
+            box-shadow: 0 16px 60px rgba(0, 0, 0, 0.35);
+            margin-bottom: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: -45% auto auto 55%;
+            width: 360px;
+            height: 360px;
+            background: radial-gradient(circle, rgba(255, 30, 39, 0.14), transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            margin-bottom: 0.85rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(255, 30, 39, 0.12);
+            color: var(--accent-neon);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-weight: 700;
+        }
+
+        .hero h1 {
+            margin: 0 0 0.45rem 0;
+            font-size: clamp(2rem, 3.8vw, 3.5rem);
+            letter-spacing: -0.05em;
+            line-height: 1;
+        }
+
+        .hero p {
+            margin: 0;
+            color: var(--text-muted);
+            max-width: 720px;
+        }
+
+        .theme-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.85rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(255, 30, 39, 0.12);
+            color: #f3b8bd;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .theme-chip strong {
+            color: var(--accent-neon);
+        }
+
+        .preview-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0 2rem;
+        }
+
+        .preview-thumb {
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            overflow: hidden;
+            background: #000;
+            min-height: 170px;
+            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35);
+        }
+
+        .preview-thumb img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35);
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-neon);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .thumb {
+            height: 210px;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-body {
+            padding: 1.15rem;
+        }
+
+        .card-body h2 {
+            margin: 0 0 0.45rem 0;
+            font-size: 1.08rem;
+        }
+
+        .meta {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin: 0 0 0.9rem 0;
+        }
+
+        .price {
+            color: var(--accent-neon);
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview-btn {
+            display: block;
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            text-align: center;
+            color: #fff;
+            font-weight: 700;
+            background: linear-gradient(135deg, #cc1117 0%, var(--accent-neon) 100%);
+            box-shadow: 0 6px 18px rgba(255, 30, 39, 0.24);
+        }
+
+        .preview-btn:hover {
+            background: linear-gradient(135deg, var(--accent-neon) 0%, #ff4f55 100%);
+        }
+
+        .empty-state {
+            padding: 4rem 1rem;
+            text-align: center;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            background: rgba(20, 11, 11, 0.75);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="topbar">
+            <a class="back-link" href="index.html">Back to categories</a>
+        </div>
+
+        <section class="hero">
+            <div class="hero-badge">Category preview cards</div>
+            <h1 id="theme-title">Loading category...</h1>
+            <p id="theme-description">Fetching preview cards for the selected category.</p>
+            <div class="theme-chip" id="theme-chip" style="display:none;"><strong id="theme-count">0</strong> cards in this category</div>
+        </section>
+
+        <div id="preview-strip" class="preview-strip"></div>
+        <div id="cards-grid" class="cards-grid"></div>
+    </div>
+
+    <script>
+        const previewStrip = document.getElementById('preview-strip');
+        const cardsGrid = document.getElementById('cards-grid');
+        const themeTitle = document.getElementById('theme-title');
+        const themeDescription = document.getElementById('theme-description');
+        const themeChip = document.getElementById('theme-chip');
+        const themeCount = document.getElementById('theme-count');
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        function slugifyTheme(themeName) {
+            return String(themeName || 'other')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '') || 'other';
+        }
+
+        function deriveTheme(title) {
+            const value = String(title || '').trim();
+            const separators = [' Vol', ' vol', ' Collection', ' collection'];
+            for (const separator of separators) {
+                const index = value.indexOf(separator);
+                if (index > 0) {
+                    return value.slice(0, index).trim();
+                }
+            }
+            return value.split(' ').slice(0, 4).join(' ').trim() || 'Other';
+        }
+
+        function parseThemeParam() {
+            const queryTheme = new URLSearchParams(window.location.search).get('theme');
+            if (queryTheme) {
+                return queryTheme;
+            }
+            const pathTheme = window.location.pathname.split('/').filter(Boolean).pop();
+            return pathTheme || 'other';
+        }
+
+        function renderPreviewCard(product) {
+            const previewUrl = product.Preview_URL || '';
+            const title = product.Title || 'Untitled Bundle';
+            const description = product.Description || 'Premium digital asset pack collection.';
+            const price = product.Price || '15.00';
+
+            return `
+                <article class="card">
+                    <div class="thumb">
+                        ${previewUrl ? `<img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(title)}" onerror="this.style.display='none'">` : ''}
+                    </div>
+                    <div class="card-body">
+                        <h2>${escapeHtml(title)}</h2>
+                        <p class="meta">${escapeHtml(description)}</p>
+                        <div class="price">$${escapeHtml(price)} USD</div>
+                        <a class="preview-btn" href="${previewUrl || 'contact.html'}">Open Preview</a>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderPreviewThumb(product) {
+            const previewUrl = product.Preview_URL || '';
+            const title = product.Title || 'Preview';
+            return `
+                <div class="preview-thumb">
+                    ${previewUrl ? `<img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(title)} preview" onerror="this.style.display='none'">` : ''}
+                </div>
+            `;
+        }
+
+        const themeSlug = parseThemeParam();
+
+        fetch('products.json')
+            .then((response) => response.json())
+            .then((products) => {
+                if (!Array.isArray(products) || products.length === 0) {
+                    themeTitle.textContent = 'No category found';
+                    themeDescription.textContent = 'There are no products available in the catalog.';
+                    cardsGrid.innerHTML = '<div class="empty-state">No preview cards found in this category.</div>';
+                    return;
+                }
+
+                const grouped = products.reduce((accumulator, product) => {
+                    const theme = deriveTheme(product.Title);
+                    const slug = slugifyTheme(theme);
+                    if (!accumulator[slug]) {
+                        accumulator[slug] = {
+                            slug,
+                            theme,
+                            items: [],
+                        };
+                    }
+                    accumulator[slug].items.push(product);
+                    return accumulator;
+                }, {});
+
+                const category = grouped[themeSlug] || Object.values(grouped).find((entry) => entry.theme.toLowerCase() === themeSlug.toLowerCase());
+
+                if (!category) {
+                    themeTitle.textContent = 'Category not found';
+                    themeDescription.textContent = 'The selected category could not be located in the catalog.';
+                    cardsGrid.innerHTML = '<div class="empty-state">No preview cards found in this category.</div>';
+                    return;
+                }
+
+                themeTitle.textContent = category.theme;
+                themeDescription.textContent = `${category.items.length} preview card${category.items.length === 1 ? '' : 's'} in this category.`;
+                themeCount.textContent = category.items.length;
+                themeChip.style.display = 'inline-flex';
+
+                previewStrip.innerHTML = category.items.slice(0, 4).map(renderPreviewThumb).join('');
+                cardsGrid.innerHTML = category.items.map(renderPreviewCard).join('');
+            })
+            .catch(() => {
+                themeTitle.textContent = 'Catalog unavailable';
+                themeDescription.textContent = 'Unable to load the product catalog right now.';
+                cardsGrid.innerHTML = '<div class="empty-state">No preview cards found in this category.</div>';
+            });
+    </script>
+</body>
+</html>
