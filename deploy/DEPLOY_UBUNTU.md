@@ -1,8 +1,12 @@
-Deploy design.wildbillsproplans.com on Ubuntu + Porkbun
+Deploy design.wildbillsproplans.com and clipart.wildbillsproplans.com on Ubuntu + Porkbun
 
 1) DNS in Porkbun
 - Type: A
 - Host: design
+- Answer: your server public IP
+- TTL: 600
+- Type: A
+- Host: clipart
 - Answer: your server public IP
 - TTL: 600
 
@@ -37,11 +41,13 @@ Deploy design.wildbillsproplans.com on Ubuntu + Porkbun
 
 7) SSL certificate
 - Wait until DNS resolves to this server IP
-- sudo certbot --nginx -d design.wildbillsproplans.com
+- sudo certbot --nginx -d design.wildbillsproplans.com -d clipart.wildbillsproplans.com
 
 8) Verify
 - curl -I http://design.wildbillsproplans.com
 - curl -I https://design.wildbillsproplans.com
+- curl -I http://clipart.wildbillsproplans.com
+- curl -I https://clipart.wildbillsproplans.com
 - journalctl -u wildbill-vault -n 100 --no-pager
 
 9) Useful operations
