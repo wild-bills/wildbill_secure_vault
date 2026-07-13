@@ -290,7 +290,7 @@
 
         function renderCategoryCard(category) {
             const previewUrl = normalizePreviewUrl(category.preview || '');
-            const href = `/category?theme=${encodeURIComponent(category.slug)}`;
+            const href = `/category/?theme=${encodeURIComponent(category.slug)}`;
             return `
                 <a class="category-card" href="${href}">
                     <div class="category-thumb">

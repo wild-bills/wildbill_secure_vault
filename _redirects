@@ -1,2 +1,1 @@
-/category /category.html 200
 /previews/* /static/previews/:splat 200
