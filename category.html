@@ -219,6 +219,40 @@
             margin-bottom: 1rem;
         }
 
+        .sample-strip {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.45rem;
+            margin: 0 0 1rem;
+        }
+
+        .sample-thumb {
+            height: 54px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .sample-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .sample-note {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin: 0 0 0.9rem;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.65rem;
+        }
+
         .preview-btn {
             display: block;
             width: 100%;
@@ -234,6 +268,23 @@
 
         .preview-btn:hover {
             background: linear-gradient(135deg, var(--accent-neon) 0%, #ff4f55 100%);
+        }
+
+        .buy-btn {
+            display: block;
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            text-align: center;
+            color: #fff;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ad0f14 0%, #d9181f 100%);
+            border: 1px solid rgba(255, 30, 39, 0.35);
+        }
+
+        .buy-btn:hover {
+            background: linear-gradient(135deg, #c4161d 0%, #f22630 100%);
         }
 
         .empty-state {
@@ -291,6 +342,45 @@
             return String(previewUrl || '').replace(/^\/static\/previews\//, '/previews/');
         }
 
+        function buildSamplePreviewUrls(previewUrl, maxSamples = 8) {
+            const normalized = normalizePreviewUrl(previewUrl);
+            if (!normalized) {
+                return [];
+            }
+
+            const match = normalized.match(/^(.*_Vol_)(\d+)(\.[^./?#]+)$/i);
+            if (!match) {
+                return [normalized];
+            }
+
+            const prefix = match[1];
+            const extension = match[3];
+            const sampleUrls = [];
+
+            for (let index = 1; index <= maxSamples; index += 1) {
+                sampleUrls.push(`${prefix}${String(index).padStart(3, '0')}${extension}`);
+            }
+
+            return sampleUrls;
+        }
+
+        function estimateAssetCount(product) {
+            const raw = `${product.Title || ''} ${product.Description || ''}`;
+            const match = raw.match(/\b(\d{3,4})\b/);
+            return match ? Number(match[1]) : null;
+        }
+
+        function buildPurchaseUrl(product) {
+            const directUrl = product.Checkout_URL || product.Buy_URL || product.Product_URL || product.Purchase_URL || '';
+            if (directUrl) {
+                return directUrl;
+            }
+
+            const subject = encodeURIComponent(`Purchase request: ${product.Title || 'Bundle'}`);
+            const body = encodeURIComponent(`Hi, I want to purchase this bundle:\n\n${product.Title || 'Bundle'}\nPrice: $${product.Price || '15.00'} USD\n\nPlease send me the checkout link.`);
+            return `mailto:wildbills1977@gmail.com?subject=${subject}&body=${body}`;
+        }
+
         function deriveTheme(title) {
             const value = String(title || '').trim();
             const separators = [' Vol', ' vol', ' Collection', ' collection'];
@@ -313,10 +403,19 @@
         }
 
         function renderPreviewCard(product) {
-            const previewUrl = normalizePreviewUrl(product.Preview_URL || '');
+            const sampleUrls = buildSamplePreviewUrls(product.Preview_URL || '');
+            const previewUrl = sampleUrls[0] || normalizePreviewUrl(product.Preview_URL || '');
             const title = product.Title || 'Untitled Bundle';
             const description = product.Description || 'Premium digital asset pack collection.';
             const price = product.Price || '15.00';
+            const purchaseUrl = buildPurchaseUrl(product);
+            const estimatedCount = estimateAssetCount(product);
+            const sampleThumbs = sampleUrls.slice(0, 4).map((url, idx) => {
+                return `<div class="sample-thumb"><img src="${escapeHtml(url)}" alt="${escapeHtml(title)} sample ${idx + 1}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`;
+            }).join('');
+            const sampleNote = estimatedCount
+                ? `Sample previews shown. Bundle name indicates about ${estimatedCount} assets.`
+                : 'Sample previews shown. Full ZIP includes more assets than shown here.';
 
             return `
                 <article class="card">
@@ -327,7 +426,12 @@
                         <h2>${escapeHtml(title)}</h2>
                         <p class="meta">${escapeHtml(description)}</p>
                         <div class="price">$${escapeHtml(price)} USD</div>
-                        <a class="preview-btn" href="${previewUrl || '/contact.html'}" target="_blank" rel="noopener">Open Preview</a>
+                        <div class="sample-strip">${sampleThumbs}</div>
+                        <p class="sample-note">${escapeHtml(sampleNote)}</p>
+                        <div class="actions">
+                            <a class="preview-btn" href="${previewUrl || '/contact.html'}" target="_blank" rel="noopener">Open Preview</a>
+                            <a class="buy-btn" href="${escapeHtml(purchaseUrl)}" target="_blank" rel="noopener">Buy Bundle</a>
+                        </div>
                     </div>
                 </article>
             `;
@@ -383,7 +487,23 @@
                 themeCount.textContent = category.items.length;
                 themeChip.style.display = 'inline-flex';
 
-                previewStrip.innerHTML = category.items.slice(0, 4).map(renderPreviewThumb).join('');
+                const stripUrls = [];
+                for (const item of category.items) {
+                    const sampleUrls = buildSamplePreviewUrls(item.Preview_URL || '', 4);
+                    for (const url of sampleUrls) {
+                        if (!stripUrls.includes(url)) {
+                            stripUrls.push(url);
+                        }
+                        if (stripUrls.length >= 8) {
+                            break;
+                        }
+                    }
+                    if (stripUrls.length >= 8) {
+                        break;
+                    }
+                }
+
+                previewStrip.innerHTML = stripUrls.map((url) => renderPreviewThumb({ Preview_URL: url, Title: category.theme })).join('');
                 cardsGrid.innerHTML = category.items.map(renderPreviewCard).join('');
             })
             .catch(() => {
