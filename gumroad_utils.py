@@ -29,7 +29,7 @@ def build_gumroad_permalink(value: str, prefix: str = "wildbill") -> str:
     """Build the custom permalink used for Gumroad bulk imports and checkout links."""
     slug = slugify_permalink(value)
     safe_prefix = slugify_permalink(prefix)
-    return f"{safe_prefix}-{slug}" if safe_prefix else slug
+    return f"{safe_prefix}_{slug}" if safe_prefix else slug
 
 
 def build_gumroad_url(value: str, store_url: str | None = None, prefix: str = "wildbill") -> str:
