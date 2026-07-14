@@ -1,0 +1,640 @@
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090506;
+      --panel: #140b0d;
+      --panel-alt: #1b1013;
+      --text: #f8f3f2;
+      --muted: #c9b9b6;
+      --line: #2f1a1d;
+      --brand: #ff3042;
+      --brand-soft: rgba(255, 48, 66, 0.16);
+      --ok: #89f0b4;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+    }
+
+    html[data-theme="light"] {
+      color-scheme: light;
+      --bg: #fff6f3;
+      --panel: #ffffff;
+      --panel-alt: #fff0ec;
+      --text: #2f1918;
+      --muted: #6b4f4d;
+      --line: #e9cbc8;
+      --brand: #d91e36;
+      --brand-soft: rgba(217, 30, 54, 0.12);
+      --ok: #177d45;
+      --shadow: 0 20px 50px rgba(120, 67, 63, 0.17);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 92% -20%, var(--brand-soft), transparent 50%),
+        radial-gradient(700px 500px at -10% 18%, rgba(255, 158, 160, 0.12), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .grain::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.08;
+      background-image: radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0);
+      background-size: 17px 17px;
+      color: var(--line);
+      z-index: 0;
+    }
+
+    .wrap {
+      width: min(1120px, 94vw);
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      margin-top: 20px;
+      padding: clamp(20px, 5vw, 46px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(160deg, var(--panel-alt), var(--panel));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      top: -140px;
+      right: -120px;
+      background: radial-gradient(circle, var(--brand-soft) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--panel), var(--brand) 6%);
+      padding: 6px 11px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 6vw, 66px);
+      line-height: 1;
+      letter-spacing: 0.01em;
+      text-wrap: balance;
+    }
+
+    .headline-accent {
+      color: var(--brand);
+      display: inline-block;
+      transform: translateY(1px);
+    }
+
+    .bio {
+      margin-top: 14px;
+      max-width: 70ch;
+      color: var(--muted);
+      font-size: clamp(16px, 2.2vw, 19px);
+    }
+
+    .hero-actions {
+      margin-top: 22px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 11px 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      background: color-mix(in srgb, var(--panel), black 4%);
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+      cursor: pointer;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--brand);
+      outline: none;
+    }
+
+    .btn.primary {
+      background: linear-gradient(120deg, color-mix(in srgb, var(--brand), black 12%), var(--brand));
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .stats {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: color-mix(in srgb, var(--panel), black 5%);
+      padding: 12px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1;
+      margin-bottom: 6px;
+      color: var(--ok);
+    }
+
+    .section {
+      margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+      padding: 16px clamp(14px, 3vw, 22px);
+      background: color-mix(in srgb, var(--panel-alt), transparent 16%);
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: clamp(19px, 2.8vw, 26px);
+      letter-spacing: 0.01em;
+    }
+
+    .section-body {
+      padding: clamp(14px, 2.3vw, 22px);
+    }
+
+    .product-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: color-mix(in srgb, var(--panel-alt), transparent 40%);
+      text-decoration: none;
+      color: inherit;
+      min-height: 100%;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .card:hover,
+    .card:focus-visible {
+      transform: translateY(-3px);
+      border-color: var(--brand);
+      outline: none;
+    }
+
+    .thumb {
+      aspect-ratio: 16 / 10;
+      background: linear-gradient(120deg, color-mix(in srgb, var(--panel), var(--brand) 10%), var(--panel));
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-body {
+      padding: 12px;
+      display: grid;
+      gap: 7px;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .desc {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .list a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      text-decoration: none;
+      color: inherit;
+      background: color-mix(in srgb, var(--panel-alt), transparent 40%);
+      transition: border-color 0.18s ease, transform 0.18s ease;
+    }
+
+    .list a:hover,
+    .list a:focus-visible {
+      transform: translateY(-2px);
+      border-color: var(--brand);
+      outline: none;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .empty {
+      margin: 0;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .footer {
+      margin: 20px 0 30px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    [data-reveal].visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 700px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        align-items: start;
+        flex-direction: column;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+      [data-reveal] {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+
+  <div class="sr-only" aria-live="polite" id="sr-announcer"></div>
+  <div class="grain" data-theme-root>
+  <div class="wrap">
+    <header class="hero" data-reveal>
+      <div class="badge-row" aria-label="Profile tags">
+        <span class="badge">Wild Bill Pro Plans</span>
+        <span class="badge">Digital Collections</span>
+        <span class="badge">Ready-to-Use Assets</span>
+      </div>
+
+      <h1>
+        <span data-gumroad-field="name">Wild Bill</span>
+        <span class="headline-accent">Storefront</span>
+      </h1>
+
+      <p class="bio" data-gumroad-field="bio">
+        Premium themed bundles for creators, agencies, and fast-moving campaigns.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn primary" href="#products" aria-label="Jump to products">Explore Catalog</a>
+        <button type="button" class="btn" id="theme-toggle" aria-label="Toggle light and dark mode">
+          <span aria-hidden="true">◐</span>
+          <span id="theme-label">Switch Theme</span>
+        </button>
+      </div>
+
+      <dl class="stats" aria-label="Catalog stats">
+        <div class="stat">
+          <dt class="sr-only">Products</dt>
+          <dd><strong id="stat-products">0</strong>Products listed</dd>
+        </div>
+        <div class="stat">
+          <dt class="sr-only">Posts</dt>
+          <dd><strong id="stat-posts">0</strong>Posts shared</dd>
+        </div>
+        <div class="stat">
+          <dt class="sr-only">Pages</dt>
+          <dd><strong id="stat-pages">0</strong>Custom pages</dd>
+        </div>
+      </dl>
+    </header>
+
+    <section class="section" id="products" data-reveal>
+      <div class="section-head">
+        <h2 class="section-title">Featured Product Catalog</h2>
+        <span class="sub">Live from your Gumroad profile data</span>
+      </div>
+      <div class="section-body">
+        <div id="product-grid" class="product-grid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="section" data-reveal>
+      <div class="section-head">
+        <h2 class="section-title">Latest Posts</h2>
+        <span class="sub">Updates and launch notes</span>
+      </div>
+      <div class="section-body">
+        <ul class="list" id="post-list" aria-live="polite"></ul>
+      </div>
+    </section>
+
+    <section class="section" data-reveal>
+      <div class="section-head">
+        <h2 class="section-title">Extra Pages</h2>
+        <span class="sub">Guides and bonus links</span>
+      </div>
+      <div class="section-body">
+        <ul class="list" id="page-list" aria-live="polite"></ul>
+      </div>
+    </section>
+
+    <footer class="footer" data-reveal>
+      Crafted for <span data-gumroad-field="name">Wild Bill</span> · Built as a custom Gumroad profile landing page.
+    </footer>
+  </div>
+  </div>
+
+  <script>
+    (function () {
+      function safeArray(value) {
+        return Array.isArray(value) ? value : [];
+      }
+
+      function text(value, fallback) {
+        const str = String(value == null ? "" : value).trim();
+        return str || fallback;
+      }
+
+      function truncate(value, max) {
+        if (value.length <= max) return value;
+        return value.slice(0, max - 1).trimEnd() + "…";
+      }
+
+      function formatDate(isoValue) {
+        const date = new Date(isoValue);
+        if (Number.isNaN(date.getTime())) return "";
+        return new Intl.DateTimeFormat(undefined, { year: "numeric", month: "short", day: "numeric" }).format(date);
+      }
+
+      function renderProducts(products) {
+        const host = document.getElementById("product-grid");
+        if (!products.length) {
+          host.innerHTML = '<p class="empty">No products published yet. Add products in Gumroad and they will appear here automatically.</p>';
+          return;
+        }
+
+        host.innerHTML = products.map(function (product) {
+          const name = text(product.name, "Untitled product");
+          const url = text(product.url, "#");
+          const type = text(product.native_type, "product");
+          const price = text(product.price, "");
+          const description = truncate(text(product.description, ""), 120);
+          const thumb = text(product.thumbnail_url, "");
+
+          const thumbMarkup = thumb
+            ? '<img src="' + thumb.replace(/"/g, "&quot;") + '" alt="' + name.replace(/"/g, "&quot;") + ' thumbnail">'
+            : '<span>No preview image</span>';
+
+          return (
+            '<a class="card" href="' + url.replace(/"/g, "&quot;") + '" aria-label="Open product: ' + name.replace(/"/g, "&quot;") + '">' +
+              '<div class="thumb">' + thumbMarkup + '</div>' +
+              '<div class="card-body">' +
+                '<div class="meta"><span>' + type + '</span><span>' + price + '</span></div>' +
+                '<h3>' + name + '</h3>' +
+                '<p class="desc">' + (description || "View details on the product page.") + '</p>' +
+              '</div>' +
+            '</a>'
+          );
+        }).join("");
+      }
+
+      function renderPosts(posts) {
+        const host = document.getElementById("post-list");
+        if (!posts.length) {
+          host.innerHTML = '<li><p class="empty">No posts yet.</p></li>';
+          return;
+        }
+
+        host.innerHTML = posts.map(function (post) {
+          const name = text(post.name, "Untitled post");
+          const url = text(post.url, "#");
+          const date = formatDate(post.published_at);
+          return (
+            '<li>' +
+              '<a href="' + url.replace(/"/g, "&quot;") + '" aria-label="Open post: ' + name.replace(/"/g, "&quot;") + '">' +
+                '<span>' + name + '</span>' +
+                '<span class="sub">' + (date || "") + '</span>' +
+              '</a>' +
+            '</li>'
+          );
+        }).join("");
+      }
+
+      function renderPages(pages) {
+        const host = document.getElementById("page-list");
+        if (!pages.length) {
+          host.innerHTML = '<li><p class="empty">No extra pages listed.</p></li>';
+          return;
+        }
+
+        host.innerHTML = pages.map(function (page) {
+          const name = text(page.name, "Untitled page");
+          return '<li><div class="empty" style="text-align:left">' + name + '</div></li>';
+        }).join("");
+      }
+
+      function applyStats(data) {
+        document.getElementById("stat-products").textContent = String(data.products.length);
+        document.getElementById("stat-posts").textContent = String(data.posts.length);
+        document.getElementById("stat-pages").textContent = String(data.pages.length);
+      }
+
+      function revealOnScroll() {
+        const elements = Array.prototype.slice.call(document.querySelectorAll("[data-reveal]"));
+        if (!elements.length) return;
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+          elements.forEach(function (el) { el.classList.add("visible"); });
+          return;
+        }
+
+        const observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+
+        elements.forEach(function (el, idx) {
+          el.style.transitionDelay = String(idx * 40) + "ms";
+          observer.observe(el);
+        });
+      }
+
+      function setupTheme() {
+        const root = document.documentElement;
+        const themeRoot = document.querySelector("[data-theme-root]");
+        const button = document.getElementById("theme-toggle");
+        const label = document.getElementById("theme-label");
+        const announcer = document.getElementById("sr-announcer");
+        const key = "wildbill-profile-theme";
+        const saved = localStorage.getItem(key);
+        const preferredDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const initial = saved || (preferredDark ? "dark" : "light");
+
+        function setTheme(mode) {
+          root.setAttribute("data-theme", mode);
+          if (themeRoot) {
+            themeRoot.setAttribute("data-theme", mode);
+          }
+          label.textContent = mode === "dark" ? "Switch To Light" : "Switch To Dark";
+          if (announcer) {
+            announcer.textContent = "Theme changed to " + mode + " mode";
+          }
+        }
+
+        setTheme(initial);
+
+        button.addEventListener("click", function () {
+          const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+          setTheme(next);
+          localStorage.setItem(key, next);
+        });
+      }
+
+      function parseInjectedData() {
+        const node = document.getElementById("gumroad-data");
+        if (!node) return { products: [], posts: [], pages: [] };
+
+        try {
+          const parsed = JSON.parse(node.textContent || "{}");
+          return {
+            products: safeArray(parsed.products),
+            posts: safeArray(parsed.posts),
+            pages: safeArray(parsed.pages)
+          };
+        } catch (error) {
+          return { products: [], posts: [], pages: [] };
+        }
+      }
+
+      setupTheme();
+      const gumroadData = parseInjectedData();
+      applyStats(gumroadData);
+      renderProducts(gumroadData.products);
+      renderPosts(gumroadData.posts);
+      renderPages(gumroadData.pages);
+      revealOnScroll();
+    })();
+  </script>
