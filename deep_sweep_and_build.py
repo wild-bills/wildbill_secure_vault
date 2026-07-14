@@ -6,6 +6,7 @@ import shutil
 import zipfile
 
 from PIL import Image, ImageOps
+from gumroad_utils import build_gumroad_url
 
 # ----------------- CONFIGURATION ----------------- #
 ROOT_SEARCH_DIR = "/home/wildbill/adult_clipart_factory"
@@ -228,6 +229,7 @@ def package_theme_chunks(theme_groups):
                 "Price": DEFAULT_PRICE,
                 "Zip_Path": f"{final_zip_path}.zip",
                 "Preview_URL": f"/static/previews/{preview_filename}",
+                "Gumroad_URL": build_gumroad_url(bundle_name.replace("_", " ")),
             })
 
     return products_data

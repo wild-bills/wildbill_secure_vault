@@ -68,11 +68,6 @@
         .buy-btn:hover { background-color: var(--accent-hover); }
         footer { text-align: center; margin-top: 5rem; color: var(--text-muted); font-size: 0.85rem; }
     </style>
-    <!-- Paddle Setup integration -->
-    <script src="https://paddle.com"></script>
-    <script type="text/javascript">
-      Paddle.Setup({ token: 'live_token_here' }); // <-- Paste your Client-side Token here
-    </script>
 </head>
 <body>
     <div class="container">
@@ -94,19 +89,10 @@
                     <li>Instant ZIP Download Access</li>
                     <li>Full Commercial Usage Rights Included</li>
                 </ul>
-                <!-- Triggers your live Paddle checkout view using its unique pricing ID -->
-                <button class="buy-btn" onclick="Paddle.Checkout.open({ items: [{ priceId: '{{ bundle['paddle_price_id'] }}', quantity: 1 }] })">
-
-
-                    Purchase Bundle
-                </button>
+                <a class="buy-btn" href="{{ bundle['gumroad_url'] }}" target="_blank" rel="noopener">Purchase Bundle on Gumroad</a>
             </div>
             {% endfor %}
         </div>
-
-        <script type="text/javascript">
-        
-        </script>
 
         <footer>
             <p>&copy; 2026 Wild Bill Pro Plans. All rights reserved.</p>

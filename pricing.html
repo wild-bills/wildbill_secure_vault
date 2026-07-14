@@ -10,305 +10,67 @@
             --card-bg: #141b2d;
             --text-main: #ffffff;
             --text-muted: #94a3b8;
-            --accent: #00eaff;
-            --accent-hover: #00b8cc;
+            --accent: #ff1e27;
+            --accent-hover: #ff4f55;
             --border-color: #1e293b;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             line-height: 1.5;
             padding: 4rem 2rem;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            letter-spacing: -0.05em;
-        }
-
-        .header p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .card {
-            background-color: var(--card-bg);
+        .container { max-width: 1100px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 3rem; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 1rem; letter-spacing: -0.05em; }
+        .header p { color: var(--text-muted); font-size: 1.1rem; max-width: 700px; margin: 0 auto; }
+        .notice {
+            background: rgba(20, 27, 45, 0.9);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s ease, border-color 0.2s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent);
-        }
-
-        .card-header h2 {
-            font-size: 1.35rem;
-            margin-bottom: 0.75rem;
-            line-height: 1.3;
-        }
-
-        .price-tag {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin: 1rem 0;
-        }
-
-        .price-tag span {
-            font-size: 1rem;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        .description {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-            flex-grow: 1;
-        }
-
-        .features-list {
-            list-style: none;
+            border-radius: 16px;
+            padding: 1.5rem;
             margin-bottom: 2rem;
-            border-top: 1px solid var(--border-color);
-            padding-top: 1.1rem;
-        }
-
-        .features-list li {
-            font-size: 0.9rem;
-            color: var(--text-main);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .features-list li::before {
-            content: "✓";
-            color: var(--accent);
-            font-weight: bold;
-            margin-right: 8px;
-        }
-
-        .buy-btn {
-            display: block;
-            text-align: center;
-            background-color: var(--accent);
-            color: #000000;
-            text-decoration: none;
-            font-weight: 600;
-            padding: 0.75rem;
-            border-radius: 6px;
-            transition: background-color 0.2s ease;
-        }
-
-        .buy-btn:hover {
-            background-color: var(--accent-hover);
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 5rem;
             color: var(--text-muted);
-            font-size: 0.85rem;
+            text-align: center;
         }
+        .buy-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 360px;
+            margin: 1rem auto 0;
+            padding: 0.9rem 1.2rem;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent) 0%, #d9181f 100%);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .buy-btn:hover { background: linear-gradient(135deg, var(--accent-hover) 0%, #ff6b70 100%); }
+        footer { text-align: center; margin-top: 4rem; color: var(--text-muted); font-size: 0.85rem; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <div class="header">
             <h1>Premium Digital Design Asset Bundles</h1>
-            <p>High-quality artwork collections for commercial and personal projects. Clear pricing, instant ZIP downloads.</p>
+            <p>Browse the live catalog to preview each bundle. Checkout is handled through Gumroad for secure payment and delivery.</p>
         </div>
 
-        <div class="grid">
-            <!-- Item 1 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 4 Neon Alternative Gothic</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>10 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 2 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 211 Neon Alternative Gothic</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>32 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 3 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 47 Grimy Streetwear Alternative</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>18 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 4 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 165 Dark Luxury Red & Matte Black</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>32 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 5 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 122 Industrial Metal & Lace</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>33 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-            <!-- Item 6 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 56 Midnight Garden Escape Room</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>18 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 7 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 195 Crimson Catacombs</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>18 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 8 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 39 Crimson Cyberpunk Fetish</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>18 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 9 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 81 Dreamy Enchanted Garden</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>17 Premium Items</li>
-                    <li>Formats: PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
-
-            <!-- Item 10 -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bundle 150 Gothic Luxury Velvet</h2>
-                    <div class="price-tag">$10<span> USD</span></div>
-                    <p class="description">Premium digital design asset bundle artwork collection.</p>
-                </div>
-                <ul class="features-list">
-                    <li>32 Premium Items</li>
-                    <li>Formats: JPG, PNG, SVG, TXT</li>
-                    <li>Instant ZIP Download</li>
-                </ul>
-                <a href="#" class="buy-btn">Buy Bundle</a>
-            </div>
+        <div class="notice">
+            The live storefront now routes purchases through Gumroad. Open a category or product page to pick a bundle, then use the Gumroad checkout link on that listing.
+            <div><a class="buy-btn" href="https://wildbill.gumroad.com/l" target="_blank" rel="noopener">Open Gumroad Store</a></div>
         </div>
 
         <footer>
             <p>&copy; 2026 Wild Bill Pro Plans. All rights reserved.</p>
         </footer>
     </div>
-
 </body>
 </html>

@@ -267,7 +267,7 @@
 
         function slugifyTheme(themeName) {
             return String(themeName || 'other')
-                .toLowerCase()Y
+                .toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/^-+|-+$/g, '') || 'other';
         }

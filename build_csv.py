@@ -2,6 +2,8 @@ import os
 import csv
 import re
 
+from gumroad_utils import build_gumroad_permalink
+
 # ----------------- CONFIGURATION ----------------- #
 TARGET_DIR = "/home/wildbill/adult_clipart_factory/completed_bundles"
 OUTPUT_CSV = "products.csv"
@@ -66,11 +68,12 @@ def generate_csv():
             "Description": DEFAULT_DESC,
             "Price": DEFAULT_PRICE,
             "Zip_URL": zip_file,       # Saves just the filename for upload_local_zips.py
-            "Preview_URL": preview_file # Saves just the filename for upload_local_zips.py
+            "Preview_URL": preview_file, # Saves just the filename for upload_local_zips.py
+            "Custom Permalink": build_gumroad_permalink(base_name)
         })
 
     # Write everything to your products.csv spreadsheet
-    headers = ["Title", "Description", "Price", "Zip_URL", "Preview_URL"]
+    headers = ["Title", "Description", "Price", "Zip_URL", "Preview_URL", "Custom Permalink"]
     with open(OUTPUT_CSV, mode="w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=headers)
         writer.writeheader()

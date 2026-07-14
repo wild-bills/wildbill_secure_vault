@@ -315,14 +315,17 @@
         }
 
         function buildPurchaseUrl(product) {
-            const directUrl = product.Checkout_URL || product.Buy_URL || product.Product_URL || product.Purchase_URL || '';
-            if (directUrl) {
-                return directUrl;
+            if (product.Gumroad_URL) {
+                return product.Gumroad_URL;
             }
 
-            const subject = encodeURIComponent(`Purchase request: ${product.Title || 'Bundle'}`);
-            const body = encodeURIComponent(`Hi, I want to purchase this bundle:\n\n${product.Title || 'Bundle'}\nPrice: $${product.Price || '15.00'} USD\n\nPlease send me the checkout link.`);
-            return `mailto:wildbills1977@gmail.com?subject=${subject}&body=${body}`;
+            const title = String(product.Title || product.name || 'item').trim();
+            const slug = title
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '') || 'item';
+
+            return `https://wildbill.gumroad.com/l/wildbill-${slug}`;
         }
 
         function deriveTheme(title) {

@@ -5,104 +5,141 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ product['name'] }} Details</title>
     <style>
-        body { font-family: sans-serif; background: #0b0f19; color: #fff; padding: 2rem; }
-        .wrapper { max-width: 1000px; margin: 0 auto; background: #141b2d; padding: 2.5rem; border-radius: 12px; border: 1px solid #1e293b; }
-        h1 { color: #38bdf8; margin-bottom: 0.5rem; }
-        .sku { color: #94a3b8; margin-bottom: 2rem; font-size: 0.9rem; }
-        
-        /* 4-IMAGE SAMPLE PREVIEW DISPLAY GRID - FIXED TO STRICT 2x2 */
-        .preview-grid { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 1.5rem; 
-            margin: 2rem 0; 
+        :root {
+            --bg: #08070c;
+            --card: #12111a;
+            --accent: #ff1e27;
+            --accent-soft: #f39aa0;
+            --text: #f6f2f2;
+            --muted: #b4a6a7;
+            --border: #2a2023;
         }
-        .preview-box { border-radius: 8px; overflow: hidden; border: 1px solid #1e293b; background: #070a12; padding: 10px; }
-        .preview-box img { width: 100%; height: auto; object-fit: cover; border-radius: 4px; }
-        .preview-title { font-size: 0.9rem; color: #94a3b8; text-align: center; margin-top: 0.5rem; }
-        
-        .buy-now-btn { background: #38bdf8; color: #000; font-weight: bold; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-size: 1.1rem; width: 100%; margin-top: 1rem; }
-        .buy-now-btn:hover { background: #0ea5e9; }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 2rem;
+            background:
+                radial-gradient(circle at top, rgba(255, 30, 39, 0.14), transparent 28%),
+                linear-gradient(180deg, #08070c 0%, #050407 100%);
+            color: var(--text);
+            font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(18, 17, 26, 0.92);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: 0 20px 64px rgba(0, 0, 0, 0.45);
+        }
+
+        h1 {
+            margin: 0 0 0.5rem;
+            font-size: clamp(2rem, 4vw, 3rem);
+            letter-spacing: -0.04em;
+        }
+
+        .sku {
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+            font-size: 0.92rem;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0 1.75rem;
+        }
+
+        .preview-box {
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: #07070b;
+            padding: 10px;
+        }
+
+        .preview-box img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .preview-title {
+            font-size: 0.88rem;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 0.6rem;
+        }
+
+        .buy-now-btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            text-decoration: none;
+            background: linear-gradient(135deg, #ff3c44 0%, var(--accent) 100%);
+            color: #fff;
+            font-weight: 800;
+            border: none;
+            padding: 1rem 1.25rem;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 1.05rem;
+            margin-top: 1rem;
+            box-shadow: 0 10px 28px rgba(255, 30, 39, 0.26);
+        }
+
+        .buy-now-btn:hover {
+            filter: brightness(1.06);
+        }
     </style>
-<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-<script type="text/javascript">
-    window.addEventListener('load', function() {
-        if (typeof Paddle !== 'undefined') {
-            Paddle.Initialize({
-                environment: 'production',
-                token: 'live_811a02c6ed6dc0af52b24357002'
-            });
-            console.log("Paddle V2 loaded successfully.");
-        }
-    });
-</script>
 </head>
 <body>
     <div class="wrapper">
         <h1>{{ product['name'] }}</h1>
         <div class="sku">Product Inventory SKU Code Reference: {{ product['sku'] }}</div>
-        
-        <h3>Asset Bundle Contents Previews (1st, 3rd, 5th, & 7th Source Extracted Samples)</h3>
-        
+
+        <h3>Asset Bundle Contents Previews</h3>
+
         <div class="preview-grid">
             {% if product['preview_1'] %}
             <div class="preview-box">
                 <img src="{{ product['preview_1'] }}" alt="Sample 1">
-                <div class="preview-title">Sample 1 (1st File)</div>
+                <div class="preview-title">Sample 1</div>
             </div>
             {% endif %}
 
             {% if product['preview_2'] %}
             <div class="preview-box">
                 <img src="{{ product['preview_2'] }}" alt="Sample 2">
-                <div class="preview-title">Sample 2 (3rd File)</div>
+                <div class="preview-title">Sample 2</div>
             </div>
             {% endif %}
 
             {% if product['preview_3'] %}
             <div class="preview-box">
                 <img src="{{ product['preview_3'] }}" alt="Sample 3">
-                <div class="preview-title">Sample 3 (5th File)</div>
+                <div class="preview-title">Sample 3</div>
             </div>
             {% endif %}
 
             {% if product['preview_4'] %}
             <div class="preview-box">
                 <img src="{{ product['preview_4'] }}" alt="Sample 4">
-                <div class="preview-title">Sample 4 (7th File)</div>
+                <div class="preview-title">Sample 4</div>
             </div>
             {% endif %}
         </div>
-        <button class="buy-now-btn" onclick="openVaultCheckout('{{ product.paddle_price_id or product.price_id or product.paddle_plan_id }}')">Purchase This Full ZIP Collection ($10.00 USD)</button>
 
-        
-</button>
+        <a class="buy-now-btn" href="{{ product['gumroad_url'] }}" target="_blank" rel="noopener">Purchase This Full ZIP Collection on Gumroad</a>
     </div>
 </body>
 </html>
-<!-- ========================================== -->
-<!--  PADDLE PAYMENT SYSTEM INTEGRATION SCRIPT  -->
-<!-- ========================================== -->
-<script src="https://paddle.com"></script>
-<script>
-  Paddle.Initialize({ 
-    // FOR TESTING: If you want sandbox simulation, use your pdl_sdbx_ token here!
-    token: "pdl_live_apikey_01kvcm8smzkd2er8yf56pdfps8_kSggBxB3y88sXVNTSTPvSr_A3j" 
-  });
-
-  function openVaultCheckout(priceId) {
-    Paddle.Checkout.open({
-      settings: {
-        displayMode: "overlay",
-        theme: "dark",
-        locale: "en"
-      },
-      items: [
-        {
-          priceId: priceId,
-          quantity: 1
-        }
-      ]
-    });
-  }
-</script>

@@ -5,6 +5,7 @@ import json
 import re
 
 from deep_sweep_and_build import build_bundle_preview
+from gumroad_utils import build_gumroad_url
 
 # ----------------- CONFIGURATION ----------------- #
 SOURCE_DIR = "/home/wildbill/adult_clipart_factory/gumroad_ready_assets"
@@ -87,7 +88,8 @@ def process_assets():
             "Description": DEFAULT_DESC,
             "Price": DEFAULT_PRICE,
             "Zip_URL": zip_filename,
-            "Preview_URL": preview_filename
+            "Preview_URL": preview_filename,
+            "Gumroad_URL": build_gumroad_url(clean_name),
         })
 
     # Write CSV Master Catalog

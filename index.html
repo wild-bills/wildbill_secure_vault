@@ -276,6 +276,20 @@
             return String(previewUrl || '').replace(/^\/static\/previews\//, '/previews/');
         }
 
+        function buildPurchaseUrl(product) {
+            if (product.Gumroad_URL) {
+                return product.Gumroad_URL;
+            }
+
+            const title = String(product.Title || product.name || 'item').trim();
+            const slug = title
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '') || 'item';
+
+            return `https://wildbill.gumroad.com/l/wildbill-${slug}`;
+        }
+
         function deriveTheme(title) {
             const value = String(title || '').trim();
             const separators = [' Vol', ' vol', ' Collection', ' collection'];

@@ -5,6 +5,8 @@ from flask import Flask, render_template, redirect, request, jsonify, send_from_
 import boto3
 from botocore.config import Config
 
+from gumroad_utils import build_gumroad_url
+
 # --- PATH & APP CONFIGURATION ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, 'database', 'store.db')
@@ -173,7 +175,10 @@ def product_detail(sku):
     conn.close()
     if product is None:
         return "Product not found", 404
-    return render_template('product.html', product=product)
+
+    product_dict = dict(product)
+    product_dict['gumroad_url'] = build_gumroad_url(product_dict.get('sku') or product_dict.get('name'))
+    return render_template('product.html', product=product_dict)
 
 # --- SECURE COMPLEMENTARY DOWNLOAD PATH ---
 @app.route('/download/<sku>', methods=['GET', 'POST'])
@@ -257,14 +262,13 @@ def refund_page():
 def pricing_page():
     conn = get_db_connection()
     # Fetches all bundles from your product table to display as pricing tiers
-    bundles = conn.execute('SELECT * FROM products ORDER BY sku ASC').fetchall()
+    bundles = [dict(row) for row in conn.execute('SELECT * FROM products ORDER BY sku ASC').fetchall()]
     conn.close()
-    return render_template('pricing.html', bundles=bundles)
 
-@app.route('/static/js/<path:filename>')
-def serve_paddle_js(filename):
-    js_dir = os.path.join(app.root_path, 'static', 'js')
-    return send_from_directory(js_dir, filename, mimetype='application/javascript')
+    for bundle in bundles:
+        bundle['gumroad_url'] = build_gumroad_url(bundle.get('sku') or bundle.get('name'))
+
+    return render_template('pricing.html', bundles=bundles)
 
 
 if __name__ == '__main__':

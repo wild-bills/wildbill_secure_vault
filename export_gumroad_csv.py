@@ -1,6 +1,8 @@
 import sqlite3
 import os
 
+from gumroad_utils import build_gumroad_permalink
+
 DB_PATH = "database/store.db"
 CSV_PATH = "gumroad_bulk_import.csv"
 
@@ -42,7 +44,8 @@ def export_vault_to_csv():
             )
             desc_clean = desc.replace('"', '""').replace('\n', ' ')
 
-            f.write(f'"{clean_name}","{price_text}","{desc_clean}","wildbill_{item["sku"]}"\n')
+            permalink = build_gumroad_permalink(item["sku"])
+            f.write(f'"{clean_name}","{price_text}","{desc_clean}","{permalink}"\n')
 
     print(f"🎉 Success! Spreadsheet saved to: {os.path.abspath(CSV_PATH)}")
 

@@ -249,6 +249,12 @@
                     margin-bottom: 1rem;
                 }
 
+                .actions {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 0.65rem;
+                }
+
                 .preview-btn {
                     display: block;
                     width: 100%;
@@ -264,6 +270,23 @@
 
                 .preview-btn:hover {
                     background: linear-gradient(135deg, var(--accent-neon) 0%, #ff4f55 100%);
+                }
+
+                .buy-btn {
+                    display: block;
+                    width: 100%;
+                    padding: 0.85rem 1rem;
+                    border-radius: 12px;
+                    text-decoration: none;
+                    text-align: center;
+                    color: #fff;
+                    font-weight: 700;
+                    background: linear-gradient(135deg, #ad0f14 0%, #d9181f 100%);
+                    border: 1px solid rgba(255, 30, 39, 0.35);
+                }
+
+                .buy-btn:hover {
+                    background: linear-gradient(135deg, #c4161d 0%, #f22630 100%);
                 }
 
                 .empty-state {
@@ -321,6 +344,20 @@
                     return String(previewUrl || '').replace(/^\/static\/previews\//, '/previews/');
                 }
 
+                function buildPurchaseUrl(product) {
+                    if (product.Gumroad_URL) {
+                        return product.Gumroad_URL;
+                    }
+
+                    const title = String(product.Title || product.name || 'item').trim();
+                    const slug = title
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/^-+|-+$/g, '') || 'item';
+
+                    return `https://wildbill.gumroad.com/l/wildbill-${slug}`;
+                }
+
                 function deriveTheme(title) {
                     const value = String(title || '').trim();
                     const separators = [' Vol', ' vol', ' Collection', ' collection'];
@@ -347,6 +384,7 @@
                     const title = product.Title || 'Untitled Bundle';
                     const description = product.Description || 'Premium digital asset pack collection.';
                     const price = product.Price || '15.00';
+                    const purchaseUrl = buildPurchaseUrl(product);
 
                     return `
                         <article class="card">
@@ -357,7 +395,10 @@
                                 <h2>${escapeHtml(title)}</h2>
                                 <p class="meta">${escapeHtml(description)}</p>
                                 <div class="price">$${escapeHtml(price)} USD</div>
-                                <a class="preview-btn" href="${previewUrl || 'contact.html'}" target="_blank" rel="noopener">Open Preview</a>
+                                <div class="actions">
+                                    <a class="preview-btn" href="${previewUrl || 'contact.html'}" target="_blank" rel="noopener">Open Combined Preview</a>
+                                    <a class="buy-btn" href="${escapeHtml(purchaseUrl)}" target="_blank" rel="noopener">Buy on Gumroad</a>
+                                </div>
                             </div>
                         </article>
                     `;
