@@ -1,57 +1,70 @@
+import json
 import os
-import random
-from PIL import Image, ImageDraw
+import tempfile
+import zipfile
+from pathlib import Path
 
-os.makedirs('static/images', exist_ok=True)
+from deep_sweep_and_build import build_bundle_preview
 
-if not os.path.exists('collage.jpg'):
-    print("Error: Please make sure 'collage.jpg' is placed inside this folder!")
-    exit(1)
 
-collage = Image.open('collage.jpg').convert('RGB')
-c_width, c_height = collage.size
+BASE_DIR = Path(__file__).resolve().parent
+PRODUCTS_JSON = BASE_DIR / "products.json"
+PREVIEW_DIR = BASE_DIR / "static" / "previews"
+IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
 
-items = [
-    "Seductive_Reds_Feed_Collection",
-    "Spicy_Sensual_Post_Kit",
-    "Adult_Creator_60_Mega_Bundle",
-    "Brat_Aesthetic_Pink_Feed_Kit",
-    "Power_Dynamics_Smooth_Kit",
-    "Adult_Creator_Smooth_600_Vault_Vol2",
-    "Edgy_Sassy_Creator_Kit",
-    "Adult_Creator_600_Ultimate_Master_Vault"
-]
 
-# Create a unique layout background from your collage for each item
-for i, name in enumerate(items):
-    # Slice out a unique 600x450 section of your stitched graphics grid
-    random.seed(i + 42) # Keeps cuts predictable but distinct
-    x = random.randint(0, max(0, c_width - 600))
-    y = random.randint(0, max(0, c_height - 450))
-    
-    # Crop the background section
-    card_img = collage.crop((x, y, x + 600, y + 450))
-    
-    # Apply a dark sleek tint overlay layer so text stays readable
-    overlay = Image.new('RGB', (600, 450), color='#000000')
-    card_img = Image.blend(card_img, overlay, alpha=0.75)
-    
-    draw = ImageDraw.Draw(card_img)
-    
-    # Premium subtle border highlight accent lines
-    draw.rectangle([(2, 2), (597, 447)], outline='#222222', width=2)
-    draw.rectangle([(4, 4), (595, 445)], outline='#a61c1c', width=1)
-    
-    clean_title = name.replace('_', ' ').upper()
-    
-    # Dynamic title layouts
-    draw.text((40, 180), "PREMIUM VAULT", fill='#888888')
-    draw.text((40, 210), clean_title, fill='#ffffff')
-    draw.text((40, 380), "ADULT GRAPHICS FACTORY", fill='#ffaa00')
-    
-    # Save matching your template engine format
-    filename = f"static/images/{name}_preview.jpg"
-    card_img.save(filename, "JPEG", quality=95)
-    print(f"Successfully processed: {filename}")
+def collect_preview_sources(zip_path: Path, temp_dir: Path) -> list[str]:
+    extracted_paths = []
+    with zipfile.ZipFile(zip_path, "r") as archive:
+        image_members = [
+            member for member in archive.namelist()
+            if Path(member).suffix.lower() in IMAGE_EXTENSIONS and not member.endswith("/")
+        ]
 
-print("All 8 graphics-backed banners successfully built!")
+        for index, member in enumerate(sorted(image_members), start=1):
+            suffix = Path(member).suffix.lower()
+            target_path = temp_dir / f"{index:04d}{suffix}"
+            with archive.open(member) as source, open(target_path, "wb") as destination:
+                destination.write(source.read())
+            extracted_paths.append(str(target_path))
+
+    return extracted_paths
+
+
+def build_all_previews() -> None:
+    PREVIEW_DIR.mkdir(parents=True, exist_ok=True)
+
+    with open(PRODUCTS_JSON, "r", encoding="utf-8") as handle:
+        products = json.load(handle)
+
+    built = 0
+    skipped = 0
+
+    for product in products:
+        zip_path = Path(product.get("Zip_Path", ""))
+        preview_url = product.get("Preview_URL", "")
+        preview_name = Path(preview_url).name
+
+        if not zip_path.is_file() or not preview_name:
+            skipped += 1
+            continue
+
+        preview_path = PREVIEW_DIR / preview_name
+        with tempfile.TemporaryDirectory(prefix="preview-build-") as temp_dir_name:
+            temp_dir = Path(temp_dir_name)
+            image_paths = collect_preview_sources(zip_path, temp_dir)
+            if not image_paths:
+                skipped += 1
+                continue
+
+            if build_bundle_preview(image_paths, str(preview_path)):
+                built += 1
+                print(f"Built {preview_path.name} from {zip_path.name} ({len(image_paths)} images)")
+            else:
+                skipped += 1
+
+    print(f"Finished preview rebuild. Built {built}, skipped {skipped}.")
+
+
+if __name__ == "__main__":
+    build_all_previews()

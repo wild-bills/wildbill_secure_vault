@@ -4,6 +4,8 @@ import csv
 import json
 import re
 
+from deep_sweep_and_build import build_bundle_preview
+
 # ----------------- CONFIGURATION ----------------- #
 SOURCE_DIR = "/home/wildbill/adult_clipart_factory/gumroad_ready_assets"
 OUTPUT_DIR = "/home/wildbill/adult_clipart_factory/completed_bundles"
@@ -16,6 +18,18 @@ DEFAULT_DESC = "High-quality premium digital asset pack collection bundle."
 def clean_title(folder_name):
     spaced_name = re.sub(r'[_.\-]+', ' ', folder_name)
     return spaced_name.strip().title()
+
+
+def collect_bundle_images(folder_path):
+    image_extensions = ('.png', '.jpg', '.jpeg', '.webp')
+    image_paths = []
+
+    for root, _, files in os.walk(folder_path):
+        for filename in sorted(files):
+            if filename.lower().endswith(image_extensions):
+                image_paths.append(os.path.join(root, filename))
+
+    return image_paths
 
 def process_assets():
     print(f"📂 Scanning assets folder: {SOURCE_DIR}")
@@ -39,22 +53,18 @@ def process_assets():
         print(f"\n⚡ [{index}/{len(bundle_folders)}] Processing bundle folder: '{folder}'...")
 
         # 1. SMART PREVIEW EXTRACTION
-        preview_filename = "MISSING_PREVIEW.png"
-        image_extensions = ('.png', '.jpg', '.jpeg', '.webp')
-        
-        inner_files = os.listdir(folder_path)
-        images_inside = [f for f in inner_files if f.lower().endswith(image_extensions)]
-        
+        preview_filename = "MISSING_PREVIEW.jpg"
+        images_inside = collect_bundle_images(folder_path)
+
         if images_inside:
-            chosen_img = images_inside[0]
-            source_img_path = os.path.join(folder_path, chosen_img)
-            
-            img_ext = os.path.splitext(chosen_img)[1]
-            preview_filename = f"{folder}{img_ext}"
+            preview_filename = f"{folder}.jpg"
             target_img_path = os.path.join(OUTPUT_DIR, preview_filename)
-            
-            shutil.copy2(source_img_path, target_img_path)
-            print(f"   🎨 Extracted cover preview: {preview_filename}")
+
+            if build_bundle_preview(images_inside, target_img_path):
+                print(f"   🎨 Built stitched preview: {preview_filename} ({len(images_inside)} images)")
+            else:
+                preview_filename = "MISSING_PREVIEW.jpg"
+                print(f"   ⚠️ Warning: Could not build preview for '{folder}'")
         else:
             print(f"   ⚠️ Warning: No cover image found inside '{folder}'")
 

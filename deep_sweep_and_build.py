@@ -3,6 +3,9 @@ import shutil
 import zipfile
 import re
 import json
+import math
+
+from PIL import Image, ImageOps
 
 # ----------------- CONFIGURATION ----------------- #
 ROOT_SEARCH_DIR = "/home/wildbill/adult_clipart_factory"
@@ -14,6 +17,54 @@ TEMP_GROUND = "/home/wildbill/adult_clipart_factory/temp_vault_unpack"
 FILES_PER_ZIP = 150  # Enforces between 100-200 files constraint perfectly
 DEFAULT_PRICE = "15.00"
 # ------------------------------------------------- #
+
+PREVIEW_MAX_DIMENSION = 2400
+PREVIEW_TILE_SIZE = 180
+PREVIEW_GUTTER = 8
+PREVIEW_BG = "#0f172a"
+PREVIEW_TILE_BG = "#111827"
+
+
+def build_bundle_preview(image_paths, output_path):
+    valid_paths = []
+    for image_path in image_paths:
+        if os.path.isfile(image_path):
+            valid_paths.append(image_path)
+
+    if not valid_paths:
+        return False
+
+    image_count = len(valid_paths)
+    columns = max(1, math.ceil(math.sqrt(image_count)))
+    rows = math.ceil(image_count / columns)
+
+    tile_size = PREVIEW_TILE_SIZE
+    while columns * tile_size + (columns + 1) * PREVIEW_GUTTER > PREVIEW_MAX_DIMENSION and tile_size > 60:
+        tile_size -= 10
+
+    canvas_width = columns * tile_size + (columns + 1) * PREVIEW_GUTTER
+    canvas_height = rows * tile_size + (rows + 1) * PREVIEW_GUTTER
+    canvas = Image.new("RGB", (canvas_width, canvas_height), PREVIEW_BG)
+
+    for index, image_path in enumerate(valid_paths):
+        try:
+            with Image.open(image_path) as source_image:
+                tile_image = ImageOps.contain(source_image.convert("RGB"), (tile_size, tile_size))
+        except Exception:
+            continue
+
+        slot = Image.new("RGB", (tile_size, tile_size), PREVIEW_TILE_BG)
+        offset_x = (tile_size - tile_image.width) // 2
+        offset_y = (tile_size - tile_image.height) // 2
+        slot.paste(tile_image, (offset_x, offset_y))
+
+        row_index, column_index = divmod(index, columns)
+        paste_x = PREVIEW_GUTTER + column_index * (tile_size + PREVIEW_GUTTER)
+        paste_y = PREVIEW_GUTTER + row_index * (tile_size + PREVIEW_GUTTER)
+        canvas.paste(slot, (paste_x, paste_y))
+
+    canvas.save(output_path, "JPEG", quality=88, optimize=True)
+    return True
 
 def clean_theme_name(text):
     text = text.lower().replace("_", " ").replace("-", " ")
@@ -114,9 +165,13 @@ def run_deep_sweep():
                 shutil.rmtree(temp_pack_dir)
                 continue
 
-            # Extract the first image to use as the homepage thumbnail preview cover
+            copied_files.sort()
             preview_filename = f"{bundle_name}.jpg"
-            shutil.copy2(os.path.join(temp_pack_dir, copied_files[0]), os.path.join(OUTPUT_IMG_DIR, preview_filename))
+            preview_path = os.path.join(OUTPUT_IMG_DIR, preview_filename)
+            copied_file_paths = [os.path.join(temp_pack_dir, filename) for filename in copied_files]
+            if not build_bundle_preview(copied_file_paths, preview_path):
+                shutil.rmtree(temp_pack_dir)
+                continue
 
             # Compress subfolder into a pristine consumer ZIP file container
             final_zip_path = os.path.join(FINAL_STORE_DIR, bundle_name)
