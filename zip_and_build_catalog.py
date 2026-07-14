@@ -8,11 +8,12 @@ from deep_sweep_and_build import build_bundle_preview
 
 # ----------------- CONFIGURATION ----------------- #
 SOURCE_DIR = "/home/wildbill/adult_clipart_factory/gumroad_ready_assets"
-OUTPUT_DIR = "/home/wildbill/adult_clipart_factory/completed_bundles"
+OUTPUT_DIR = os.environ.get("VAULT_FINAL_STORE_DIR", "/run/media/wildbill/storage/completed_bundles")
 OUTPUT_CSV = "products.csv"
 OUTPUT_JSON = "products.json"  
 DEFAULT_PRICE = "15.00"
 DEFAULT_DESC = "High-quality premium digital asset pack collection bundle."
+MIN_FILES_PER_ZIP = 100
 # ------------------------------------------------- #
 
 def clean_title(folder_name):
@@ -55,6 +56,10 @@ def process_assets():
         # 1. SMART PREVIEW EXTRACTION
         preview_filename = "MISSING_PREVIEW.jpg"
         images_inside = collect_bundle_images(folder_path)
+
+        if len(images_inside) < MIN_FILES_PER_ZIP:
+            print(f"   ⏭️ Skipping '{folder}' because it only has {len(images_inside)} images.")
+            continue
 
         if images_inside:
             preview_filename = f"{folder}.jpg"
