@@ -13,6 +13,26 @@ DB_PATH = os.path.join(BASE_DIR, 'database', 'store.db')
 
 app = Flask(__name__)
 
+ALLOWED_CORS_ORIGINS = {
+    'https://clipart.wildbillsproplans.com',
+    'https://www.clipart.wildbillsproplans.com',
+}
+
+
+def cors_json_response(payload, status_code=200):
+    response = jsonify(payload)
+    response.status_code = status_code
+
+    origin = request.headers.get('Origin', '')
+    if origin in ALLOWED_CORS_ORIGINS:
+        response.headers['Access-Control-Allow-Origin'] = origin
+
+    response.headers['Vary'] = 'Origin'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response.headers['Access-Control-Max-Age'] = '86400'
+    return response
+
 # --- SECURE BACKBLAZE CLOUD STORAGE CONFIGURATION ---
 B2_KEY_ID = "005a9b63ec462530000000002"
 B2_APPLICATION_KEY = "K005l0PuojaZ6sv1IiHJgJAoJkxiDp8"
@@ -97,9 +117,12 @@ def build_catalog_sections():
 
     return sections
 
-@app.route('/paddle-webhook', methods=['POST'])
+@app.route('/paddle-webhook', methods=['POST', 'OPTIONS'])
 def paddle_webhook():
-    payload_json = request.get_json()
+    if request.method == 'OPTIONS':
+        return cors_json_response({'status': 'preflight-ok'})
+
+    payload_json = request.get_json(silent=True) or {}
     event_type = payload_json.get('event_type')
     
     if event_type == "transaction.completed":
@@ -126,7 +149,7 @@ def paddle_webhook():
                 print(f"⚠️ Warning: Received Paddle price ID {completed_price_id} but found no matching database entry.")
             conn.close()
             
-    return jsonify({"status": "success"}), 200
+    return cors_json_response({"status": "success"}, 200)
 
 
 # --- FRONTEND ROUTE: HOMEPAGE GALLERY ---
