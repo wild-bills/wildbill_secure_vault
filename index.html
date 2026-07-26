@@ -229,6 +229,44 @@
     </style>
 </head>
 <body>
+<!-- Save this block inside your index.html file for structural testing -->
+<div id="test-panel" style="border: 2px dashed #f39c12; padding: 20px; margin: 20px auto; max-width: 400px; font-family: sans-serif;">
+    <h3 style="margin-top: 0; color: #f39c12;">Pipeline Live Diagnostic Panel</h3>
+    <p style="font-size: 14px;">Simulates an automated customer purchase directly via your active Cloudflare tunnel route.</p>
+    
+    <label style="display: block; font-size: 12px; margin-bottom: 5px;">Test Delivery Email:</label>
+    <input type="email" id="test_email" value="wildbilltest@domain.com" style="width: 100%; padding: 8px; margin-bottom: 15px; box-sizing: border-box;">
+    
+    <button onclick="triggerMockOrder()" style="background: #f39c12; color: #fff; border: none; padding: 10px 15px; font-weight: bold; width: 100%; cursor: pointer; border-radius: 4px;">
+        Fire Verification Payload
+    </button>
+</div>
+
+<script>
+async function triggerMockOrder() {
+    const targetEmail = document.getElementById('test_email').value;
+    const gatewayUrl = 'https://wildbillsproplans.com';
+    
+    const payload = {
+        status: "finished",
+        order_id: "bundle_101_cyberpunk",
+        customer_email: targetEmail
+    };
+
+    try {
+        const response = await fetch(gatewayUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        alert('Server Response: ' + JSON.stringify(result));
+    } catch (error) {
+        alert('Pipeline Delivery Error: ' + error.message);
+    }
+}
+</script>
+
     <main class="container">
         <section class="hero">
             <p class="eyebrow">Catalog categories</p>
