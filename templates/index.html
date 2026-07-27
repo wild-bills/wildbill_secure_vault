@@ -254,6 +254,38 @@
     </main>
 
     <script>
+        // Ensure your frontend targets the correct api subdomain route
+const API_URL = "https://api-clipart.wildbillsproplans.com/paddle-webhook";
+
+document.addEventListener("DOMContentLoaded", () => {
+    const buyButtons = document.querySelectorAll(".buy-button");
+    buyButtons.forEach(button => {
+        button.addEventListener("click", (e) => {
+            const productId = button.getAttribute("data-product-id"); // e.g., bundle_101_cyberpunk
+            const userEmail = document.getElementById("customer-email").value;
+
+            fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "order_id": productId,
+                    "customer_email": userEmail,
+                    "status": "success"
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log("Gateway connected successfully:", data);
+            })
+            .catch(err => {
+                console.error("Transmission path blocked:", err);
+            });
+        });
+    });
+});
+
         const categoryGrid = document.getElementById('category-grid');
 
         function escapeHtml(value) {
