@@ -301,7 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const catalogGrid = document.getElementById("product-catalog-grid");
     
     // Fetch directly from your live authenticated tunnel API route
-    fetch("https://wildbillsproplans.com")
+    fetch("https://api-clipart.wildbillsproplans.com")
         .then(res => res.json())
         .then(data => {
             if (data.status === "success" && data.products.length > 0) {
