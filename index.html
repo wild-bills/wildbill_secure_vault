@@ -291,115 +291,50 @@ async function triggerMockOrder() {
         </footer>
     </main>
 
-    <script>
-        const categoryGrid = document.getElementById('category-grid');
-
-        function escapeHtml(value) {
-            return String(value)
-                .replaceAll('&', '&amp;')
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')
-                .replaceAll('"', '&quot;')
-                .replaceAll("'", '&#39;');
-        }
-
-        function slugifyTheme(themeName) {
-            return String(themeName || 'other')
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/^-+|-+$/g, '') || 'other';
-        }
-
-        function normalizePreviewUrl(previewUrl) {
-            return String(previewUrl || '').replace(/^\/static\/previews\//, '/previews/');
-        }
-
-        function buildPurchaseUrl(product) {
-<!-- Real Live Production Button Layout -->
-<div class="product-card" style="background:#111; color:#fff; padding:20px; border-radius:8px; border:1px solid #333; max-width:300px;">
-    <h3>Cyberpunk Vector Clipart Collection 01</h3>
-    <p style="color:#e74c3c; font-weight:bold;">$20.00 USD</p>
-    
-    <!-- Direct link to your verified backend pipeline -->
-    <form action="https://wildbillsproplans.com" method="POST">
-        <!-- Tells your script exactly which local zip file to fetch -->
-        <input type="hidden" name="order_id" value="bundle_101_cyberpunk">
-        
-        <label style="display:block; font-size:12px; margin-bottom:5px; color:#888;">Delivery Email:</label>
-        <input type="email" name="customer_email" required placeholder="Enter your email" 
-               style="width:90%; padding:8px; margin-bottom:15px; background:#222; border:1px solid #444; color:#fff; border-radius:4px;">
-        
-        <button type="submit" style="width:97%; padding:10px; background:#e74c3c; color:#fff; font-weight:bold; border:none; border-radius:4px; cursor:pointer;">
-            Buy Asset Pack Now
-        </button>
-    </form>
+<!-- Automated Production Grid -->
+<div id="product-catalog-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px;">
+    <!-- Your local background script will build and insert the cards directly here -->
 </div>
 
-
-        function deriveTheme(title) {
-            const value = String(title || '').trim();
-            const separators = [' Vol', ' vol', ' Collection', ' collection'];
-            for (const separator of separators) {
-                const index = value.indexOf(separator);
-                if (index > 0) {
-                    return value.slice(0, index).trim();
-                }
-            }
-            return value.split(' ').slice(0, 4).join(' ').trim() || 'Other';
-        }
-
-        function renderCategoryCard(category) {
-            const previewUrl = normalizePreviewUrl(category.preview || '');
-            const href = `/category/?theme=${encodeURIComponent(category.slug)}`;
-            return `
-                <a class="category-card" href="${href}">
-                    <div class="category-thumb">
-                        ${previewUrl ? `<img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(category.theme)} preview">` : ''}
-                    </div>
-                    <div class="category-body">
-                        <h2>${escapeHtml(category.theme)}</h2>
-                        <p class="category-count">${category.count} preview card${category.count === 1 ? '' : 's'}</p>
-                        <span class="category-pill">Open category</span>
-                    </div>
-                </a>
-            `;
-        }
-
-            fetch('products.json')
-            .then((response) => response.json())
-            .then((products) => {
-                if (!Array.isArray(products) || products.length === 0) {
-                    categoryGrid.innerHTML = '<div class="empty-state">No categories found.</div>';
-                    return;
-                }
-
-                const grouped = products.reduce((accumulator, product) => {
-                    const theme = deriveTheme(product.Title);
-                    const slug = slugifyTheme(theme);
-                    if (!accumulator[slug]) {
-                        accumulator[slug] = {
-                            slug,
-                            theme,
-                            count: 0,
-                            preview: product.Preview_URL || '',
-                        };
-                    }
-                    accumulator[slug].count += 1;
-                    if (!accumulator[slug].preview && product.Preview_URL) {
-                        accumulator[slug].preview = product.Preview_URL;
-                    }
-                    return accumulator;
-                }, {});
-
-                const categories = Object.values(grouped).sort((left, right) => {
-                    return right.count - left.count || left.theme.localeCompare(right.theme);
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const catalogGrid = document.getElementById("product-catalog-grid");
+    
+    // Fetch directly from your live authenticated tunnel API route
+    fetch("https://wildbillsproplans.com")
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success" && data.products.length > 0) {
+                catalogGrid.innerHTML = ""; // Clear out placeholder text
+                
+                data.products.forEach(productCode => {
+                    // Turn file underscores into clean visual titles automatically
+                    const displayTitle = productCode.replace(/_/g, ' ').toUpperCase();
+                    
+                    const productCard = `
+                        <div class="card" style="border:1px solid #333; background:#111; color:#fff; padding:20px; border-radius:8px;">
+                            <h3 style="color:#e74c3c; margin-top:0;">${displayTitle}</h3>
+                            <p style="color:#aaa; font-size:14px;">Complete high-resolution visual collection bundle archive.</p>
+                            <form action="https://wildbillsproplans.com" method="POST">
+                                <input type="hidden" name="order_id" value="${productCode}">
+                                <input type="email" name="customer_email" required placeholder="Your Delivery Email" 
+                                       style="width:90%; padding:8px; margin-bottom:12px; background:#222; color:#fff; border:1px solid #444; border-radius:4px;">
+                                <button type="submit" style="width:97%; padding:10px; background:#e74c3c; color:#fff; font-weight:bold; border:none; border-radius:4px; cursor:pointer;">
+                                    Purchase Bundle
+                                </button>
+                            </form>
+                        </div>
+                    `;
+                    catalogGrid.innerHTML += productCard;
                 });
+            } else {
+                catalogGrid.innerHTML = "<p style='color:#666;'>No product bundles currently queued for distribution.</p>";
+            }
+        })
+        .catch(err => console.error("Inventory loop failed to load:", err));
+});
+</script>
 
-                categoryGrid.innerHTML = categories.map(renderCategoryCard).join('');
-            })
-            .catch(() => {
-                categoryGrid.innerHTML = '<div class="empty-state">Catalog unavailable right now.</div>';
-            });
     </script>
 </body>
 </html>
