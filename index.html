@@ -271,6 +271,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Ensure your frontend targets the correct api subdomain route
 const API_URL = "https://api-clipart.wildbillsproplans.com/paddle-webhook";
+// --- DYNAMIC CATALOG RENDERER ---
+document.addEventListener('DOMContentLoaded', () => {
+    const gridContainer = document.querySelector('.category-grid');
+    
+    fetch('https://wildbillsproplans.com')
+        .then(res => {
+            if (!res.ok) throw new Error("Network response error: " + res.status);
+            return res.json();
+        })
+        .then(data => {
+            if (data.status === "success" && data.products.length > 0) {
+                // Clear the "Loading categories..." spinner completely
+                gridContainer.innerHTML = '';
+                
+                // Loop through your 120 clipart packages
+                data.products.forEach(prodId => {
+                    // Turn underscores into clean visual space text headings
+                    const displayTitle = prodId.replace(/_/g, ' ').toUpperCase();
+                    
+                    const cardHtml = `
+                        <div class="product-card" style="background:#141414; padding:20px; border:1px solid #261010; border-radius:6px; margin:10px; text-align:center;">
+                            <img src="https://wildbillsproplans.com{prodId}_Storefront_Preview.png" alt="${displayTitle}" style="max-width:100%; border-radius:4px; margin-bottom:15px;" onerror="this.src='https://wildbillsproplans.com'">
+                            <h3 style="color:#e74c3c; font-size:16px; margin-bottom:10px;">${displayTitle}</h3>
+                            <p style="color:#aaa; font-size:13px; margin-bottom:15px;">Premium line artwork collection ready for instant commercial use download.</p>
+                            <button class="buy-button" data-product-id="${prodId}" style="width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; font-weight:bold; text-transform:uppercase; border-radius:4px; cursor:pointer;">
+                                Buy Pack - $20.00
+                            </button>
+                        </div>
+                    `;
+                    gridContainer.innerHTML += cardHtml;
+                });
+            } else {
+                gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">No active product packages found in the vault catalog.</div>';
+            }
+        })
+        .catch(err => {
+            console.error("Catalog parse dropped:", err);
+            gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">Handshake error. Failed to map database inventory files over the secure tunnel.</div>';
+        });
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     const buyButtons = document.querySelectorAll(".buy-button");
