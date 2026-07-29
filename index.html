@@ -489,6 +489,53 @@ document.getElementById("vault-support-form").addEventListener("submit", functio
     });
 });
 </script>
+<!-- HARD OVERRIDE TUNNEL INVENTORY CODES -->
+<script>
+(function() {
+    console.log("[VAULT OVERRIDE] Bypassing Cloudflare background cache configurations...");
+    
+    function injectClipartGridCards() {
+        const gridContainer = document.querySelector('.category-grid');
+        if (!gridContainer) return;
+        
+        // Connects character-for-character down your verified backend subdomain tunnel
+        fetch('https://wildbillsproplans.com')
+            .then(res => {
+                if (!res.ok) throw new Error("HTTP connection fault state: " + res.status);
+                return res.json();
+            })
+            .then(data => {
+                if (data.status === "success" && Array.isArray(data.products)) {
+                    gridContainer.innerHTML = ''; // Exterminate the loading text spinner instantly
+                    
+                    data.products.forEach(prodId => {
+                        const displayTitle = prodId.replace(/_/g, ' ').toUpperCase();
+                        
+                        const cardHtml = `
+                            <div class="product-card" style="background:#141414; padding:20px; border:1px solid #261010; border-radius:6px; margin:10px; text-align:center; display:inline-block; width:280px; vertical-align:top; box-shadow:0 4px 10px rgba(0,0,0,0.5);">
+                                <img src="https://wildbillsproplans.com{prodId}_Storefront_Preview.png" alt="${displayTitle}" style="max-width:100%; border-radius:4px; margin-bottom:15px;" onerror="this.src='https://wildbillsproplans.com'">
+                                <h3 style="color:#e74c3c; font-size:15px; margin-bottom:10px; font-family:Arial, sans-serif; min-height:40px;">${displayTitle}</h3>
+                                <p style="color:#aaa; font-size:12px; margin-bottom:15px; font-family:Arial, sans-serif;">Premium transparent background design vectors ready for download.</p>
+                                <button class="buy-button" data-product-id="${prodId}" style="width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; font-weight:bold; text-transform:uppercase; border-radius:4px; cursor:pointer;">
+                                    Buy Pack - $20.00
+                                </button>
+                            </div>
+                        `;
+                        gridContainer.innerHTML += cardHtml;
+                    });
+                }
+            })
+            .catch(err => console.error("[VAULT OVERRIDE ERROR] Tunnel fetch dropped:", err));
+    }
+
+    // Fire the rendering sequence immediately on browser boot cycles
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', injectClipartGridCards);
+    } else {
+        injectClipartGridCards();
+    }
+})();
+</script>
 
 </body>
 </html>
