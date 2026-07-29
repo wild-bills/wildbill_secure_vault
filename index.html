@@ -275,7 +275,7 @@ const API_URL = "https://api-clipart.wildbillsproplans.com/paddle-webhook";
 document.addEventListener('DOMContentLoaded', () => {
     const gridContainer = document.querySelector('.category-grid');
     
-    fetch('https://wildbillsproplans.com')
+    fetch('https://api-clipart.wildbillsproplans.com')
         .then(res => {
             if (!res.ok) throw new Error("Network response error: " + res.status);
             return res.json();
@@ -464,7 +464,7 @@ document.getElementById("vault-support-form").addEventListener("submit", functio
     statusMsg.style.display = "block";
     statusMsg.style.color = "#aaa";
     statusMsg.innerText = "Transmitting secure verification payload down tunnel...";
-    fetch("https://wildbillsproplans.com", {
+    fetch("https://api-clipart.wildbillsproplans.com", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -499,7 +499,7 @@ document.getElementById("vault-support-form").addEventListener("submit", functio
         if (!gridContainer) return;
         
         // Connects character-for-character down your verified backend subdomain tunnel
-        fetch('https://wildbillsproplans.com')
+        fetch('https://api-clipart.wildbillsproplans.com')
             .then(res => {
                 if (!res.ok) throw new Error("HTTP connection fault state: " + res.status);
                 return res.json();
