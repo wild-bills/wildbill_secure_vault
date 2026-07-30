@@ -35,7 +35,7 @@
     const gridContainer = document.getElementById('main-catalog-grid');
     const filterBar = document.getElementById('vault-filter-bar');
 
-    fetch('https://api-clipart.wildbillsproplans.com/static/products.json')
+    fetch('https://wildbillsproplans.com')
         .then(res => {
             if (!res.ok) throw new Error("HTTP connection fault: " + res.status);
             return res.json();
@@ -81,9 +81,14 @@
         }
         productArray.forEach(prodId => {
             const displayTitle = prodId.replace(/_/g, ' ').toUpperCase();
+            
+            // Convert to lowercase to check against your actual filenames
+            const cleanId = prodId.toLowerCase();
+            
             const cardHtml = `
                 <div class="product-card" style="background:#141414; padding:20px; border:1px solid #261010; border-radius:6px; margin:10px; text-align:center; display:inline-block; width:280px; vertical-align:top;">
-                    <img src="https://wildbillsproplans.com{prodId}_Storefront_Preview.png" alt="${displayTitle}" style="max-width:100%; border-radius:4px; margin-bottom:15px;" onerror="this.onerror=null; this.src='https://wildbillsproplans.com';">
+                    <!-- Maps directly down your /previews/ symlink folder using the real .jpg file patterns -->
+                    <img src="https://wildbillsproplans.com{prodId}_preview.jpg" alt="${displayTitle}" style="max-width:100%; border-radius:4px; margin-bottom:15px;" onerror="this.onerror=null; this.src='https://wildbillsproplans.com{cleanId}_preview.jpg';">
                     <h3 style="color:#e74c3c; font-size:14px; margin-bottom:10px; min-height:40px;">${displayTitle}</h3>
                     <button class="buy-button" data-product-id="${prodId}" style="width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; font-weight:bold; text-transform:uppercase; border-radius:4px; cursor:pointer;">Buy Pack - $20.00</button>
                 </div>
