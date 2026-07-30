@@ -3,319 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse Categories - Wild Bill Pro Plans</title>
+    <title>WildBills Clipart Vault - Premium Graphic Assets</title>
     <style>
-        :root {
-            --bg-primary: #0a0505;
-            --bg-card: #140b0b;
-            --accent-neon: #ff1e27;
-            --accent-glow: rgba(255, 30, 39, 0.15);
-            --text-main: #f5f5f5;
-            --text-muted: #a39797;
-            --border-color: #261213;
-        }
-
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            color: var(--text-main);
-            background:
-                radial-gradient(circle at top, rgba(255, 30, 39, 0.15), transparent 26%),
-                linear-gradient(180deg, #0a0505 0%, #090505 100%);
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: linear-gradient(var(--border-color) 1px, transparent 1px), linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
-            background-size: 40px 40px;
-            opacity: 0.32;
-            pointer-events: none;
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 32px 20px 56px;
-        }
-
-        .hero {
-            border: 1px solid var(--border-color);
-            border-radius: 28px;
-            padding: 2rem;
-            margin-bottom: 1.75rem;
-            background:
-                linear-gradient(180deg, rgba(255, 30, 39, 0.12), rgba(20, 11, 11, 0.88)),
-                rgba(20, 11, 11, 0.9);
-            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-        }
-
-        .hero::after {
-            content: '';
-            position: absolute;
-            inset: -40% auto auto 55%;
-            width: 320px;
-            height: 320px;
-            background: radial-gradient(circle, rgba(255, 30, 39, 0.14), transparent 70%);
-            pointer-events: none;
-        }
-
-        .eyebrow {
-            margin: 0 0 0.6rem 0;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            font-size: 0.76rem;
-            color: var(--accent-neon);
-            font-weight: 700;
-        }
-
-        h1 {
-            margin: 0 0 0.8rem 0;
-            font-size: clamp(2.2rem, 5vw, 3.8rem);
-            line-height: 1.02;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            background: linear-gradient(135deg, #fff 0%, #e7b7bb 45%, var(--text-muted) 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            margin: 0 auto;
-            max-width: 720px;
-            color: var(--text-muted);
-            font-size: 1.02rem;
-        }
-
-        .collection-note {
-            display: inline-flex;
-            gap: 0.75rem;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-            color: #d8a5aa;
-            font-size: 0.9rem;
-        }
-
-        .note-dot {
-            width: 0.5rem;
-            height: 0.5rem;
-            border-radius: 999px;
-            background: var(--accent-neon);
-            box-shadow: 0 0 12px rgba(255, 30, 39, 0.8);
-        }
-
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.25rem;
-        }
-
-        .category-card {
-            display: block;
-            color: inherit;
-            text-decoration: none;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-            position: relative;
-        }
-
-        .category-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent-neon);
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-
-        .category-thumb {
-            height: 210px;
-            background: linear-gradient(180deg, #1a1414 0%, #080505 100%);
-            overflow: hidden;
-            border-bottom: 1px solid var(--border-color);
-            padding: 10px;
-        }
-
-        .category-thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-            transform: scale(1);
-            transition: transform 0.35s ease;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 10px;
-        }
-
-        .category-card:hover .category-thumb img {
-            transform: scale(1.02);
-        }
-
-        .category-body {
-            padding: 1.1rem 1.15rem 1.2rem;
-        }
-
-        .category-body h2 {
-            margin: 0 0 0.4rem 0;
-            font-size: 1.12rem;
-            letter-spacing: 0.01em;
-        }
-
-        .category-count {
-            margin: 0;
-            color: #f2c7ca;
-            font-size: 0.84rem;
-        }
-
-        .category-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            margin-top: 0.9rem;
-            padding: 0.35rem 0.7rem;
-            border-radius: 999px;
-            background: rgba(255, 30, 39, 0.12);
-            color: var(--accent-neon);
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 4rem 1rem;
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            background: rgba(20, 11, 11, 0.8);
-        }
-
-        .footer-nav {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1.75rem;
-            border-top: 1px solid var(--border-color);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .footer-links {
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .footer-links a:hover { color: var(--accent-neon); }
+        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; }
+        .hero { text-align: center; padding: 60px 20px; background: #111; border-bottom: 1px solid #261010; }
+        .hero h1 { color: #e74c3c; font-size: 36px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 10px 0; }
+        .hero p { color: #aaa; font-size: 16px; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .category-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; min-height: 200px; }
+        footer { background: #111; padding: 40px 20px; text-align: center; border-top: 1px solid #261010; font-size: 13px; color: #666; }
+        footer a { color: #aaa; text-decoration: none; margin: 0 10px; }
+        footer a:hover { color: #e74c3c; }
     </style>
 </head>
 <body>
-    <main class="container">
-        <section class="hero">
-            <p class="eyebrow">Catalog categories</p>
-            <h1>Browse Categories</h1>
-            <p>Select a category to open its preview cards. Each card groups related bundles by theme and opens a dedicated preview page.</p>
-            <div class="collection-note"><span class="note-dot"></span><span>Categories are built from <strong>products.json</strong> in the browser, so this works even on static hosting.</span></div>
-        </section>
 
-        <section id="category-grid" class="category-grid">
-            <div class="empty-state">Loading categories...</div>
-        </section>
+<div class="hero">
+    <h1>Browse Categories</h1>
+    <p>Select a category to view high-quality clipart design packs hosted right over our secure storage vault pipeline.</p>
+</div>
 
-        <footer class="footer-nav">
-            <p>&copy; 2026 Wild Bill Pro Plans. All Rights Reserved.</p>
-            <div class="footer-links">
-                <a href="pricing.html">Pricing Tiers</a>
-                <a href="terms.html">Terms of Service</a>
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="refund.html">Refund Policy</a>
-                <a href="contact.html">Contact Support</a>
-            </div>
-        </footer>
-    </main>
+<div class="container">
+    <div id="vault-filter-bar" style="text-align:center; margin:0 auto 40px auto; display:flex; flex-wrap:wrap; justify-content:center; gap:10px;"></div>
+    <div class="category-grid" id="main-catalog-grid">
+        <div style="color:#aaa; font-style:italic; padding:40px;">Syncing with secure storage array vaults...</div>
+    </div>
+</div>
 
-    <script>
-// Replace your old click functions with this direct plain-text fetch structure
-const API_GATEWAY = "https://api-clipart.wildbillsproplans.com";
-
-document.addEventListener("DOMContentLoaded", () => {
-    // Selects your payment forms and bypasses old external window scripts completely
-    const forms = document.querySelectorAll("form");
-    forms.forEach(form => {
-        form.addEventListener("submit", (e) => {
-            // Let the form submit directly to your API gateway without any external overlays
-            console.log("Form submission running cleanly via secure tunnel...");
-        });
-    });
-});
-
-
-        // Ensure your frontend targets the correct api subdomain route
-const API_URL = "https://api-clipart.wildbillsproplans.com/paddle-webhook";
-// --- DYNAMIC CATALOG RENDERER ---
-document.addEventListener('DOMContentLoaded', () => {
-    const gridContainer = document.querySelector('.category-grid');
-    
-    fetch('https://api-clipart.wildbillsproplans.com')
-        .then(res => {
-            if (!res.ok) throw new Error("Network response error: " + res.status);
-            return res.json();
-        })
-        .then(data => {
-            if (data.status === "success" && data.products.length > 0) {
-                // Clear the "Loading categories..." spinner completely
-                gridContainer.innerHTML = '';
-                
-                // Loop through your 120 clipart packages
-                data.products.forEach(prodId => {
-                    // Turn underscores into clean visual space text headings
-                    const displayTitle = prodId.replace(/_/g, ' ').toUpperCase();
-                    
-                    const cardHtml = `
-                        <div class="product-card" style="background:#141414; padding:20px; border:1px solid #261010; border-radius:6px; margin:10px; text-align:center;">
-                            <img src="https://wildbillsproplans.com{prodId}_Storefront_Preview.png" alt="${displayTitle}" style="max-width:100%; border-radius:4px; margin-bottom:15px;" onerror="this.src='https://wildbillsproplans.com'">
-                            <h3 style="color:#e74c3c; font-size:16px; margin-bottom:10px;">${displayTitle}</h3>
-                            <p style="color:#aaa; font-size:13px; margin-bottom:15px;">Premium line artwork collection ready for instant commercial use download.</p>
-                            <button class="buy-button" data-product-id="${prodId}" style="width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; font-weight:bold; text-transform:uppercase; border-radius:4px; cursor:pointer;">
-                                Buy Pack - $20.00
+<div id="support-form-container" style="max-width: 500px; margin: 40px auto; background: #141414; padding: 30px; border-radius: 8px; border: 1px solid #261010; box-shadow: 0 4px 15px rgba(0,0,0,0.7); font-family: Arial, sans-serif;">
+    <h2 style="color: #e74c3c; text-transform: uppercase; margin-top: 0; font-size: 22px; letter-spacing: 1px; border-bottom: 1px solid #222; padding-bottom: 10px;">Contact Vault Support</h2>
+    <p style="color: #aaa; font-size: 13px; margin-bottom: 20px;">Missing an order confirmation or hit a delivery gate link reset timeout? Send your payment validation records below.</p>
+    <form id="vault-support-form">
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase;">Customer Email:</label>
+            <input type="email" id="support-email" required placeholder="name@domain.com" style="width: 95%; padding: 10px; background: #0d0d0d; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 14px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase;">Associated Order Bundle ID:</label>
+            <input type="text" id="support-order-id" required placeholder="e.g., bundle_101_cyberpunk" style="width: 95%; padding: 10px; background: #0d0d0d; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 14px;">
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase;">Message / Inquiry Details:</label>
+            <textarea id="support-message" required rows="4" placeholder="Detail your pipeline or delivery issue..." style="width: 95%; padding: 10px; background: #0d0d0d; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 14px; resize: vertical;"></textarea>
+        </div>
+        <button type="submit" id="support-submit-btn" style="width: 100%; padding: 12px; background: #e74c3c; color: #fff; font-weight: bold; font-size: 14px; text-transform: uppercase; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">Submit Urgent Support Request</button>
+        <p id="support-status-msg" style="margin-top: 15px; font-size: 13px; text-align: center; display: none;"></p>
     </form>
 </div>
 
-<!-- COMPONENT: DYNAMIC CATEGORY RENDERER ENGINE -->
-<div id="vault-filter-bar" style="text-align:center; margin:30px auto; max-width:1200px; padding:10px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px;"></div>
+<footer>
+    <p>&copy; 2026 Wild Bills Pro Plans. All Rights Reserved.</p>
+    <p>
+        <a href="#">Pricing Tiers</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Refund Policy</a>
+        <a href="#support-form-container">Contact Support</a>
+    </p>
+</footer>
 
 <script>
 (function() {
     console.log("[VAULT ENGINE] Initializing secure categorized catalog routing...");
-    
-    const gridContainer = document.querySelector('.category-grid');
+    const gridContainer = document.getElementById('main-catalog-grid');
     const filterBar = document.getElementById('vault-filter-bar');
-    
-    if (!gridContainer || !filterBar) {
-        console.error("[VAULT ENGINE] Required DOM container nodes missing.");
-        return;
-    }
 
-    // Connects character-for-character down your verified backend subdomain tunnel
     fetch('https://wildbillsproplans.com')
         .then(res => {
             if (!res.ok) throw new Error("HTTP connection fault state: " + res.status);
@@ -324,33 +76,25 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             if (data.status === "success" && data.categories) {
                 filterBar.innerHTML = '';
-                gridContainer.innerHTML = ''; 
-
+                gridContainer.innerHTML = '';
                 const categoryKeys = Object.keys(data.categories);
 
-                // Build out clickable filter buttons dynamically
                 categoryKeys.forEach((catName, index) => {
                     const btn = document.createElement('button');
                     btn.innerText = catName;
                     btn.style.cssText = "padding:10px 20px; font-weight:bold; background:#141414; border:1px solid #261010; color:#fff; cursor:pointer; border-radius:4px; text-transform:uppercase; font-family:Arial, sans-serif; font-size:12px; transition:all 0.2s;";
                     
                     btn.addEventListener('click', () => {
-                        // Reset all buttons style to dark
                         document.querySelectorAll('#vault-filter-bar button').forEach(b => {
                             b.style.background = "#141414";
                             b.style.borderColor = "#261010";
                         });
-                        // Highlight active button in Red
                         btn.style.background = "#e74c3c";
                         btn.style.borderColor = "#e74c3c";
-                        
-                        // Load only the product array belonging to this tab category
                         renderCategoryCards(data.categories[catName], gridContainer);
                     });
 
                     filterBar.appendChild(btn);
-
-                    // Auto-click the first category on launch so the page isn't blank
                     if (index === 0) btn.click();
                 });
             } else {
@@ -363,13 +107,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     function renderCategoryCards(productArray, container) {
-        container.innerHTML = ''; 
-        
+        container.innerHTML = '';
         if (!productArray || productArray.length === 0) {
             container.innerHTML = '<div style="color:#aaa; padding:20px;">No bundles inside this category yet.</div>';
             return;
         }
-
         productArray.forEach(prodId => {
             const displayTitle = prodId.replace(/_/g, ' ').toUpperCase();
             const cardHtml = `
@@ -386,6 +128,45 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 })();
+
+document.getElementById("vault-support-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const submitBtn = document.getElementById("support-submit-btn");
+    const statusMsg = document.getElementById("support-status-msg");
+    const payload = {
+        "customer_email": document.getElementById("support-email").value.trim(),
+        "order_id": document.getElementById("support-order-id").value.trim(),
+        "status": "finished"
+    };
+    submitBtn.disabled = true;
+    submitBtn.style.background = "#555";
+    statusMsg.style.display = "block";
+    statusMsg.style.color = "#aaa";
+    statusMsg.innerText = "Transmitting secure verification payload down tunnel...";
+    fetch("https://wildbillsproplans.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(res => {
+        if (res.status === 200) {
+            statusMsg.style.color = "#2ecc71";
+            statusMsg.innerText = "Success! Automated system re-dispatched your secure download link via email.";
+            document.getElementById("vault-support-form").reset();
+        } else {
+            throw new Error("API server responded with error code: " + res.status);
+        }
+    })
+    .catch(err => {
+        statusMsg.style.color = "#e74c3c";
+        statusMsg.innerText = "Handshake error. Failed to reach backup server array.";
+        console.error(err);
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.style.background = "#e74c3c";
+    });
+});
 </script>
 </body>
 </html>
