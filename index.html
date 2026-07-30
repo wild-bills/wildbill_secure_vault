@@ -297,267 +297,85 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p style="color:#aaa; font-size:13px; margin-bottom:15px;">Premium line artwork collection ready for instant commercial use download.</p>
                             <button class="buy-button" data-product-id="${prodId}" style="width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; font-weight:bold; text-transform:uppercase; border-radius:4px; cursor:pointer;">
                                 Buy Pack - $20.00
-                            </button>
-                        </div>
-                    `;
-                    gridContainer.innerHTML += cardHtml;
+    </form>
+</div>
+
+<!-- COMPONENT: DYNAMIC CATEGORY RENDERER ENGINE -->
+<div id="vault-filter-bar" style="text-align:center; margin:30px auto; max-width:1200px; padding:10px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px;"></div>
+
+<script>
+(function() {
+    console.log("[VAULT ENGINE] Initializing secure categorized catalog routing...");
+    
+    const gridContainer = document.querySelector('.category-grid');
+    const filterBar = document.getElementById('vault-filter-bar');
+    
+    if (!gridContainer || !filterBar) {
+        console.error("[VAULT ENGINE] Required DOM container nodes missing.");
+        return;
+    }
+
+    // Connects character-for-character down your verified backend subdomain tunnel
+    fetch('https://wildbillsproplans.com')
+        .then(res => {
+            if (!res.ok) throw new Error("HTTP connection fault state: " + res.status);
+            return res.json();
+        })
+        .then(data => {
+            if (data.status === "success" && data.categories) {
+                filterBar.innerHTML = '';
+                gridContainer.innerHTML = ''; 
+
+                const categoryKeys = Object.keys(data.categories);
+
+                // Build out clickable filter buttons dynamically
+                categoryKeys.forEach((catName, index) => {
+                    const btn = document.createElement('button');
+                    btn.innerText = catName;
+                    btn.style.cssText = "padding:10px 20px; font-weight:bold; background:#141414; border:1px solid #261010; color:#fff; cursor:pointer; border-radius:4px; text-transform:uppercase; font-family:Arial, sans-serif; font-size:12px; transition:all 0.2s;";
+                    
+                    btn.addEventListener('click', () => {
+                        // Reset all buttons style to dark
+                        document.querySelectorAll('#vault-filter-bar button').forEach(b => {
+                            b.style.background = "#141414";
+                            b.style.borderColor = "#261010";
+                        });
+                        // Highlight active button in Red
+                        btn.style.background = "#e74c3c";
+                        btn.style.borderColor = "#e74c3c";
+                        
+                        // Load only the product array belonging to this tab category
+                        renderCategoryCards(data.categories[catName], gridContainer);
+                    });
+
+                    filterBar.appendChild(btn);
+
+                    // Auto-click the first category on launch so the page isn't blank
+                    if (index === 0) btn.click();
                 });
             } else {
-                gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">No active product packages found in the vault catalog.</div>';
+                gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">No active product categories found in the database.</div>';
             }
         })
         .catch(err => {
-            console.error("Catalog parse dropped:", err);
+            console.error("[VAULT ENGINE CRASH] Tunnel fetch dropped:", err);
             gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">Handshake error. Failed to map database inventory files over the secure tunnel.</div>';
         });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    const buyButtons = document.querySelectorAll(".buy-button");
-    buyButtons.forEach(button => {
-        button.addEventListener("click", (e) => {
-            const productId = button.getAttribute("data-product-id"); // e.g., bundle_101_cyberpunk
-            const userEmail = document.getElementById("customer-email").value;
-
-            fetch(API_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    "order_id": productId,
-                    "customer_email": userEmail,
-                    "status": "success"
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                console.log("Gateway connected successfully:", data);
-            })
-            .catch(err => {
-                console.error("Transmission path blocked:", err);
-            });
-        });
-    });
-});
-
-        const categoryGrid = document.getElementById('category-grid');
-
-        function escapeHtml(value) {
-            return String(value)
-                .replaceAll('&', '&amp;')
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')
-                .replaceAll('"', '&quot;')
-                .replaceAll("'", '&#39;');
-        }
-
-        function slugifyTheme(themeName) {
-            return String(themeName || 'other')
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/^-+|-+$/g, '') || 'other';
-        }
-
-        function normalizePreviewUrl(previewUrl) {
-            return String(previewUrl || '').replace(/^\/static\/previews\//, '/previews/');
-        }
-
-        function deriveTheme(title) {
-            const value = String(title || '').trim();
-            const separators = [' Vol', ' vol', ' Collection', ' collection'];
-            for (const separator of separators) {
-                const index = value.indexOf(separator);
-                if (index > 0) {
-                    return value.slice(0, index).trim();
-                }
-            }
-            return value.split(' ').slice(0, 4).join(' ').trim() || 'Other';
-        }
-
-        function renderCategoryCard(category) {
-            const previewUrl = normalizePreviewUrl(category.preview || '');
-            const href = `/category?theme=${encodeURIComponent(category.slug)}`;
-            return `
-                <a class="category-card" href="${href}">
-                    <div class="category-thumb">
-                        ${previewUrl ? `<img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(category.theme)} preview">` : ''}
-                    </div>
-                    <div class="category-body">
-                        <h2>${escapeHtml(category.theme)}</h2>
-                        <p class="category-count">${category.count} preview card${category.count === 1 ? '' : 's'}</p>
-                        <span class="category-pill">Open category</span>
-                    </div>
-                </a>
-            `;
-        }
-
-        fetch('products.json')
-            .then((response) => response.json())
-            .then((products) => {
-                if (!Array.isArray(products) || products.length === 0) {
-                    categoryGrid.innerHTML = '<div class="empty-state">No categories found.</div>';
-                    return;
-                }
-
-                const grouped = products.reduce((accumulator, product) => {
-                    const theme = deriveTheme(product.Title);
-                    const slug = slugifyTheme(theme);
-                    if (!accumulator[slug]) {
-                        accumulator[slug] = {
-                            slug,
-                            theme,
-                            count: 0,
-                            preview: product.Preview_URL || '',
-                        };
-                    }
-                    accumulator[slug].count += 1;
-                    if (!accumulator[slug].preview && product.Preview_URL) {
-                        accumulator[slug].preview = product.Preview_URL;
-                    }
-                    return accumulator;
-                }, {});
-
-                const categories = Object.values(grouped).sort((left, right) => {
-                    return right.count - left.count || left.theme.localeCompare(right.theme);
-                });
-
-                categoryGrid.innerHTML = categories.map(renderCategoryCard).join('');
-            })
-            .catch(() => {
-                categoryGrid.innerHTML = '<div class="empty-state">Catalog unavailable right now.</div>';
-            });
-    </script>
-<!-- Interactive Support Module Section -->
-<div id="support-form-container" style="max-width: 500px; margin: 40px auto; background: #141414; padding: 30px; border-radius: 8px; border: 1px solid #261010; box-shadow: 0 4px 15px rgba(0,0,0,0.7); font-family: Arial, sans-serif;">
-    <h2 style="color: #e74c3c; text-transform: uppercase; margin-top: 0; font-size: 22px; letter-spacing: 1px; border-bottom: 1px solid #222; padding-bottom: 10px;">Contact Vault Support</h2>
-    <p style="color: #aaa; font-size: 13px; margin-bottom: 20px;">Missing an order confirmation or hit a delivery gate link reset timeout? Send your payment validation records below.</p>
-    <form id="vault-support-form">
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase;">Customer Email:</label>
-            <input type="email" id="support-email" required placeholder="name@domain.com" style="width: 95%; padding: 10px; background: #0d0d0d; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 14px;">
-        </div>
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase;">Associated Order Bundle ID:</label>
-            <input type="text" id="support-order-id" required placeholder="e.g., bundle_101_cyberpunk" style="width: 95%; padding: 10px; background: #0d0d0d; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 14px;">
-        </div>
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase;">Message / Inquiry Details:</label>
-            <textarea id="support-message" required rows="4" placeholder="Detail your pipeline or delivery issue..." style="width: 95%; padding: 10px; background: #0d0d0d; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 14px; resize: vertical;"></textarea>
-        </div>
-        <button type="submit" id="support-submit-btn" style="width: 100%; padding: 12px; background: #e74c3c; color: #fff; font-weight: bold; font-size: 14px; text-transform: uppercase; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">Submit Urgent Support Request</button>
-        <p id="support-status-msg" style="margin-top: 15px; font-size: 13px; text-align: center; display: none;"></p>
-    </form>
-</div>
-<script>
-document.getElementById("vault-support-form").addEventListener("submit", function(e) {
-    e.preventDefault();
-    const submitBtn = document.getElementById("support-submit-btn");
-    const statusMsg = document.getElementById("support-status-msg");
-    const payload = {
-        "customer_email": document.getElementById("support-email").value.trim(),
-        "order_id": document.getElementById("support-order-id").value.trim(),
-        "status": "finished"
-    };
-    submitBtn.disabled = true;
-    submitBtn.style.background = "#555";
-    statusMsg.style.display = "block";
-    statusMsg.style.color = "#aaa";
-    statusMsg.innerText = "Transmitting secure verification payload down tunnel...";
-    fetch("https://api-clipart.wildbillsproplans.com", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-    })
-    .then(res => {
-        if (res.status === 200) {
-            statusMsg.style.color = "#2ecc71";
-            statusMsg.innerText = "Success! Automated system re-dispatched your secure download link via email.";
-            document.getElementById("vault-support-form").reset();
-        } else {
-            throw new Error("API server responded with error code: " + res.status);
-        }
-    })
-    .catch(err => {
-        statusMsg.style.color = "#e74c3c";
-        statusMsg.innerText = "Handshake error. Failed to reach backup server array.";
-        console.error(err);
-    })
-    .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.style.background = "#e74c3c";
-    });
-});
-</script>
-<!-- HARD OVERRIDE TUNNEL INVENTORY CODES WITH FILTER BAR -->
-<script>
-(function() {
-    console.log("[VAULT OVERRIDE] Loading categorized filtration layouts...");
-    
-    function injectClipartGridCards() {
-        const gridContainer = document.querySelector('.category-grid');
-        if (!gridContainer) return;
-
-        // Create a wrapper for our new navigation filter bar if it doesn't exist
-        let filterBar = document.getElementById('vault-filter-bar');
-        if (!filterBar) {
-            filterBar = document.createElement('div');
-            filterBar.id = 'vault-filter-bar';
-            filterBar.style.cssText = "text-align:center; margin:30px auto; max-width:1200px; padding:10px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px;";
-            gridContainer.parentNode.insertBefore(filterBar, gridContainer);
-        }
-        
-        fetch('https://wildbillsproplans.com')
-            .then(res => {
-                if (!res.ok) throw new Error("HTTP connection fault state: " + res.status);
-                return res.json();
-            })
-            .then(data => {
-                if (data.status === "success" && data.categories) {
-                    filterBar.innerHTML = '';
-                    gridContainer.innerHTML = ''; // Wipe out the loading spinner text
-
-                    const categoryKeys = Object.keys(data.categories);
-
-                    // 1. Build out clickable filter buttons dynamically
-                    categoryKeys.forEach((catName, index) => {
-                        const btn = document.createElement('button');
-                        btn.innerText = catName;
-                        btn.style.cssText = "padding:10px 20px; font-weight:bold; background:#141414; border:1px solid #261010; color:#fff; cursor:pointer; border-radius:4px; text-transform:uppercase; font-family:Arial, sans-serif; font-size:12px; transition:all 0.2s;";
-                        
-                        btn.addEventListener('click', () => {
-                            // Reset all buttons style to dark
-                            document.querySelectorAll('#vault-filter-bar button').forEach(b => {
-                                b.style.background = "#141414";
-                                b.style.borderColor = "#261010";
-                            });
-                            // Highlight the active button in Red
-                            btn.style.background = "#e74c3c";
-                            btn.style.borderColor = "#e74c3c";
-                            
-                            // Load only the product array belonging to this tab category
-                            renderCategoryCards(data.categories[catName], gridContainer);
-                        });
-
-                        filterBar.appendChild(btn);
-
-                        // Auto-click the first category on launch so the page isn't blank
-                        if (index === 0) btn.click();
-                    });
-                }
-            })
-            .catch(err => console.error("[VAULT OVERRIDE ERROR] Tunnel fetch dropped:", err));
-    }
 
     function renderCategoryCards(productArray, container) {
-        container.innerHTML = ''; // Wipe past view
+        container.innerHTML = ''; 
         
+        if (!productArray || productArray.length === 0) {
+            container.innerHTML = '<div style="color:#aaa; padding:20px;">No bundles inside this category yet.</div>';
+            return;
+        }
+
         productArray.forEach(prodId => {
             const displayTitle = prodId.replace(/_/g, ' ').toUpperCase();
             const cardHtml = `
                 <div class="product-card" style="background:#141414; padding:20px; border:1px solid #261010; border-radius:6px; margin:10px; text-align:center; display:inline-block; width:280px; vertical-align:top; box-shadow:0 4px 10px rgba(0,0,0,0.5);">
                     <img src="https://wildbillsproplans.com{prodId}_Storefront_Preview.png" alt="${displayTitle}" style="max-width:100%; border-radius:4px; margin-bottom:15px;" onerror="this.src='https://wildbillsproplans.com'">
-                    <h3 style="color:#e74c3c; font-size:15px; margin-bottom:10px; font-family:Arial, sans-serif; min-height:40px;">${displayTitle}</h3>
+                    <h3 style="color:#e74c3c; font-size:14px; margin-bottom:10px; font-family:Arial, sans-serif; min-height:40px;">${displayTitle}</h3>
                     <p style="color:#aaa; font-size:12px; margin-bottom:15px; font-family:Arial, sans-serif;">Premium transparent background design vectors ready for download.</p>
                     <button class="buy-button" data-product-id="${prodId}" style="width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; font-weight:bold; text-transform:uppercase; border-radius:4px; cursor:pointer;">
                         Buy Pack - $20.00
@@ -567,21 +385,6 @@ document.getElementById("vault-support-form").addEventListener("submit", functio
             container.innerHTML += cardHtml;
         });
     }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', injectClipartGridCards);
-    } else {
-        injectClipartGridCards();
-    }
-})();
-</script> `; gridContainer.innerHTML += cardHtml;
-                }
-            })
-    }
-
-    // Fire the rendering sequence immediately on browser boot cycles
-        document.addEventListener('DOMContentLoaded', injectClipartGridCards);
-    } else {
 })();
 </script>
 </body>
