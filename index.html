@@ -35,7 +35,7 @@
     const gridContainer = document.getElementById('main-catalog-grid');
     const filterBar = document.getElementById('vault-filter-bar');
 
-    fetch('https://wildbillsproplans.com')
+    fetch('https://api-clipart.wildbillsproplans.com')
         .then(res => {
             if (!res.ok) throw new Error("HTTP connection fault: " + res.status);
             return res.json();
