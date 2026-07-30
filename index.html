@@ -95,3 +95,107 @@
 </script>
 </body>
 </html>
+
+<script>
+(function() {
+    console.log("[VAULT ENGINE] Initializing secure categorized catalog routing...");
+    const gridContainer = document.getElementById('main-catalog-grid');
+    const filterBar = document.getElementById('vault-filter-bar');
+
+    fetch('https://wildbillsproplans.com')
+        .then(res => {
+            if (!res.ok) throw new Error("HTTP connection fault: " + res.status);
+            return res.json();
+        })
+        .then(data => {
+            if (data.status === "success" && data.categories) {
+                filterBar.innerHTML = '';
+                gridContainer.innerHTML = '';
+                const categoryKeys = Object.keys(data.categories);
+
+                categoryKeys.forEach((catName, index) => {
+                    const btn = document.createElement('button');
+                    btn.innerText = catName;
+                    btn.style.cssText = "padding:10px 20px; font-weight:bold; background:#141414; border:1px solid #261010; color:#fff; cursor:pointer; border-radius:4px; text-transform:uppercase; font-size:12px; margin:5px;";
+                    
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('#vault-filter-bar button').forEach(b => {
+                            b.style.background = "#141414";
+                            b.style.borderColor = "#261010";
+                        });
+                        btn.style.background = "#e74c3c";
+                        btn.style.borderColor = "#e74c3c";
+                        renderCategoryCards(data.categories[catName], gridContainer);
+                    });
+
+                    filterBar.appendChild(btn);
+                    if (index === 0) btn.click();
+                });
+            } else {
+                gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">No categories found in data maps.</div>';
+            }
+        })
+        .catch(err => {
+            console.error("[VAULT CRASH]", err);
+            gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">Handshake error over tunnel.</div>';
+        });
+
+    function renderCategoryCards(productArray, container) {
+        container.innerHTML = '';
+        if (!productArray || productArray.length === 0) {
+            container.innerHTML = '<div style="color:#aaa; padding:20px;">No bundles inside this category.</div>';
+            return;
+        }
+        productArray.forEach(prodId => {
+            const displayTitle = prodId.replace(/_/g, ' ').toUpperCase();
+            const cardHtml = `
+                <div class="product-card" style="background:#141414; padding:20px; border:1px solid #261010; border-radius:6px; margin:10px; text-align:center; display:inline-block; width:280px; vertical-align:top;">
+                    <img src="https://wildbillsproplans.com{prodId}_Storefront_Preview.png" alt="${displayTitle}" style="max-width:100%; border-radius:4px; margin-bottom:15px;" onerror="this.onerror=null; this.src='https://wildbillsproplans.com';">
+                    <h3 style="color:#e74c3c; font-size:14px; margin-bottom:10px; min-height:40px;">${displayTitle}</h3>
+                    <button class="buy-button" data-product-id="${prodId}" style="width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; font-weight:bold; text-transform:uppercase; border-radius:4px; cursor:pointer;">Buy Pack - $20.00</button>
+                </div>
+            `;
+            container.innerHTML += cardHtml;
+        });
+    }
+})();
+
+document.getElementById("vault-support-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const submitBtn = document.getElementById("support-submit-btn");
+    const statusMsg = document.getElementById("support-status-msg");
+    const payload = {
+        "customer_email": document.getElementById("support-email").value.trim(),
+        "order_id": document.getElementById("support-order-id").value.trim(),
+        "status": "finished"
+    };
+    submitBtn.disabled = true;
+    submitBtn.style.background = "#555";
+    statusMsg.style.display = "block";
+    statusMsg.innerText = "Transmitting secure verification payload down tunnel...";
+    fetch("https://wildbillsproplans.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(res => {
+        if (res.status === 200) {
+            statusMsg.style.color = "#2ecc71";
+            statusMsg.innerText = "Success! Links re-dispatched via email.";
+            document.getElementById("vault-support-form").reset();
+        } else {
+            throw new Error("API error: " + res.status);
+        }
+    })
+    .catch(err => {
+        statusMsg.style.color = "#e74c3c";
+        statusMsg.innerText = "Handshake error. Failed to reach server array.";
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.style.background = "#e74c3c";
+    });
+});
+</script>
+</body>
+</html>
