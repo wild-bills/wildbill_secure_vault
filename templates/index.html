@@ -489,53 +489,100 @@ document.getElementById("vault-support-form").addEventListener("submit", functio
     });
 });
 </script>
-<!-- HARD OVERRIDE TUNNEL INVENTORY CODES -->
+<!-- HARD OVERRIDE TUNNEL INVENTORY CODES WITH FILTER BAR -->
 <script>
 (function() {
-    console.log("[VAULT OVERRIDE] Bypassing Cloudflare background cache configurations...");
+    console.log("[VAULT OVERRIDE] Loading categorized filtration layouts...");
     
     function injectClipartGridCards() {
         const gridContainer = document.querySelector('.category-grid');
         if (!gridContainer) return;
+
+        // Create a wrapper for our new navigation filter bar if it doesn't exist
+        let filterBar = document.getElementById('vault-filter-bar');
+        if (!filterBar) {
+            filterBar = document.createElement('div');
+            filterBar.id = 'vault-filter-bar';
+            filterBar.style.cssText = "text-align:center; margin:30px auto; max-width:1200px; padding:10px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px;";
+            gridContainer.parentNode.insertBefore(filterBar, gridContainer);
+        }
         
-        // Connects character-for-character down your verified backend subdomain tunnel
-        fetch('https://api-clipart.wildbillsproplans.com')
+        fetch('https://wildbillsproplans.com')
             .then(res => {
                 if (!res.ok) throw new Error("HTTP connection fault state: " + res.status);
                 return res.json();
             })
             .then(data => {
-                if (data.status === "success" && Array.isArray(data.products)) {
-                    gridContainer.innerHTML = ''; // Exterminate the loading text spinner instantly
-                    
-                    data.products.forEach(prodId => {
-                        const displayTitle = prodId.replace(/_/g, ' ').toUpperCase();
+                if (data.status === "success" && data.categories) {
+                    filterBar.innerHTML = '';
+                    gridContainer.innerHTML = ''; // Wipe out the loading spinner text
+
+                    const categoryKeys = Object.keys(data.categories);
+
+                    // 1. Build out clickable filter buttons dynamically
+                    categoryKeys.forEach((catName, index) => {
+                        const btn = document.createElement('button');
+                        btn.innerText = catName;
+                        btn.style.cssText = "padding:10px 20px; font-weight:bold; background:#141414; border:1px solid #261010; color:#fff; cursor:pointer; border-radius:4px; text-transform:uppercase; font-family:Arial, sans-serif; font-size:12px; transition:all 0.2s;";
                         
-                        const cardHtml = `
-                            <div class="product-card" style="background:#141414; padding:20px; border:1px solid #261010; border-radius:6px; margin:10px; text-align:center; display:inline-block; width:280px; vertical-align:top; box-shadow:0 4px 10px rgba(0,0,0,0.5);">
-                                <img src="https://wildbillsproplans.com{prodId}_Storefront_Preview.png" alt="${displayTitle}" style="max-width:100%; border-radius:4px; margin-bottom:15px;" onerror="this.src='https://wildbillsproplans.com'">
-                                <h3 style="color:#e74c3c; font-size:15px; margin-bottom:10px; font-family:Arial, sans-serif; min-height:40px;">${displayTitle}</h3>
-                                <p style="color:#aaa; font-size:12px; margin-bottom:15px; font-family:Arial, sans-serif;">Premium transparent background design vectors ready for download.</p>
-                                <button class="buy-button" data-product-id="${prodId}" style="width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; font-weight:bold; text-transform:uppercase; border-radius:4px; cursor:pointer;">
-                                    Buy Pack - $20.00
-                                </button>
-                            </div>
-                        `;
-                        gridContainer.innerHTML += cardHtml;
+                        btn.addEventListener('click', () => {
+                            // Reset all buttons style to dark
+                            document.querySelectorAll('#vault-filter-bar button').forEach(b => {
+                                b.style.background = "#141414";
+                                b.style.borderColor = "#261010";
+                            });
+                            // Highlight the active button in Red
+                            btn.style.background = "#e74c3c";
+                            btn.style.borderColor = "#e74c3c";
+                            
+                            // Load only the product array belonging to this tab category
+                            renderCategoryCards(data.categories[catName], gridContainer);
+                        });
+
+                        filterBar.appendChild(btn);
+
+                        // Auto-click the first category on launch so the page isn't blank
+                        if (index === 0) btn.click();
                     });
                 }
             })
             .catch(err => console.error("[VAULT OVERRIDE ERROR] Tunnel fetch dropped:", err));
     }
 
-    // Fire the rendering sequence immediately on browser boot cycles
+    function renderCategoryCards(productArray, container) {
+        container.innerHTML = ''; // Wipe past view
+        
+        productArray.forEach(prodId => {
+            const displayTitle = prodId.replace(/_/g, ' ').toUpperCase();
+            const cardHtml = `
+                <div class="product-card" style="background:#141414; padding:20px; border:1px solid #261010; border-radius:6px; margin:10px; text-align:center; display:inline-block; width:280px; vertical-align:top; box-shadow:0 4px 10px rgba(0,0,0,0.5);">
+                    <img src="https://wildbillsproplans.com{prodId}_Storefront_Preview.png" alt="${displayTitle}" style="max-width:100%; border-radius:4px; margin-bottom:15px;" onerror="this.src='https://wildbillsproplans.com'">
+                    <h3 style="color:#e74c3c; font-size:15px; margin-bottom:10px; font-family:Arial, sans-serif; min-height:40px;">${displayTitle}</h3>
+                    <p style="color:#aaa; font-size:12px; margin-bottom:15px; font-family:Arial, sans-serif;">Premium transparent background design vectors ready for download.</p>
+                    <button class="buy-button" data-product-id="${prodId}" style="width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; font-weight:bold; text-transform:uppercase; border-radius:4px; cursor:pointer;">
+                        Buy Pack - $20.00
+                    </button>
+                </div>
+            `;
+            container.innerHTML += cardHtml;
+        });
+    }
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', injectClipartGridCards);
     } else {
         injectClipartGridCards();
     }
 })();
-</script>
+</script> `; gridContainer.innerHTML += cardHtml;
+                }
+            })
+    }
 
+    // Fire the rendering sequence immediately on browser boot cycles
+        document.addEventListener('DOMContentLoaded', injectClipartGridCards);
+    } else {
+})();
+</script>
 </body>
 </html>
