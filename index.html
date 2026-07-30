@@ -5,22 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WildBills Clipart Vault - Premium Graphic Assets</title>
     <style>
-        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #0d0d0d; color: #e0e0e0; font-family: Arial, sans-serif; margin: 0; padding: 0; }
         .hero { text-align: center; padding: 60px 20px; background: #111; border-bottom: 1px solid #261010; }
-        .hero h1 { color: #e74c3c; font-size: 36px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 10px 0; }
+        .hero h1 { color: #e74c3c; font-size: 36px; text-transform: uppercase; margin: 0 0 10px 0; }
         .hero p { color: #aaa; font-size: 16px; margin: 0; }
         .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
         .category-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; min-height: 200px; }
         footer { background: #111; padding: 40px 20px; text-align: center; border-top: 1px solid #261010; font-size: 13px; color: #666; }
         footer a { color: #aaa; text-decoration: none; margin: 0 10px; }
-        footer a:hover { color: #e74c3c; }
     </style>
 </head>
 <body>
 
 <div class="hero">
     <h1>Browse Categories</h1>
-    <p>Select a category to view high-quality clipart design packs hosted right over our secure storage vault pipeline.</p>
+    <p>Select a category to filter your 120 premium clipart design packs.</p>
 </div>
 
 <div class="container">
@@ -30,36 +29,29 @@
     </div>
 </div>
 
-<div id="support-form-container" style="max-width: 500px; margin: 40px auto; background: #141414; padding: 30px; border-radius: 8px; border: 1px solid #261010; box-shadow: 0 4px 15px rgba(0,0,0,0.7); font-family: Arial, sans-serif;">
-    <h2 style="color: #e74c3c; text-transform: uppercase; margin-top: 0; font-size: 22px; letter-spacing: 1px; border-bottom: 1px solid #222; padding-bottom: 10px;">Contact Vault Support</h2>
-    <p style="color: #aaa; font-size: 13px; margin-bottom: 20px;">Missing an order confirmation or hit a delivery gate link reset timeout? Send your payment validation records below.</p>
+<div id="support-form-container" style="max-width: 500px; margin: 40px auto; background: #141414; padding: 30px; border-radius: 8px; border: 1px solid #261010;">
+    <h2 style="color: #e74c3c; text-transform: uppercase; margin-top: 0; font-size: 22px;">Contact Vault Support</h2>
+    <p style="color: #aaa; font-size: 13px; margin-bottom: 20px;">Missing a link or hit a timeout? Dispatch support below.</p>
     <form id="vault-support-form">
         <div style="margin-bottom: 15px;">
-            <label style="display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase;">Customer Email:</label>
-            <input type="email" id="support-email" required placeholder="name@domain.com" style="width: 95%; padding: 10px; background: #0d0d0d; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 14px;">
+            <label style="display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase;">Email:</label>
+            <input type="email" id="support-email" required placeholder="name@domain.com" style="width: 95%; padding: 10px; background: #0d0d0d; border: 1px solid #333; color: #fff; border-radius: 4px;">
         </div>
         <div style="margin-bottom: 15px;">
-            <label style="display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase;">Associated Order Bundle ID:</label>
-            <input type="text" id="support-order-id" required placeholder="e.g., bundle_101_cyberpunk" style="width: 95%; padding: 10px; background: #0d0d0d; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 14px;">
+            <label style="display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase;">Bundle ID:</label>
+            <input type="text" id="support-order-id" required placeholder="e.g., bundle_101_cyberpunk" style="width: 95%; padding: 10px; background: #0d0d0d; border: 1px solid #333; color: #fff; border-radius: 4px;">
         </div>
         <div style="margin-bottom: 20px;">
-            <label style="display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase;">Message / Inquiry Details:</label>
-            <textarea id="support-message" required rows="4" placeholder="Detail your pipeline or delivery issue..." style="width: 95%; padding: 10px; background: #0d0d0d; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 14px; resize: vertical;"></textarea>
+            <label style="display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase;">Details:</label>
+            <textarea id="support-message" required rows="4" placeholder="Issue details..." style="width: 95%; padding: 10px; background: #0d0d0d; border: 1px solid #333; color: #fff; border-radius: 4px; resize: vertical;"></textarea>
         </div>
-        <button type="submit" id="support-submit-btn" style="width: 100%; padding: 12px; background: #e74c3c; color: #fff; font-weight: bold; font-size: 14px; text-transform: uppercase; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">Submit Urgent Support Request</button>
+        <button type="submit" id="support-submit-btn" style="width: 100%; padding: 12px; background: #e74c3c; color: #fff; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; text-transform: uppercase;">Submit Urgent Support Request</button>
         <p id="support-status-msg" style="margin-top: 15px; font-size: 13px; text-align: center; display: none;"></p>
     </form>
 </div>
 
 <footer>
     <p>&copy; 2026 Wild Bills Pro Plans. All Rights Reserved.</p>
-    <p>
-        <a href="#">Pricing Tiers</a>
-        <a href="terms.html">Terms of Service</a>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Refund Policy</a>
-        <a href="#support-form-container">Contact Support</a>
-    </p>
 </footer>
 
 <script>
@@ -70,7 +62,7 @@
 
     fetch('https://wildbillsproplans.com')
         .then(res => {
-            if (!res.ok) throw new Error("HTTP connection fault state: " + res.status);
+            if (!res.ok) throw new Error("HTTP connection fault: " + res.status);
             return res.json();
         })
         .then(data => {
@@ -82,7 +74,7 @@
                 categoryKeys.forEach((catName, index) => {
                     const btn = document.createElement('button');
                     btn.innerText = catName;
-                    btn.style.cssText = "padding:10px 20px; font-weight:bold; background:#141414; border:1px solid #261010; color:#fff; cursor:pointer; border-radius:4px; text-transform:uppercase; font-family:Arial, sans-serif; font-size:12px; transition:all 0.2s;";
+                    btn.style.cssText = "padding:10px 20px; font-weight:bold; background:#141414; border:1px solid #261010; color:#fff; cursor:pointer; border-radius:4px; text-transform:uppercase; font-size:12px;";
                     
                     btn.addEventListener('click', () => {
                         document.querySelectorAll('#vault-filter-bar button').forEach(b => {
@@ -98,30 +90,27 @@
                     if (index === 0) btn.click();
                 });
             } else {
-                gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">No active product categories found in the database.</div>';
+                gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">No categories found in data maps.</div>';
             }
         })
         .catch(err => {
-            console.error("[VAULT ENGINE CRASH] Tunnel fetch dropped:", err);
-            gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">Handshake error. Failed to map database inventory files over the secure tunnel.</div>';
+            console.error("[VAULT CRASH]", err);
+            gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">Handshake error over tunnel.</div>';
         });
 
     function renderCategoryCards(productArray, container) {
         container.innerHTML = '';
         if (!productArray || productArray.length === 0) {
-            container.innerHTML = '<div style="color:#aaa; padding:20px;">No bundles inside this category yet.</div>';
+            container.innerHTML = '<div style="color:#aaa; padding:20px;">No bundles inside this category.</div>';
             return;
         }
         productArray.forEach(prodId => {
             const displayTitle = prodId.replace(/_/g, ' ').toUpperCase();
             const cardHtml = `
-                <div class="product-card" style="background:#141414; padding:20px; border:1px solid #261010; border-radius:6px; margin:10px; text-align:center; display:inline-block; width:280px; vertical-align:top; box-shadow:0 4px 10px rgba(0,0,0,0.5);">
+                <div class="product-card" style="background:#141414; padding:20px; border:1px solid #261010; border-radius:6px; margin:10px; text-align:center; display:inline-block; width:280px; vertical-align:top;">
                     <img src="https://wildbillsproplans.com{prodId}_Storefront_Preview.png" alt="${displayTitle}" style="max-width:100%; border-radius:4px; margin-bottom:15px;" onerror="this.src='https://wildbillsproplans.com'">
-                    <h3 style="color:#e74c3c; font-size:14px; margin-bottom:10px; font-family:Arial, sans-serif; min-height:40px;">${displayTitle}</h3>
-                    <p style="color:#aaa; font-size:12px; margin-bottom:15px; font-family:Arial, sans-serif;">Premium transparent background design vectors ready for download.</p>
-                    <button class="buy-button" data-product-id="${prodId}" style="width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; font-weight:bold; text-transform:uppercase; border-radius:4px; cursor:pointer;">
-                        Buy Pack - $20.00
-                    </button>
+                    <h3 style="color:#e74c3c; font-size:14px; margin-bottom:10px; min-height:40px;">${displayTitle}</h3>
+                    <button class="buy-button" data-product-id="${prodId}" style="width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; font-weight:bold; text-transform:uppercase; border-radius:4px; cursor:pointer;">Buy Pack - $20.00</button>
                 </div>
             `;
             container.innerHTML += cardHtml;
@@ -141,7 +130,6 @@ document.getElementById("vault-support-form").addEventListener("submit", functio
     submitBtn.disabled = true;
     submitBtn.style.background = "#555";
     statusMsg.style.display = "block";
-    statusMsg.style.color = "#aaa";
     statusMsg.innerText = "Transmitting secure verification payload down tunnel...";
     fetch("https://wildbillsproplans.com", {
         method: "POST",
@@ -151,16 +139,15 @@ document.getElementById("vault-support-form").addEventListener("submit", functio
     .then(res => {
         if (res.status === 200) {
             statusMsg.style.color = "#2ecc71";
-            statusMsg.innerText = "Success! Automated system re-dispatched your secure download link via email.";
+            statusMsg.innerText = "Success! Links re-dispatched via email.";
             document.getElementById("vault-support-form").reset();
         } else {
-            throw new Error("API server responded with error code: " + res.status);
+            throw new Error("API error: " + res.status);
         }
     })
     .catch(err => {
         statusMsg.style.color = "#e74c3c";
-        statusMsg.innerText = "Handshake error. Failed to reach backup server array.";
-        console.error(err);
+        statusMsg.innerText = "Handshake error. Failed to reach server array.";
     })
     .finally(() => {
         submitBtn.disabled = false;
