@@ -35,7 +35,7 @@
     const filterBar = document.getElementById('vault-filter-bar');
 
     // Appends a live timestamp cache-breaker to the query string to force real-time loads
-    fetch('https://wildbillsproplans.com' + new Date().getTime())
+    fetch('https://api-clipart.wildbillsproplans.com' + new Date().getTime())
         .then(res => {
             if (!res.ok) throw new Error("HTTP connection fault: " + res.status);
             return res.json();
