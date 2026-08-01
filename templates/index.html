@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wild Bill Secure Vault</title>
+    <link rel="icon" href="/favicon.ico">
+    <title>Wild Bill Clipart Vault</title>
     <style>
         :root {
-            --bg: #0b0707;
-            --panel: #140c0c;
-            --border: #2c1919;
-            --text: #f4f1f1;
-            --muted: #ae9f9f;
-            --accent: #ff2e35;
+            --bg: #0c0808;
+            --panel: #151010;
+            --border: #2a1d1d;
+            --text: #f5f2f2;
+            --muted: #b3a5a5;
+            --accent: #ef4a3b;
         }
 
         * { box-sizing: border-box; }
@@ -20,114 +21,477 @@
             margin: 0;
             color: var(--text);
             font-family: Arial, sans-serif;
-            background:
-                radial-gradient(circle at top, rgba(255, 46, 53, 0.14), transparent 30%),
-                linear-gradient(180deg, #0b0707 0%, #080505 100%);
+            background: linear-gradient(180deg, #0c0808 0%, #090606 100%);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 56px 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--accent);
+            letter-spacing: 0.03em;
+        }
+
+        .hero p {
+            color: var(--muted);
+            margin: 10px 0 0;
         }
 
         .wrap {
             max-width: 1240px;
             margin: 0 auto;
-            padding: 2rem 1rem 3rem;
+            padding: 24px 16px 48px;
         }
 
-        .hero {
-            margin-bottom: 1.5rem;
-            padding: 1.5rem;
-            border-radius: 22px;
-            border: 1px solid var(--border);
-            background: rgba(20, 12, 12, 0.82);
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
         }
 
-        h1 {
-            margin: 0 0 0.5rem;
-            font-size: clamp(1.9rem, 4vw, 3rem);
-        }
-
-        .sub {
-            margin: 0;
+        .results-meta {
+            text-align: center;
             color: var(--muted);
+            margin: -8px 0 14px;
+            font-size: 13px;
+        }
+
+        .filter-btn {
+            padding: 10px 16px;
+            font-weight: 700;
+            border: 1px solid var(--border);
+            background: #181212;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
         }
 
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1rem;
+            gap: 16px;
+            min-height: 180px;
         }
 
         .card {
-            border: 1px solid var(--border);
-            border-radius: 18px;
             background: var(--panel);
-            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: #5b3838;
         }
 
         .thumb {
-            height: 180px;
-            background: #0d0909;
-            padding: 10px;
-        }
-
-        .thumb img {
             width: 100%;
-            height: 100%;
+            height: 190px;
+            border-radius: 6px;
             object-fit: contain;
-            border-radius: 10px;
+            background: #0f0a0a;
             display: block;
+            margin-bottom: 12px;
         }
 
-        .body {
-            padding: 0.95rem;
-        }
-
-        .theme {
-            margin: 0 0 0.4rem;
+        .title {
+            margin: 0 0 6px;
             color: var(--accent);
-            font-size: 1.04rem;
+            font-size: 14px;
+            min-height: 36px;
         }
 
-        .count {
-            margin: 0 0 0.8rem;
+        .sku {
+            margin: 0 0 8px;
             color: var(--muted);
-            font-size: 0.9rem;
+            font-size: 12px;
         }
 
-        .btn {
-            display: inline-block;
-            width: 100%;
-            text-align: center;
-            padding: 0.75rem 1rem;
-            border-radius: 10px;
-            text-decoration: none;
+        .price {
+            margin: 0 0 12px;
             color: #fff;
             font-weight: 700;
-            background: linear-gradient(135deg, #c9151d 0%, var(--accent) 100%);
+        }
+
+        .buy-btn {
+            display: inline-block;
+            width: calc(50% - 6px);
+            text-align: center;
+            padding: 10px;
+            background: var(--accent);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 4px;
+        }
+
+        .details-btn {
+            display: inline-block;
+            width: calc(50% - 6px);
+            text-align: center;
+            padding: 10px;
+            background: #2a1d1d;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+
+        .status {
+            color: var(--muted);
+            text-align: center;
+            padding: 24px;
+        }
+
+        .pager {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0 6px;
+        }
+
+        .pager button {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            background: #181212;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .pager button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .pager-info {
+            color: var(--muted);
+            font-size: 12px;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .error {
+            color: var(--accent);
         }
     </style>
 </head>
 <body>
-    <main class="wrap">
-        <section class="hero">
-            <h1>Browse Vault Categories</h1>
-            <p class="sub">Choose a category to view bundle previews and start checkout for a specific SKU.</p>
-        </section>
+    <header class="hero">
+        <h1>BROWSE CATEGORIES</h1>
+        <p>Select a category to filter your premium clipart bundles.</p>
+    </header>
 
-        <section class="grid">
-            {% for section in categories %}
-            <article class="card">
-                <div class="thumb">
-                    {% if section.preview %}
-                    <img src="{{ section.preview }}" alt="{{ section.theme }} preview" onerror="this.style.display='none'">
-                    {% endif %}
-                </div>
-                <div class="body">
-                    <h2 class="theme">{{ section.theme }}</h2>
-                    <p class="count">{{ section.count }} bundle{{ '' if section.count == 1 else 's' }}</p>
-                    <a class="btn" href="{{ url_for('category_view', theme_slug=section.slug) }}">View Bundles</a>
-                </div>
-            </article>
-            {% endfor %}
-        </section>
+    <main class="wrap">
+        <div id="filter-bar" class="filter-bar"></div>
+        <div id="results-meta" class="results-meta"></div>
+        <div id="catalog-grid" class="grid">
+            <div class="status">Loading catalog...</div>
+        </div>
+        <div id="pager" class="pager"></div>
     </main>
+
+    <script>
+        (function() {
+            const filterBar = document.getElementById('filter-bar');
+            const resultsMeta = document.getElementById('results-meta');
+            const grid = document.getElementById('catalog-grid');
+            const pager = document.getElementById('pager');
+            const appOrigin = 'https://api-clipart.wildbillsproplans.com';
+            const dataCandidates = ['/catalog.json', '/products.json', '/static/products.json'];
+            const pageSize = 24;
+
+            let activeCategory = '';
+            let activePage = 1;
+            let catalogCategories = {};
+
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+
+            function normalizePreview(url) {
+                const value = String(url || '');
+                if (!value) {
+                    return '';
+                }
+                if (value.startsWith('http://') || value.startsWith('https://')) {
+                    return value;
+                }
+                if (value.startsWith('/')) {
+                    return window.location.origin + value;
+                }
+                return value;
+            }
+
+            function displayTitle(rawName, sku) {
+                const name = String(rawName || '').trim();
+                if (!name || name.startsWith('===')) {
+                    return sku || 'Bundle';
+                }
+                return name;
+            }
+
+            function buildGroupedCategories(categories) {
+                const grouped = {};
+                const maxItemsPerCategory = 60;
+
+                Object.entries(categories || {}).forEach(([name, items]) => {
+                    const safeItems = Array.isArray(items) ? items : [];
+
+                    if (safeItems.length <= maxItemsPerCategory) {
+                        grouped[name] = safeItems;
+                        return;
+                    }
+
+                    for (let i = 0; i < safeItems.length; i += maxItemsPerCategory) {
+                        const slice = safeItems.slice(i, i + maxItemsPerCategory);
+                        const start = i + 1;
+                        const end = i + slice.length;
+                        const label = name + ' ' + start + '-' + end;
+                        grouped[label] = slice;
+                    }
+                });
+
+                return grouped;
+            }
+
+            function renderPager(totalItems) {
+                pager.innerHTML = '';
+
+                if (totalItems <= pageSize) {
+                    return;
+                }
+
+                const totalPages = Math.ceil(totalItems / pageSize);
+
+                const prev = document.createElement('button');
+                prev.type = 'button';
+                prev.textContent = 'Previous';
+                prev.disabled = activePage <= 1;
+                prev.addEventListener('click', () => {
+                    if (activePage > 1) {
+                        activePage -= 1;
+                        renderActiveCategory();
+                    }
+                });
+
+                const info = document.createElement('div');
+                info.className = 'pager-info';
+                info.textContent = 'Page ' + activePage + ' of ' + totalPages;
+
+                const next = document.createElement('button');
+                next.type = 'button';
+                next.textContent = 'Next';
+                next.disabled = activePage >= totalPages;
+                next.addEventListener('click', () => {
+                    if (activePage < totalPages) {
+                        activePage += 1;
+                        renderActiveCategory();
+                    }
+                });
+
+                pager.appendChild(prev);
+                pager.appendChild(info);
+                pager.appendChild(next);
+            }
+
+            function renderCards(items) {
+                if (!Array.isArray(items) || items.length === 0) {
+                    resultsMeta.textContent = '';
+                    grid.innerHTML = '<div class="status">No bundles found for this category.</div>';
+                    pager.innerHTML = '';
+                    return;
+                }
+
+                const totalItems = items.length;
+                const totalPages = Math.ceil(totalItems / pageSize);
+                if (activePage > totalPages) {
+                    activePage = totalPages;
+                }
+                if (activePage < 1) {
+                    activePage = 1;
+                }
+
+                const start = (activePage - 1) * pageSize;
+                const end = Math.min(start + pageSize, totalItems);
+                const pageItems = items.slice(start, end);
+                resultsMeta.textContent = 'Showing ' + (start + 1) + '-' + end + ' of ' + totalItems + ' bundles';
+
+                grid.innerHTML = pageItems.map((item) => {
+                    const sku = item.sku || '';
+                    const title = displayTitle(item.name, sku);
+                    const price = item.price || '10.00';
+                    const fileCount = item.file_count;
+                    const preview = normalizePreview((item.previews && item.previews[0]) || '');
+                    const detailHref = sku
+                        ? '/product.html?sku=' + encodeURIComponent(sku)
+                        : '/contact.html';
+                    const buyHref = sku
+                        ? '/product.html?sku=' + encodeURIComponent(sku)
+                        : '/contact.html';
+
+                    return `
+                        <article class="card" role="link" tabindex="0" data-detail-href="${escapeHtml(detailHref)}">
+                            ${preview ? `<img class="thumb" src="${escapeHtml(preview)}" alt="${escapeHtml(title)}" onerror="this.style.display='none'">` : ''}
+                            <h2 class="title">${escapeHtml(title)}</h2>
+                            <p class="sku">${sku ? 'SKU: ' + escapeHtml(sku) : ''}</p>
+                            <p class="sku">${Number.isFinite(Number(fileCount)) && Number(fileCount) > 0 ? escapeHtml(String(fileCount)) + ' files in ZIP' : ''}</p>
+                            <p class="price">$${escapeHtml(price)}</p>
+                            <a class="details-btn" href="${detailHref}">View Details</a>
+                            <a class="buy-btn" href="${buyHref}">Buy Bundle</a>
+                        </article>
+                    `;
+                }).join('');
+
+                grid.querySelectorAll('.card[data-detail-href]').forEach((card) => {
+                    const href = card.getAttribute('data-detail-href');
+                    card.addEventListener('click', (event) => {
+                        if (event.target.closest('a')) {
+                            return;
+                        }
+                        window.location.href = href;
+                    });
+                    card.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            window.location.href = href;
+                        }
+                    });
+                });
+
+                renderPager(totalItems);
+            }
+
+            function renderActiveCategory() {
+                const items = catalogCategories[activeCategory] || [];
+                renderCards(items);
+            }
+
+            function renderCategories(categories) {
+                const names = Object.keys(categories || {});
+                if (names.length === 0) {
+                    resultsMeta.textContent = '';
+                    pager.innerHTML = '';
+                    grid.innerHTML = '<div class="status">No categories found.</div>';
+                    return;
+                }
+
+                catalogCategories = categories;
+                filterBar.innerHTML = '';
+
+                names.forEach((name, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'filter-btn';
+                    button.textContent = name;
+
+                    button.addEventListener('click', () => {
+                        document.querySelectorAll('.filter-btn').forEach((node) => node.classList.remove('active'));
+                        button.classList.add('active');
+                        activeCategory = name;
+                        activePage = 1;
+                        renderActiveCategory();
+                    });
+
+                    filterBar.appendChild(button);
+                    if (index === 0) {
+                        button.click();
+                    }
+                });
+            }
+
+            function normalizeItemsFromLegacyProducts(list) {
+                const categories = {};
+
+                list.forEach((item) => {
+                    const category = String(item.category || 'All Bundles').trim() || 'All Bundles';
+                    const rawSku = String(item.sku || '').trim();
+                    const sku = rawSku.toUpperCase().startsWith('WB-') ? rawSku : '';
+                    const title = String(item.title || item.name || item.bundle_id || 'Bundle').trim();
+                    const price = String(item.price || '10.00').trim();
+                    const preview = item.preview_url || item.image_url || item.preview || '';
+
+                    if (!categories[category]) {
+                        categories[category] = [];
+                    }
+
+                    categories[category].push({
+                        name: title,
+                        sku,
+                        price,
+                        previews: preview ? [preview] : [],
+                    });
+                });
+
+                return categories;
+            }
+
+            function parseCatalogPayload(data) {
+                if (data && data.status === 'success' && data.categories && typeof data.categories === 'object') {
+                    return buildGroupedCategories(data.categories);
+                }
+
+                if (Array.isArray(data)) {
+                    return buildGroupedCategories(normalizeItemsFromLegacyProducts(data));
+                }
+
+                return null;
+            }
+
+            function loadCandidate(index) {
+                if (index >= dataCandidates.length) {
+                    grid.innerHTML = '<div class="status error">Unable to load catalog data. Missing catalog.json/products.json in deployed root.</div>';
+                    return;
+                }
+
+                const path = dataCandidates[index];
+                fetch(path)
+                    .then((res) => {
+                        if (!res.ok) {
+                            throw new Error(path + ' failed with HTTP ' + res.status);
+                        }
+                        return res.json();
+                    })
+                    .then((data) => {
+                        const categories = parseCatalogPayload(data);
+                        if (!categories || Object.keys(categories).length === 0) {
+                            throw new Error(path + ' returned no usable categories');
+                        }
+                        renderCategories(categories);
+                    })
+                    .catch((error) => {
+                        console.warn(error);
+                        loadCandidate(index + 1);
+                    });
+            }
+
+            loadCandidate(0);
+        })();
+    </script>
 </body>
 </html>
