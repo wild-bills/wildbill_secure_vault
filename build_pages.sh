@@ -13,6 +13,7 @@ mkdir -p "$DIST_DIR/static"
 mkdir -p "$DIST_DIR/category"
 
 cp index.html "$DIST_DIR/"
+cp product.html "$DIST_DIR/"
 cp category.html "$DIST_DIR/category/index.html"
 cp catalog.json "$DIST_DIR/"
 cp products.json "$DIST_DIR/"

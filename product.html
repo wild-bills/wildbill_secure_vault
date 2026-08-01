@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/favicon.ico">
+    <title>Bundle Details - Wild Bill Clipart Vault</title>
+    <style>
+        :root {
+            --bg: #090709;
+            --panel: #151010;
+            --border: #2e1f1f;
+            --text: #f4efef;
+            --muted: #b8a8a8;
+            --accent: #ef4a3b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top, rgba(239, 74, 59, 0.16), transparent 30%),
+                linear-gradient(180deg, #090709 0%, #070506 100%);
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 28px 16px 46px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 16px;
+            color: var(--muted);
+            text-decoration: none;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 8px 14px;
+            background: #140e0e;
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: rgba(21, 16, 16, 0.92);
+            padding: 18px;
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            color: var(--accent);
+            font-size: clamp(1.7rem, 3.8vw, 2.5rem);
+        }
+
+        .meta {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 14px 0 18px;
+        }
+
+        .chip {
+            padding: 7px 11px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            font-size: 12px;
+            color: #ffd8d4;
+            background: #1a1212;
+            font-weight: 700;
+        }
+
+        .stitched {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 8px;
+            background: #0d0909;
+            margin-bottom: 18px;
+        }
+
+        .stitched-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-auto-rows: minmax(150px, 260px);
+            gap: 6px;
+        }
+
+        .stitched-grid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            display: block;
+            background: #070505;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .preview-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 8px;
+            background: #0d0909;
+        }
+
+        .preview-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            border-radius: 8px;
+            display: block;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 700;
+            border-radius: 8px;
+            padding: 10px 14px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+        }
+
+        .btn-secondary {
+            background: #241717;
+            border: 1px solid #3a2626;
+        }
+
+        .status {
+            text-align: center;
+            color: var(--muted);
+            padding: 24px;
+        }
+
+        .error {
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <main class="wrap">
+        <a class="back" href="/">Back to catalog</a>
+        <section id="detail" class="panel">
+            <div class="status">Loading bundle details...</div>
+        </section>
+    </main>
+
+    <script>
+        (function() {
+            const detail = document.getElementById('detail');
+            const params = new URLSearchParams(window.location.search);
+            const sku = (params.get('sku') || '').trim().toUpperCase();
+            const dataCandidates = ['/catalog.json', '/products.json', '/static/products.json'];
+            const checkoutOrigin = 'https://api-clipart.wildbillsproplans.com';
+
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+
+            function normalizePreview(url) {
+                const value = String(url || '');
+                if (!value) {
+                    return '';
+                }
+                if (value.startsWith('http://') || value.startsWith('https://')) {
+                    return value;
+                }
+                if (value.startsWith('/')) {
+                    return window.location.origin + value;
+                }
+                return value;
+            }
+
+            function normalizeItemsFromLegacyProducts(list) {
+                const categories = {};
+
+                list.forEach((item) => {
+                    const category = String(item.category || 'All Bundles').trim() || 'All Bundles';
+                    const rawSku = String(item.sku || '').trim();
+                    const normalizedSku = rawSku.toUpperCase().startsWith('WB-') ? rawSku.toUpperCase() : '';
+                    const title = String(item.title || item.name || item.bundle_id || 'Bundle').trim();
+                    const price = String(item.price || '10.00').trim();
+                    const preview = item.preview_url || item.image_url || item.preview || '';
+
+                    if (!categories[category]) {
+                        categories[category] = [];
+                    }
+
+                    categories[category].push({
+                        name: title,
+                        sku: normalizedSku,
+                        price,
+                        previews: preview ? [preview] : [],
+                        file_count: item.file_count || item.count || null,
+                    });
+                });
+
+                return categories;
+            }
+
+            function parseCatalogPayload(data) {
+                if (data && data.status === 'success' && data.categories && typeof data.categories === 'object') {
+                    return data.categories;
+                }
+                if (Array.isArray(data)) {
+                    return normalizeItemsFromLegacyProducts(data);
+                }
+                return null;
+            }
+
+            function findItem(categories) {
+                const groups = Object.keys(categories || {});
+                for (const groupName of groups) {
+                    const hit = (categories[groupName] || []).find((item) => String(item.sku || '').toUpperCase() === sku);
+                    if (hit) {
+                        return { item: hit, groupName };
+                    }
+                }
+                return null;
+            }
+
+            function renderDetail(bundle, categoryName) {
+                const title = bundle.name || bundle.sku || 'Bundle';
+                const price = String(bundle.price || '10.00');
+                const previews = Array.isArray(bundle.previews) ? bundle.previews.map(normalizePreview).filter(Boolean) : [];
+                const fileCount = Number(bundle.file_count);
+                const itemCountLabel = Number.isFinite(fileCount) && fileCount > 0
+                    ? fileCount + ' files in ZIP bundle'
+                    : 'ZIP item count will show after inventory sync';
+                const checkoutHref = sku
+                    ? checkoutOrigin + '/checkout/' + encodeURIComponent(sku)
+                    : checkoutOrigin + '/contact';
+
+                detail.innerHTML = `
+                    <h1>${escapeHtml(title)}</h1>
+                    <p class="meta">SKU: ${escapeHtml(bundle.sku || '')}</p>
+                    <p class="meta">Category: ${escapeHtml(categoryName)}</p>
+                    <div class="chips">
+                        <div class="chip">${escapeHtml(itemCountLabel)}</div>
+                        <div class="chip">${escapeHtml(String(previews.length))} preview image${previews.length === 1 ? '' : 's'}</div>
+                        <div class="chip">$${escapeHtml(price)} USD</div>
+                    </div>
+
+                    ${previews.length ? `
+                    <div class="stitched">
+                        <div class="stitched-grid">
+                            ${previews.map((url, index) => `<img src="${escapeHtml(url)}" alt="Bundle stitched preview ${index + 1}" onerror="this.style.display='none'">`).join('')}
+                        </div>
+                    </div>
+                    <div class="preview-grid">
+                        ${previews.map((url, index) => `
+                        <div class="preview-card">
+                            <img src="${escapeHtml(url)}" alt="Bundle preview ${index + 1}" onerror="this.style.display='none'">
+                        </div>
+                        `).join('')}
+                    </div>
+                    ` : '<div class="status">No preview images available for this bundle yet.</div>'}
+
+                    <div class="actions">
+                        <a class="btn btn-primary" href="${checkoutHref}">Buy Bundle</a>
+                        <a class="btn btn-secondary" href="/">Browse More Bundles</a>
+                    </div>
+                `;
+            }
+
+            function loadCandidate(index) {
+                if (!sku) {
+                    detail.innerHTML = '<div class="status error">Missing SKU in URL. Open this page from a bundle card.</div>';
+                    return;
+                }
+
+                if (index >= dataCandidates.length) {
+                    detail.innerHTML = '<div class="status error">Unable to load bundle details right now.</div>';
+                    return;
+                }
+
+                const path = dataCandidates[index];
+                fetch(path)
+                    .then((res) => {
+                        if (!res.ok) {
+                            throw new Error(path + ' failed with HTTP ' + res.status);
+                        }
+                        return res.json();
+                    })
+                    .then((data) => {
+                        const categories = parseCatalogPayload(data);
+                        if (!categories) {
+                            throw new Error('No usable categories in payload');
+                        }
+                        const result = findItem(categories);
+                        if (!result) {
+                            throw new Error('SKU not found in payload');
+                        }
+                        renderDetail(result.item, result.groupName);
+                    })
+                    .catch(() => {
+                        loadCandidate(index + 1);
+                    });
+            }
+
+            loadCandidate(0);
+        })();
+    </script>
+</body>
+</html>
