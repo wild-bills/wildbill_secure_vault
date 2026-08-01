@@ -13,6 +13,8 @@ SOURCE_DIRECTORIES = [
 
 OUTPUT_DIR = "/home/wildbill/vault_secure_backups"
 DB_PATH = "/home/wildbill/wildbill_secure_vault/store.db"
+MIN_FILES_PER_BUNDLE = 150
+MAX_FILES_PER_BUNDLE = 200
 
 def scan_zip_contents(zip_path):
     """Counts the actual total number of vector formats, banners, and files inside a zip."""
@@ -74,6 +76,15 @@ def create_mega_bundles(theme_keyword, items_per_bundle=60, base_price=12.00):
                 full_source_path = file_location_map[file]
                 total_sub_files += scan_zip_contents(full_source_path)
                 master_zip.write(full_source_path, arcname=file)
+
+        if total_sub_files < MIN_FILES_PER_BUNDLE or total_sub_files > MAX_FILES_PER_BUNDLE:
+            print(
+                f"⏭️ Skipping volume {bundle_num}: {total_sub_files} files found "
+                f"(required {MIN_FILES_PER_BUNDLE}-{MAX_FILES_PER_BUNDLE})."
+            )
+            if os.path.exists(output_path):
+                os.remove(output_path)
+            continue
 
         # 3. Dynamic marketing descriptions based on your rich file formats
         description_text = (

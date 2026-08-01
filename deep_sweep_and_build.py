@@ -17,7 +17,8 @@ OUTPUT_JSON = "/home/wildbill/wildbill_secure_vault/products.json"
 TEMP_GROUND = os.environ.get("VAULT_TEMP_GROUND", "/run/media/wildbill/storage/temp_vault_unpack")
 PACK_STAGING_DIR = os.environ.get("VAULT_PACK_STAGING_DIR", "/run/media/wildbill/storage/bundle_pack_staging")
 FILES_PER_ZIP = 150
-MIN_FILES_PER_ZIP = 100
+MIN_FILES_PER_ZIP = 150
+MAX_FILES_PER_ZIP = 200
 DEFAULT_PRICE = "15.00"
 # ------------------------------------------------- #
 
@@ -96,19 +97,25 @@ def split_theme_files(file_list):
     if total_files < MIN_FILES_PER_ZIP:
         return []
 
-    chunk_count = max(1, math.ceil(total_files / FILES_PER_ZIP))
-    while chunk_count > 1 and total_files / chunk_count < MIN_FILES_PER_ZIP:
-        chunk_count -= 1
+    # Choose a chunk count that guarantees each bundle lands in the 150-200 range.
+    min_chunk_count = math.ceil(total_files / MAX_FILES_PER_ZIP)
+    max_chunk_count = total_files // MIN_FILES_PER_ZIP
+    if min_chunk_count > max_chunk_count:
+        return []
 
+    chunk_count = min_chunk_count
     base_size = total_files // chunk_count
     remainder = total_files % chunk_count
+
     chunks = []
     start_index = 0
-
     for chunk_index in range(chunk_count):
         chunk_size = base_size + (1 if chunk_index < remainder else 0)
         end_index = start_index + chunk_size
-        chunks.append(file_list[start_index:end_index])
+        chunk = file_list[start_index:end_index]
+        if len(chunk) < MIN_FILES_PER_ZIP or len(chunk) > MAX_FILES_PER_ZIP:
+            return []
+        chunks.append(chunk)
         start_index = end_index
 
     return chunks
@@ -193,6 +200,12 @@ def package_theme_chunks(theme_groups):
 
         print(f"📦 Style Theme '{theme}' contains {len(unique_files)} total discovered images. Packing chunks...")
         chunks = split_theme_files(unique_files)
+        if not chunks:
+            print(
+                f"⏭️ Skipping theme '{theme}' because files cannot be partitioned into "
+                f"{MIN_FILES_PER_ZIP}-{MAX_FILES_PER_ZIP} sized bundles."
+            )
+            continue
 
         for index, chunk in enumerate(chunks, start=1):
             safe_theme_id = theme.replace(" ", "_")
@@ -209,6 +222,14 @@ def package_theme_chunks(theme_groups):
             copied_files = sorted(os.listdir(temp_pack_dir))
             if not copied_files:
                 shutil.rmtree(temp_pack_dir)
+                continue
+
+            if len(copied_files) < MIN_FILES_PER_ZIP or len(copied_files) > MAX_FILES_PER_ZIP:
+                shutil.rmtree(temp_pack_dir)
+                print(
+                    f"⏭️ Skipping {bundle_name}: contains {len(copied_files)} files, "
+                    f"outside required {MIN_FILES_PER_ZIP}-{MAX_FILES_PER_ZIP} range."
+                )
                 continue
 
             preview_filename = f"{bundle_name}.jpg"
