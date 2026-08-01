@@ -131,6 +131,7 @@ def build_catalog_sections():
             'name': product_name,
             'price': product['price'],
             'theme': theme_name,
+            'file_count': product['file_count'],
             'previews': product_previews(product),
             'checkout_url': build_checkout_url(checkout_sku),
         })
@@ -240,8 +241,9 @@ def product_detail(sku):
         return "Product not found", 404
 
     product_dict = dict(product)
+    previews = product_previews(product)
     product_dict['checkout_url'] = build_checkout_url(product_dict.get('sku') or '')
-    return render_template('product.html', product=product_dict)
+    return render_template('product.html', product=product_dict, previews=previews)
 
 
 @app.route('/checkout/<sku>', methods=['GET'])

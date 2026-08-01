@@ -91,6 +91,13 @@
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 14px;
+            cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: #5b3838;
         }
 
         .thumb {
@@ -124,7 +131,7 @@
 
         .buy-btn {
             display: inline-block;
-            width: 100%;
+            width: calc(50% - 6px);
             text-align: center;
             padding: 10px;
             background: var(--accent);
@@ -132,6 +139,19 @@
             text-decoration: none;
             font-weight: 700;
             border-radius: 4px;
+        }
+
+        .details-btn {
+            display: inline-block;
+            width: calc(50% - 6px);
+            text-align: center;
+            padding: 10px;
+            background: #2a1d1d;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 4px;
+            margin-right: 8px;
         }
 
         .status {
@@ -319,21 +339,43 @@
                     const title = item.name || item.sku || 'Bundle';
                     const sku = item.sku || '';
                     const price = item.price || '10.00';
+                    const fileCount = item.file_count;
                     const preview = normalizePreview((item.previews && item.previews[0]) || '');
-                    const buyHref = sku
+                    const detailHref = sku
                         ? appOrigin + '/product/' + encodeURIComponent(sku)
+                        : appOrigin + '/contact';
+                    const buyHref = sku
+                        ? appOrigin + '/checkout/' + encodeURIComponent(sku)
                         : appOrigin + '/contact';
 
                     return `
-                        <article class="card">
+                        <article class="card" role="link" tabindex="0" data-detail-href="${escapeHtml(detailHref)}">
                             ${preview ? `<img class="thumb" src="${escapeHtml(preview)}" alt="${escapeHtml(title)}" onerror="this.style.display='none'">` : ''}
                             <h2 class="title">${escapeHtml(title)}</h2>
                             <p class="sku">${sku ? 'SKU: ' + escapeHtml(sku) : ''}</p>
+                            <p class="sku">${Number.isFinite(Number(fileCount)) && Number(fileCount) > 0 ? escapeHtml(String(fileCount)) + ' files in ZIP' : ''}</p>
                             <p class="price">$${escapeHtml(price)}</p>
+                            <a class="details-btn" href="${detailHref}">View Details</a>
                             <a class="buy-btn" href="${buyHref}">Buy Bundle</a>
                         </article>
                     `;
                 }).join('');
+
+                grid.querySelectorAll('.card[data-detail-href]').forEach((card) => {
+                    const href = card.getAttribute('data-detail-href');
+                    card.addEventListener('click', (event) => {
+                        if (event.target.closest('a')) {
+                            return;
+                        }
+                        window.location.href = href;
+                    });
+                    card.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            window.location.href = href;
+                        }
+                    });
+                });
 
                 renderPager(totalItems);
             }
