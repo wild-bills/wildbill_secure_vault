@@ -1,5 +1,6 @@
 import os
 import re
+import csv
 import sqlite3
 from urllib.parse import urlencode
 from flask import Flask, render_template, redirect, request, jsonify, send_from_directory, url_for
@@ -10,6 +11,7 @@ from botocore.config import Config
 # --- PATH & APP CONFIGURATION ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, 'database', 'store.db')
+THEME_IMPORT_CSV = os.path.join(BASE_DIR, 'make_vault_import.csv')
 
 app = Flask(__name__)
 
@@ -64,10 +66,65 @@ def get_db_connection():
     return conn
 
 
+def load_bundle_theme_lookup():
+    lookup = {}
+    max_bundle_num = 0
+
+    if not os.path.exists(THEME_IMPORT_CSV):
+        return lookup, max_bundle_num
+
+    with open(THEME_IMPORT_CSV, mode='r', encoding='utf-8-sig', newline='') as handle:
+        reader = csv.DictReader(handle)
+        for row in reader:
+            raw_sku = str(row.get('SKU') or '').strip().lower()
+            if not raw_sku:
+                continue
+
+            # Example import SKU: bundle_24_crimson_cyberpunk_fetish
+            match = re.match(r'bundle_(\d+)_(.+)$', raw_sku)
+            if not match:
+                continue
+
+            bundle_num = int(match.group(1))
+            raw_theme = match.group(2).replace('_', ' ').strip()
+            if not raw_theme:
+                continue
+
+            lookup[bundle_num] = raw_theme
+            if bundle_num > max_bundle_num:
+                max_bundle_num = bundle_num
+
+    return lookup, max_bundle_num
+
+
+BUNDLE_THEME_LOOKUP, MAX_BUNDLE_THEME_NUMBER = load_bundle_theme_lookup()
+
+
+def infer_theme_from_sku(sku_value):
+    raw_sku = str(sku_value or '').strip().upper()
+    match = re.search(r'(\d+)$', raw_sku)
+    if not match:
+        return ''
+
+    sku_num = int(match.group(1))
+    if sku_num in BUNDLE_THEME_LOOKUP:
+        return BUNDLE_THEME_LOOKUP[sku_num]
+
+    if MAX_BUNDLE_THEME_NUMBER > 0:
+        wrapped_num = ((sku_num - 1) % MAX_BUNDLE_THEME_NUMBER) + 1
+        return BUNDLE_THEME_LOOKUP.get(wrapped_num, '')
+
+    return ''
+
+
 def normalize_theme(product):
     theme = (product['theme'] or '').strip()
-    if theme:
+    if theme and theme.lower() != 'gothic':
         return theme.title()
+
+    inferred = infer_theme_from_sku(product['sku'])
+    if inferred:
+        return inferred.title()
 
     name = (product['name'] or '').strip()
     if name:
