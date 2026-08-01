@@ -3,495 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="/favicon.ico">
-    <title>Wild Bill Clipart Vault</title>
+    <title>WildBills Clipart Vault - Premium Graphic Assets</title>
     <style>
-        :root {
-            --bg: #0c0808;
-            --panel: #151010;
-            --border: #2a1d1d;
-            --text: #f5f2f2;
-            --muted: #b3a5a5;
-            --accent: #ef4a3b;
-        }
-
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            color: var(--text);
-            font-family: Arial, sans-serif;
-            background: linear-gradient(180deg, #0c0808 0%, #090606 100%);
-        }
-
-        .hero {
-            text-align: center;
-            padding: 56px 16px 24px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        h1 {
-            margin: 0;
-            color: var(--accent);
-            letter-spacing: 0.03em;
-        }
-
-        .hero p {
-            color: var(--muted);
-            margin: 10px 0 0;
-        }
-
-        .wrap {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 24px 16px 48px;
-        }
-
-        .filter-bar {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 24px;
-        }
-
-        .results-meta {
-            text-align: center;
-            color: var(--muted);
-            margin: -8px 0 14px;
-            font-size: 13px;
-        }
-
-        .filter-btn {
-            padding: 10px 16px;
-            font-weight: 700;
-            border: 1px solid var(--border);
-            background: #181212;
-            color: #fff;
-            border-radius: 6px;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 12px;
-        }
-
-        .filter-btn.active {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 16px;
-            min-height: 180px;
-        }
-
-        .card {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 14px;
-            cursor: pointer;
-            transition: transform 0.15s ease, border-color 0.15s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            border-color: #5b3838;
-        }
-
-        .thumb {
-            width: 100%;
-            height: 190px;
-            border-radius: 6px;
-            object-fit: contain;
-            background: #0f0a0a;
-            display: block;
-            margin-bottom: 12px;
-        }
-
-        .title {
-            margin: 0 0 6px;
-            color: var(--accent);
-            font-size: 14px;
-            min-height: 36px;
-        }
-
-        .sku {
-            margin: 0 0 8px;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .price {
-            margin: 0 0 12px;
-            color: #fff;
-            font-weight: 700;
-        }
-
-        .buy-btn {
-            display: inline-block;
-            width: calc(50% - 6px);
-            text-align: center;
-            padding: 10px;
-            background: var(--accent);
-            color: #fff;
-            text-decoration: none;
-            font-weight: 700;
-            border-radius: 4px;
-        }
-
-        .details-btn {
-            display: inline-block;
-            width: calc(50% - 6px);
-            text-align: center;
-            padding: 10px;
-            background: #2a1d1d;
-            color: #fff;
-            text-decoration: none;
-            font-weight: 700;
-            border-radius: 4px;
-            margin-right: 8px;
-        }
-
-        .status {
-            color: var(--muted);
-            text-align: center;
-            padding: 24px;
-        }
-
-        .pager {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin: 20px 0 6px;
-        }
-
-        .pager button {
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            background: #181212;
-            color: #fff;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 12px;
-            text-transform: uppercase;
-        }
-
-        .pager button:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
-        }
-
-        .pager-info {
-            color: var(--muted);
-            font-size: 12px;
-            min-width: 120px;
-            text-align: center;
-        }
-
-        .error {
-            color: var(--accent);
-        }
+        body { background-color: #0d0d0d; color: #e0e0e0; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .hero { text-align: center; padding: 60px 20px; background: #111; border-bottom: 1px solid #261010; }
+        .hero h1 { color: #e74c3c; font-size: 36px; text-transform: uppercase; margin: 0 0 10px 0; }
+        .hero p { color: #aaa; font-size: 16px; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .category-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; min-height: 200px; }
+        footer { background: #111; padding: 40px 20px; text-align: center; border-top: 1px solid #261010; font-size: 13px; color: #666; }
     </style>
 </head>
 <body>
-    <header class="hero">
-        <h1>BROWSE CATEGORIES</h1>
-        <p>Select a category to filter your premium clipart bundles.</p>
-    </header>
 
-    <main class="wrap">
-        <div id="filter-bar" class="filter-bar"></div>
-        <div id="results-meta" class="results-meta"></div>
-        <div id="catalog-grid" class="grid">
-            <div class="status">Loading catalog...</div>
-        </div>
-        <div id="pager" class="pager"></div>
-    </main>
+<div class="hero">
+    <h1>Browse Categories</h1>
+    <p>Select a category to filter your 150-item premium clipart design packs.</p>
+</div>
 
-    <script>
-        (function() {
-            const filterBar = document.getElementById('filter-bar');
-            const resultsMeta = document.getElementById('results-meta');
-            const grid = document.getElementById('catalog-grid');
-            const pager = document.getElementById('pager');
-            const appOrigin = 'https://api-clipart.wildbillsproplans.com';
-            const dataCandidates = ['/catalog.json', '/products.json', '/static/products.json'];
-            const pageSize = 24;
+<div class="container">
+    <div id="vault-filter-bar" style="text-align:center; margin:0 auto 40px auto; display:flex; flex-wrap:wrap; justify-content:center; gap:10px;"></div>
+    <div class="category-grid" id="main-catalog-grid">
+        <div style="color:#aaa; font-style:italic; padding:40px;">Syncing with secure storage array vaults...</div>
+    </div>
+</div>
 
-            let activeCategory = '';
-            let activePage = 1;
-            let catalogCategories = {};
+<script>
+(function() {
+    console.log("[VAULT ENGINE] Initializing secure categorized catalog routing...");
+    const gridContainer = document.getElementById('main-catalog-grid');
+    const filterBar = document.getElementById('vault-filter-bar');
 
-            function escapeHtml(value) {
-                return String(value || '')
-                    .replaceAll('&', '&amp;')
-                    .replaceAll('<', '&lt;')
-                    .replaceAll('>', '&gt;')
-                    .replaceAll('"', '&quot;')
-                    .replaceAll("'", '&#39;');
-            }
-
-            function normalizePreview(url) {
-                const value = String(url || '');
-                if (!value) {
-                    return '';
-                }
-                if (value.startsWith('http://') || value.startsWith('https://')) {
-                    return value;
-                }
-                if (value.startsWith('/')) {
-                    return window.location.origin + value;
-                }
-                return value;
-            }
-
-            function displayTitle(rawName, sku) {
-                const name = String(rawName || '').trim();
-                if (!name || name.startsWith('===')) {
-                    return sku || 'Bundle';
-                }
-                return name;
-            }
-
-            function buildGroupedCategories(categories) {
-                const grouped = {};
-                const maxItemsPerCategory = 60;
-
-                Object.entries(categories || {}).forEach(([name, items]) => {
-                    const safeItems = Array.isArray(items) ? items : [];
-
-                    if (safeItems.length <= maxItemsPerCategory) {
-                        grouped[name] = safeItems;
-                        return;
-                    }
-
-                    for (let i = 0; i < safeItems.length; i += maxItemsPerCategory) {
-                        const slice = safeItems.slice(i, i + maxItemsPerCategory);
-                        const start = i + 1;
-                        const end = i + slice.length;
-                        const label = name + ' ' + start + '-' + end;
-                        grouped[label] = slice;
-                    }
-                });
-
-                return grouped;
-            }
-
-            function renderPager(totalItems) {
-                pager.innerHTML = '';
-
-                if (totalItems <= pageSize) {
-                    return;
-                }
-
-                const totalPages = Math.ceil(totalItems / pageSize);
-
-                const prev = document.createElement('button');
-                prev.type = 'button';
-                prev.textContent = 'Previous';
-                prev.disabled = activePage <= 1;
-                prev.addEventListener('click', () => {
-                    if (activePage > 1) {
-                        activePage -= 1;
-                        renderActiveCategory();
-                    }
-                });
-
-                const info = document.createElement('div');
-                info.className = 'pager-info';
-                info.textContent = 'Page ' + activePage + ' of ' + totalPages;
-
-                const next = document.createElement('button');
-                next.type = 'button';
-                next.textContent = 'Next';
-                next.disabled = activePage >= totalPages;
-                next.addEventListener('click', () => {
-                    if (activePage < totalPages) {
-                        activePage += 1;
-                        renderActiveCategory();
-                    }
-                });
-
-                pager.appendChild(prev);
-                pager.appendChild(info);
-                pager.appendChild(next);
-            }
-
-            function renderCards(items) {
-                if (!Array.isArray(items) || items.length === 0) {
-                    resultsMeta.textContent = '';
-                    grid.innerHTML = '<div class="status">No bundles found for this category.</div>';
-                    pager.innerHTML = '';
-                    return;
-                }
-
-                const totalItems = items.length;
-                const totalPages = Math.ceil(totalItems / pageSize);
-                if (activePage > totalPages) {
-                    activePage = totalPages;
-                }
-                if (activePage < 1) {
-                    activePage = 1;
-                }
-
-                const start = (activePage - 1) * pageSize;
-                const end = Math.min(start + pageSize, totalItems);
-                const pageItems = items.slice(start, end);
-                resultsMeta.textContent = 'Showing ' + (start + 1) + '-' + end + ' of ' + totalItems + ' bundles';
-
-                grid.innerHTML = pageItems.map((item) => {
-                    const sku = item.sku || '';
-                    const title = displayTitle(item.name, sku);
-                    const price = item.price || '10.00';
-                    const fileCount = item.file_count;
-                    const preview = normalizePreview((item.previews && item.previews[0]) || '');
-                    const detailHref = sku
-                        ? '/product.html?sku=' + encodeURIComponent(sku)
-                        : '/contact.html';
-                    const buyHref = sku
-                        ? '/product.html?sku=' + encodeURIComponent(sku)
-                        : '/contact.html';
-
-                    return `
-                        <article class="card" role="link" tabindex="0" data-detail-href="${escapeHtml(detailHref)}">
-                            ${preview ? `<img class="thumb" src="${escapeHtml(preview)}" alt="${escapeHtml(title)}" onerror="this.style.display='none'">` : ''}
-                            <h2 class="title">${escapeHtml(title)}</h2>
-                            <p class="sku">${sku ? 'SKU: ' + escapeHtml(sku) : ''}</p>
-                            <p class="sku">${Number.isFinite(Number(fileCount)) && Number(fileCount) > 0 ? escapeHtml(String(fileCount)) + ' files in ZIP' : ''}</p>
-                            <p class="price">$${escapeHtml(price)}</p>
-                            <a class="details-btn" href="${detailHref}">View Details</a>
-                            <a class="buy-btn" href="${buyHref}">Buy Bundle</a>
-                        </article>
-                    `;
-                }).join('');
-
-                grid.querySelectorAll('.card[data-detail-href]').forEach((card) => {
-                    const href = card.getAttribute('data-detail-href');
-                    card.addEventListener('click', (event) => {
-                        if (event.target.closest('a')) {
-                            return;
-                        }
-                        window.location.href = href;
-                    });
-                    card.addEventListener('keydown', (event) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                            event.preventDefault();
-                            window.location.href = href;
-                        }
-                    });
-                });
-
-                renderPager(totalItems);
-            }
-
-            function renderActiveCategory() {
-                const items = catalogCategories[activeCategory] || [];
-                renderCards(items);
-            }
-
-            function renderCategories(categories) {
-                const names = Object.keys(categories || {});
-                if (names.length === 0) {
-                    resultsMeta.textContent = '';
-                    pager.innerHTML = '';
-                    grid.innerHTML = '<div class="status">No categories found.</div>';
-                    return;
-                }
-
-                catalogCategories = categories;
+    // Appends a live timestamp cache-breaker to the query string to force real-time loads
+    fetch('https://wildbillsproplans.com' + new Date().getTime())
+        .then(res => {
+            if (!res.ok) throw new Error("HTTP connection fault: " + res.status);
+            return res.json();
+        })
+        .then(data => {
+            if (data.status === "success" && data.categories) {
                 filterBar.innerHTML = '';
+                gridContainer.innerHTML = '';
+                const categoryKeys = Object.keys(data.categories);
 
-                names.forEach((name, index) => {
-                    const button = document.createElement('button');
-                    button.className = 'filter-btn';
-                    button.textContent = name;
-
-                    button.addEventListener('click', () => {
-                        document.querySelectorAll('.filter-btn').forEach((node) => node.classList.remove('active'));
-                        button.classList.add('active');
-                        activeCategory = name;
-                        activePage = 1;
-                        renderActiveCategory();
+                categoryKeys.forEach((catName, index) => {
+                    const btn = document.createElement('button');
+                    btn.innerText = catName;
+                    btn.style.cssText = "padding:10px 20px; font-weight:bold; background:#141414; border:1px solid #261010; color:#fff; cursor:pointer; border-radius:4px; text-transform:uppercase; font-size:12px; margin:5px;";
+                    
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('#vault-filter-bar button').forEach(b => {
+                            b.style.background = "#141414";
+                            b.style.borderColor = "#261010";
+                        });
+                        btn.style.background = "#e74c3c";
+                        btn.style.borderColor = "#e74c3c";
+                        renderCategoryCards(data.categories[catName], gridContainer);
                     });
 
-                    filterBar.appendChild(button);
-                    if (index === 0) {
-                        button.click();
-                    }
+                    filterBar.appendChild(btn);
+                    if (index === 0) btn.click();
                 });
+            } else {
+                gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">No categories found in data maps.</div>';
             }
+        })
+        .catch(err => {
+            console.error("[VAULT CRASH]", err);
+            gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">Handshake error over tunnel.</div>';
+        });
 
-            function normalizeItemsFromLegacyProducts(list) {
-                const categories = {};
-
-                list.forEach((item) => {
-                    const category = String(item.category || 'All Bundles').trim() || 'All Bundles';
-                    const rawSku = String(item.sku || '').trim();
-                    const sku = rawSku.toUpperCase().startsWith('WB-') ? rawSku : '';
-                    const title = String(item.title || item.name || item.bundle_id || 'Bundle').trim();
-                    const price = String(item.price || '10.00').trim();
-                    const preview = item.preview_url || item.image_url || item.preview || '';
-
-                    if (!categories[category]) {
-                        categories[category] = [];
-                    }
-
-                    categories[category].push({
-                        name: title,
-                        sku,
-                        price,
-                        previews: preview ? [preview] : [],
-                    });
-                });
-
-                return categories;
-            }
-
-            function parseCatalogPayload(data) {
-                if (data && data.status === 'success' && data.categories && typeof data.categories === 'object') {
-                    return buildGroupedCategories(data.categories);
-                }
-
-                if (Array.isArray(data)) {
-                    return buildGroupedCategories(normalizeItemsFromLegacyProducts(data));
-                }
-
-                return null;
-            }
-
-            function loadCandidate(index) {
-                if (index >= dataCandidates.length) {
-                    grid.innerHTML = '<div class="status error">Unable to load catalog data. Missing catalog.json/products.json in deployed root.</div>';
-                    return;
-                }
-
-                const path = dataCandidates[index];
-                fetch(path)
-                    .then((res) => {
-                        if (!res.ok) {
-                            throw new Error(path + ' failed with HTTP ' + res.status);
-                        }
-                        return res.json();
-                    })
-                    .then((data) => {
-                        const categories = parseCatalogPayload(data);
-                        if (!categories || Object.keys(categories).length === 0) {
-                            throw new Error(path + ' returned no usable categories');
-                        }
-                        renderCategories(categories);
-                    })
-                    .catch((error) => {
-                        console.warn(error);
-                        loadCandidate(index + 1);
-                    });
-            }
-
-            loadCandidate(0);
-        })();
-    </script>
+    function renderCategoryCards(productArray, container) {
+        container.innerHTML = '';
+        if (!productArray || productArray.length === 0) {
+            container.innerHTML = '<div style="color:#aaa; padding:20px;">No bundles inside this category.</div>';
+            return;
+        }
+        productArray.forEach(prodId => {
+            const displayTitle = prodId.replace(/_/g, ' ').toUpperCase();
+            const cleanId = prodId.toLowerCase();
+            
+            const cardHtml = `
+                <div class="product-card" style="background:#141414; padding:20px; border:1px solid #261010; border-radius:6px; margin:10px; text-align:center; display:inline-block; width:280px; vertical-align:top;">
+                    <img src="https://wildbillsproplans.com{cleanId}_preview.jpg" alt="${displayTitle}" style="max-width:100%; border-radius:4px; margin-bottom:15px;" onerror="this.onerror=null; this.src='https://wildbillsproplans.com{prodId}_preview.jpg';">
+                    <h3 style="color:#e74c3c; font-size:14px; margin-bottom:10px; min-height:40px;">${displayTitle}</h3>
+                    <button class="buy-button" data-product-id="${prodId}" style="width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; font-weight:bold; text-transform:uppercase; border-radius:4px; cursor:pointer;">Buy Pack - $20.00</button>
+                </div>
+            `;
+            container.innerHTML += cardHtml;
+        });
+    }
+})();
+</script>
 </body>
 </html>
