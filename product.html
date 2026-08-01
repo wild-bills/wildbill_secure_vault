@@ -139,6 +139,8 @@
             font-weight: 700;
             border-radius: 8px;
             padding: 10px 14px;
+            border: 0;
+            cursor: pointer;
         }
 
         .btn-primary {
@@ -259,6 +261,7 @@
             function renderDetail(bundle, categoryName) {
                 const title = displayTitle(bundle.name, bundle.sku || sku);
                 const price = String(bundle.price || '10.00');
+                const priceId = String(bundle.price_id || '').trim();
                 const previews = Array.isArray(bundle.previews) ? bundle.previews.map(normalizePreview).filter(Boolean) : [];
                 const fileCount = Number(bundle.file_count);
                 const itemCountLabel = Number.isFinite(fileCount) && fileCount > 0
@@ -294,10 +297,49 @@
                     ` : '<div class="status">No preview images available for this bundle yet.</div>'}
 
                     <div class="actions">
-                        <a class="btn btn-primary" href="${checkoutHref}">Buy Bundle</a>
+                        <button class="btn btn-primary" id="buyBundleButton" type="button">Buy Bundle</button>
                         <a class="btn btn-secondary" href="/">Browse More Bundles</a>
                     </div>
                 `;
+
+                const buyButton = document.getElementById('buyBundleButton');
+                if (!buyButton) {
+                    return;
+                }
+
+                buyButton.addEventListener('click', () => {
+                    const metadataProductId = String(
+                        bundle.product_id
+                        || bundle.zip_filename
+                        || bundle.sku
+                        || sku
+                        || ''
+                    )
+                        .replace(/\.zip$/i, '')
+                        .replace(/[^A-Za-z0-9_]+/g, '_')
+                        .replace(/^_+|_+$/g, '');
+
+                    const checkoutSessionParameters = {
+                        success_url: 'https://wildbillsproplans.com',
+                        cancel_url: 'https://wildbillsproplans.com',
+                        line_items: [{ price: priceId || 'YOUR_STRIPE_PRICE_ID', quantity: 1 }],
+                        mode: 'payment',
+                        metadata: {
+                            product_id: metadataProductId,
+                        },
+                    };
+
+                    const redirectUrl = new URL(checkoutHref);
+                    redirectUrl.searchParams.set('product_id', checkoutSessionParameters.metadata.product_id);
+                    if (priceId) {
+                        redirectUrl.searchParams.set('price_id', priceId);
+                    }
+                    redirectUrl.searchParams.set('success_url', checkoutSessionParameters.success_url);
+                    redirectUrl.searchParams.set('cancel_url', checkoutSessionParameters.cancel_url);
+                    redirectUrl.searchParams.set('mode', checkoutSessionParameters.mode);
+
+                    window.location.href = redirectUrl.toString();
+                });
             }
 
             function loadCandidate(index) {

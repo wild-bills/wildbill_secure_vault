@@ -151,17 +151,32 @@ def product_previews(product):
     return previews[:4]
 
 
-def build_checkout_url(sku):
+def build_checkout_url(sku, metadata_product_id='', price_id='', success_url='', cancel_url='', mode='payment'):
     """Build external checkout URL for the configured payment provider."""
     checkout_base = (os.environ.get('PAY_SERVICE_CHECKOUT_URL') or '').strip()
     if not checkout_base:
         return None
 
-    if '{sku}' in checkout_base:
-        return checkout_base.replace('{sku}', sku)
+    passthrough = {
+        'product_id': (metadata_product_id or '').strip(),
+        'price_id': (price_id or '').strip(),
+        'success_url': (success_url or '').strip(),
+        'cancel_url': (cancel_url or '').strip(),
+        'mode': (mode or '').strip(),
+    }
+    passthrough = {k: v for k, v in passthrough.items() if v}
 
-    separator = '&' if '?' in checkout_base else '?'
-    return f"{checkout_base}{separator}{urlencode({'sku': sku})}"
+    if '{sku}' in checkout_base:
+        checkout_url = checkout_base.replace('{sku}', sku)
+    else:
+        separator = '&' if '?' in checkout_base else '?'
+        checkout_url = f"{checkout_base}{separator}{urlencode({'sku': sku})}"
+
+    if not passthrough:
+        return checkout_url
+
+    separator = '&' if '?' in checkout_url else '?'
+    return f"{checkout_url}{separator}{urlencode(passthrough)}"
 
 
 def build_catalog_sections():
@@ -178,6 +193,11 @@ def build_catalog_sections():
             product_name = product['sku'] or 'Untitled Bundle'
 
         checkout_sku = product['sku'] or ''
+        zip_filename = (product['zip_filename'] or '').strip()
+        metadata_product_id = zip_filename
+        if metadata_product_id.lower().endswith('.zip'):
+            metadata_product_id = metadata_product_id[:-4]
+
         grouped.setdefault(theme_slug, {
             'slug': theme_slug,
             'theme': theme_name,
@@ -187,8 +207,11 @@ def build_catalog_sections():
             'sku': product['sku'],
             'name': product_name,
             'price': product['price'],
+            'price_id': product['paddle_price_id'],
             'theme': theme_name,
             'file_count': product['file_count'],
+            'zip_filename': zip_filename,
+            'product_id': metadata_product_id,
             'previews': product_previews(product),
             'checkout_url': build_checkout_url(checkout_sku),
         })
@@ -312,7 +335,14 @@ def checkout_redirect(sku):
     if product is None:
         return "Product not found", 404
 
-    checkout_url = build_checkout_url(sku)
+    checkout_url = build_checkout_url(
+        sku,
+        metadata_product_id=request.args.get('product_id', '').strip(),
+        price_id=request.args.get('price_id', '').strip(),
+        success_url=request.args.get('success_url', '').strip(),
+        cancel_url=request.args.get('cancel_url', '').strip(),
+        mode=request.args.get('mode', 'payment').strip() or 'payment',
+    )
     if not checkout_url:
         return (
             "Checkout is not configured yet. Set PAY_SERVICE_CHECKOUT_URL "

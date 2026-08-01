@@ -202,12 +202,62 @@
             {% endif %}
         </div>
 
-        {% if product['checkout_url'] %}
-        <a class="buy-now-btn" href="{{ product['checkout_url'] }}" target="_blank" rel="noopener">Start Secure Checkout</a>
-        {% else %}
-        <a class="buy-now-btn" href="{{ url_for('checkout_redirect', sku=product['sku']) }}">Start Secure Checkout</a>
-        <div class="checkout-note">If checkout is not configured yet, this link will show setup status.</div>
+        <button
+            class="buy-now-btn"
+            id="buyNowButton"
+            type="button"
+            data-checkout-url="{{ product['checkout_url'] or url_for('checkout_redirect', sku=product['sku']) }}"
+            data-price-id="{{ product['paddle_price_id'] or '' }}"
+            data-product-id="{{ (product['zip_filename'] or product['sku'] or '')|replace('.zip', '') }}"
+        >
+            Start Secure Checkout
+        </button>
+        {% if not product['checkout_url'] %}
+        <div class="checkout-note">If checkout is not configured yet, this button will show setup status.</div>
         {% endif %}
     </div>
+
+    <script>
+        (function () {
+            const button = document.getElementById('buyNowButton');
+            if (!button) {
+                return;
+            }
+
+            button.addEventListener('click', function () {
+                const checkoutUrl = button.dataset.checkoutUrl || '';
+                if (!checkoutUrl) {
+                    return;
+                }
+
+                const metadataProductId = String(button.dataset.productId || '')
+                    .replace(/\.zip$/i, '')
+                    .replace(/[^A-Za-z0-9_]+/g, '_')
+                    .replace(/^_+|_+$/g, '');
+
+                const priceId = String(button.dataset.priceId || '').trim();
+                const checkoutSessionParameters = {
+                    success_url: 'https://wildbillsproplans.com',
+                    cancel_url: 'https://wildbillsproplans.com',
+                    line_items: [{ price: priceId || 'YOUR_STRIPE_PRICE_ID', quantity: 1 }],
+                    mode: 'payment',
+                    metadata: {
+                        product_id: metadataProductId,
+                    },
+                };
+
+                const redirectUrl = new URL(checkoutUrl, window.location.origin);
+                redirectUrl.searchParams.set('product_id', checkoutSessionParameters.metadata.product_id);
+                if (priceId) {
+                    redirectUrl.searchParams.set('price_id', priceId);
+                }
+                redirectUrl.searchParams.set('success_url', checkoutSessionParameters.success_url);
+                redirectUrl.searchParams.set('cancel_url', checkoutSessionParameters.cancel_url);
+                redirectUrl.searchParams.set('mode', checkoutSessionParameters.mode);
+
+                window.location.href = redirectUrl.toString();
+            });
+        })();
+    </script>
 </body>
 </html>
