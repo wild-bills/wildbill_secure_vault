@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/favicon.ico">
     <title>Wild Bill Clipart Vault</title>
     <style>
         :root {
@@ -155,6 +156,7 @@
             const filterBar = document.getElementById('filter-bar');
             const grid = document.getElementById('catalog-grid');
             const appOrigin = 'https://api-clipart.wildbillsproplans.com';
+            const dataCandidates = ['/catalog.json', '/products.json', '/static/products.json'];
 
             function escapeHtml(value) {
                 return String(value || '')
@@ -233,24 +235,72 @@
                 });
             }
 
-            fetch('/catalog.json')
-                .then((res) => {
-                    if (!res.ok) {
-                        throw new Error('Catalog request failed with HTTP ' + res.status);
+            function normalizeItemsFromLegacyProducts(list) {
+                const categories = {};
+
+                list.forEach((item) => {
+                    const category = String(item.category || 'All Bundles').trim() || 'All Bundles';
+                    const rawSku = String(item.sku || '').trim();
+                    const sku = rawSku.toUpperCase().startsWith('WB-') ? rawSku : '';
+                    const title = String(item.title || item.name || item.bundle_id || 'Bundle').trim();
+                    const price = String(item.price || '10.00').trim();
+                    const preview = item.preview_url || item.image_url || item.preview || '';
+
+                    if (!categories[category]) {
+                        categories[category] = [];
                     }
-                    return res.json();
-                })
-                .then((data) => {
-                    if (data && data.status === 'success' && data.categories) {
-                        renderCategories(data.categories);
-                        return;
-                    }
-                    throw new Error('Unexpected catalog payload');
-                })
-                .catch((error) => {
-                    console.error(error);
-                    grid.innerHTML = '<div class="status error">Unable to load local catalog.json. Rebuild and publish dist with catalog + static assets.</div>';
+
+                    categories[category].push({
+                        name: title,
+                        sku,
+                        price,
+                        previews: preview ? [preview] : [],
+                    });
                 });
+
+                return categories;
+            }
+
+            function parseCatalogPayload(data) {
+                if (data && data.status === 'success' && data.categories && typeof data.categories === 'object') {
+                    return data.categories;
+                }
+
+                if (Array.isArray(data)) {
+                    return normalizeItemsFromLegacyProducts(data);
+                }
+
+                return null;
+            }
+
+            function loadCandidate(index) {
+                if (index >= dataCandidates.length) {
+                    grid.innerHTML = '<div class="status error">Unable to load catalog data. Missing catalog.json/products.json in deployed root.</div>';
+                    return;
+                }
+
+                const path = dataCandidates[index];
+                fetch(path)
+                    .then((res) => {
+                        if (!res.ok) {
+                            throw new Error(path + ' failed with HTTP ' + res.status);
+                        }
+                        return res.json();
+                    })
+                    .then((data) => {
+                        const categories = parseCatalogPayload(data);
+                        if (!categories || Object.keys(categories).length === 0) {
+                            throw new Error(path + ' returned no usable categories');
+                        }
+                        renderCategories(categories);
+                    })
+                    .catch((error) => {
+                        console.warn(error);
+                        loadCandidate(index + 1);
+                    });
+            }
+
+            loadCandidate(0);
         })();
     </script>
 </body>

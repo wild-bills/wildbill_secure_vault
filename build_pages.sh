@@ -20,6 +20,10 @@ cp ads.txt "$DIST_DIR/"
 cp sitemap.xml "$DIST_DIR/"
 cp _redirects "$DIST_DIR/"
 
+if [[ -f static/favicon.ico ]]; then
+    cp static/favicon.ico "$DIST_DIR/favicon.ico"
+fi
+
 cp templates/contact.html "$DIST_DIR/contact.html"
 cp templates/privacy.html "$DIST_DIR/privacy.html"
 cp templates/terms.html "$DIST_DIR/terms.html"
