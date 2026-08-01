@@ -55,6 +55,13 @@
             margin-bottom: 24px;
         }
 
+        .results-meta {
+            text-align: center;
+            color: var(--muted);
+            margin: -8px 0 14px;
+            font-size: 13px;
+        }
+
         .filter-btn {
             padding: 10px 16px;
             font-weight: 700;
@@ -133,6 +140,38 @@
             padding: 24px;
         }
 
+        .pager {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0 6px;
+        }
+
+        .pager button {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            background: #181212;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .pager button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .pager-info {
+            color: var(--muted);
+            font-size: 12px;
+            min-width: 120px;
+            text-align: center;
+        }
+
         .error {
             color: var(--accent);
         }
@@ -146,17 +185,26 @@
 
     <main class="wrap">
         <div id="filter-bar" class="filter-bar"></div>
+        <div id="results-meta" class="results-meta"></div>
         <div id="catalog-grid" class="grid">
             <div class="status">Loading catalog...</div>
         </div>
+        <div id="pager" class="pager"></div>
     </main>
 
     <script>
         (function() {
             const filterBar = document.getElementById('filter-bar');
+            const resultsMeta = document.getElementById('results-meta');
             const grid = document.getElementById('catalog-grid');
+            const pager = document.getElementById('pager');
             const appOrigin = 'https://api-clipart.wildbillsproplans.com';
             const dataCandidates = ['/catalog.json', '/products.json', '/static/products.json'];
+            const pageSize = 24;
+
+            let activeCategory = '';
+            let activePage = 1;
+            let catalogCategories = {};
 
             function escapeHtml(value) {
                 return String(value || '')
@@ -181,13 +229,93 @@
                 return value;
             }
 
-            function renderCards(items) {
-                if (!Array.isArray(items) || items.length === 0) {
-                    grid.innerHTML = '<div class="status">No bundles found for this category.</div>';
+            function buildGroupedCategories(categories) {
+                const grouped = {};
+                const maxItemsPerCategory = 60;
+
+                Object.entries(categories || {}).forEach(([name, items]) => {
+                    const safeItems = Array.isArray(items) ? items : [];
+
+                    if (safeItems.length <= maxItemsPerCategory) {
+                        grouped[name] = safeItems;
+                        return;
+                    }
+
+                    for (let i = 0; i < safeItems.length; i += maxItemsPerCategory) {
+                        const slice = safeItems.slice(i, i + maxItemsPerCategory);
+                        const start = i + 1;
+                        const end = i + slice.length;
+                        const label = name + ' ' + start + '-' + end;
+                        grouped[label] = slice;
+                    }
+                });
+
+                return grouped;
+            }
+
+            function renderPager(totalItems) {
+                pager.innerHTML = '';
+
+                if (totalItems <= pageSize) {
                     return;
                 }
 
-                grid.innerHTML = items.map((item) => {
+                const totalPages = Math.ceil(totalItems / pageSize);
+
+                const prev = document.createElement('button');
+                prev.type = 'button';
+                prev.textContent = 'Previous';
+                prev.disabled = activePage <= 1;
+                prev.addEventListener('click', () => {
+                    if (activePage > 1) {
+                        activePage -= 1;
+                        renderActiveCategory();
+                    }
+                });
+
+                const info = document.createElement('div');
+                info.className = 'pager-info';
+                info.textContent = 'Page ' + activePage + ' of ' + totalPages;
+
+                const next = document.createElement('button');
+                next.type = 'button';
+                next.textContent = 'Next';
+                next.disabled = activePage >= totalPages;
+                next.addEventListener('click', () => {
+                    if (activePage < totalPages) {
+                        activePage += 1;
+                        renderActiveCategory();
+                    }
+                });
+
+                pager.appendChild(prev);
+                pager.appendChild(info);
+                pager.appendChild(next);
+            }
+
+            function renderCards(items) {
+                if (!Array.isArray(items) || items.length === 0) {
+                    resultsMeta.textContent = '';
+                    grid.innerHTML = '<div class="status">No bundles found for this category.</div>';
+                    pager.innerHTML = '';
+                    return;
+                }
+
+                const totalItems = items.length;
+                const totalPages = Math.ceil(totalItems / pageSize);
+                if (activePage > totalPages) {
+                    activePage = totalPages;
+                }
+                if (activePage < 1) {
+                    activePage = 1;
+                }
+
+                const start = (activePage - 1) * pageSize;
+                const end = Math.min(start + pageSize, totalItems);
+                const pageItems = items.slice(start, end);
+                resultsMeta.textContent = 'Showing ' + (start + 1) + '-' + end + ' of ' + totalItems + ' bundles';
+
+                grid.innerHTML = pageItems.map((item) => {
                     const title = item.name || item.sku || 'Bundle';
                     const sku = item.sku || '';
                     const price = item.price || '10.00';
@@ -206,15 +334,25 @@
                         </article>
                     `;
                 }).join('');
+
+                renderPager(totalItems);
+            }
+
+            function renderActiveCategory() {
+                const items = catalogCategories[activeCategory] || [];
+                renderCards(items);
             }
 
             function renderCategories(categories) {
                 const names = Object.keys(categories || {});
                 if (names.length === 0) {
+                    resultsMeta.textContent = '';
+                    pager.innerHTML = '';
                     grid.innerHTML = '<div class="status">No categories found.</div>';
                     return;
                 }
 
+                catalogCategories = categories;
                 filterBar.innerHTML = '';
 
                 names.forEach((name, index) => {
@@ -225,7 +363,9 @@
                     button.addEventListener('click', () => {
                         document.querySelectorAll('.filter-btn').forEach((node) => node.classList.remove('active'));
                         button.classList.add('active');
-                        renderCards(categories[name]);
+                        activeCategory = name;
+                        activePage = 1;
+                        renderActiveCategory();
                     });
 
                     filterBar.appendChild(button);
@@ -263,11 +403,11 @@
 
             function parseCatalogPayload(data) {
                 if (data && data.status === 'success' && data.categories && typeof data.categories === 'object') {
-                    return data.categories;
+                    return buildGroupedCategories(data.categories);
                 }
 
                 if (Array.isArray(data)) {
-                    return normalizeItemsFromLegacyProducts(data);
+                    return buildGroupedCategories(normalizeItemsFromLegacyProducts(data));
                 }
 
                 return null;
