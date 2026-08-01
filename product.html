@@ -200,6 +200,14 @@
                 return value;
             }
 
+            function displayTitle(rawName, normalizedSku) {
+                const name = String(rawName || '').trim();
+                if (!name || name.startsWith('===')) {
+                    return normalizedSku || 'Bundle';
+                }
+                return name;
+            }
+
             function normalizeItemsFromLegacyProducts(list) {
                 const categories = {};
 
@@ -249,7 +257,7 @@
             }
 
             function renderDetail(bundle, categoryName) {
-                const title = bundle.name || bundle.sku || 'Bundle';
+                const title = displayTitle(bundle.name, bundle.sku || sku);
                 const price = String(bundle.price || '10.00');
                 const previews = Array.isArray(bundle.previews) ? bundle.previews.map(normalizePreview).filter(Boolean) : [];
                 const fileCount = Number(bundle.file_count);

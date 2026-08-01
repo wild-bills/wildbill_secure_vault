@@ -249,6 +249,14 @@
                 return value;
             }
 
+            function displayTitle(rawName, sku) {
+                const name = String(rawName || '').trim();
+                if (!name || name.startsWith('===')) {
+                    return sku || 'Bundle';
+                }
+                return name;
+            }
+
             function buildGroupedCategories(categories) {
                 const grouped = {};
                 const maxItemsPerCategory = 60;
@@ -336,8 +344,8 @@
                 resultsMeta.textContent = 'Showing ' + (start + 1) + '-' + end + ' of ' + totalItems + ' bundles';
 
                 grid.innerHTML = pageItems.map((item) => {
-                    const title = item.name || item.sku || 'Bundle';
                     const sku = item.sku || '';
+                    const title = displayTitle(item.name, sku);
                     const price = item.price || '10.00';
                     const fileCount = item.file_count;
                     const preview = normalizePreview((item.previews && item.previews[0]) || '');
