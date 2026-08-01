@@ -31,8 +31,8 @@ PRO_PRICE_MATRIX = {
 }
 DEFAULT_PRICE = 89.99
 
-# Base URL for preview images – must stay on the design subdomain
-PREVIEW_BASE_URL = "https://design.wildbillsproplans.com/previews"
+# Base URL for preview images served to storefront clients.
+PREVIEW_BASE_URL = "https://clipart.wildbillsproplans.com/previews"
 
 
 # ----------------------------------------------------------------------

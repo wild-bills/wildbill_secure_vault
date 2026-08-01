@@ -154,12 +154,7 @@
         (function() {
             const filterBar = document.getElementById('filter-bar');
             const grid = document.getElementById('catalog-grid');
-            let catalogOrigin = window.location.origin;
-
-            const catalogEndpoints = [
-                '/catalog.json',
-                'https://api-clipart.wildbillsproplans.com/catalog.json'
-            ];
+            const appOrigin = 'https://api-clipart.wildbillsproplans.com';
 
             function escapeHtml(value) {
                 return String(value || '')
@@ -179,7 +174,7 @@
                     return value;
                 }
                 if (value.startsWith('/')) {
-                    return catalogOrigin + value;
+                    return window.location.origin + value;
                 }
                 return value;
             }
@@ -196,8 +191,8 @@
                     const price = item.price || '10.00';
                     const preview = normalizePreview((item.previews && item.previews[0]) || '');
                     const buyHref = sku
-                        ? catalogOrigin + '/product/' + encodeURIComponent(sku)
-                        : catalogOrigin + '/contact';
+                        ? appOrigin + '/product/' + encodeURIComponent(sku)
+                        : appOrigin + '/contact';
 
                     return `
                         <article class="card">
@@ -238,28 +233,24 @@
                 });
             }
 
-            async function loadCatalog() {
-                for (const endpoint of catalogEndpoints) {
-                    try {
-                        const response = await fetch(endpoint);
-                        if (!response.ok) {
-                            continue;
-                        }
-                        const data = await response.json();
-                        if (data && data.status === 'success' && data.categories) {
-                            catalogOrigin = new URL(endpoint, window.location.href).origin;
-                            renderCategories(data.categories);
-                            return;
-                        }
-                    } catch (error) {
-                        console.error('Catalog load failed for', endpoint, error);
+            fetch('/catalog.json')
+                .then((res) => {
+                    if (!res.ok) {
+                        throw new Error('Catalog request failed with HTTP ' + res.status);
                     }
-                }
-
-                grid.innerHTML = '<div class="status error">Unable to load catalog from local or api-clipart source.</div>';
-            }
-
-            loadCatalog();
+                    return res.json();
+                })
+                .then((data) => {
+                    if (data && data.status === 'success' && data.categories) {
+                        renderCategories(data.categories);
+                        return;
+                    }
+                    throw new Error('Unexpected catalog payload');
+                })
+                .catch((error) => {
+                    console.error(error);
+                    grid.innerHTML = '<div class="status error">Unable to load local catalog.json. Rebuild and publish dist with catalog + static assets.</div>';
+                });
         })();
     </script>
 </body>

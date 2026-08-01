@@ -1,12 +1,12 @@
-Deploy design.wildbillsproplans.com and clipart.wildbillsproplans.com on Ubuntu + Porkbun
+Deploy clipart.wildbillsproplans.com and api-clipart.wildbillsproplans.com on Ubuntu + Porkbun
 
 1) DNS in Porkbun
 - Type: A
-- Host: design
+- Host: clipart
 - Answer: your server public IP
 - TTL: 600
 - Type: A
-- Host: clipart
+- Host: api-clipart
 - Answer: your server public IP
 - TTL: 600
 
@@ -34,20 +34,20 @@ Deploy design.wildbillsproplans.com and clipart.wildbillsproplans.com on Ubuntu 
 - sudo systemctl status wildbill-vault
 
 6) Nginx site
-- sudo cp deploy/nginx.design.wildbillsproplans.com.conf /etc/nginx/sites-available/design.wildbillsproplans.com
-- sudo ln -s /etc/nginx/sites-available/design.wildbillsproplans.com /etc/nginx/sites-enabled/design.wildbillsproplans.com
+- sudo cp deploy/nginx.clipart.wildbillsproplans.com.conf /etc/nginx/sites-available/clipart.wildbillsproplans.com
+- sudo ln -s /etc/nginx/sites-available/clipart.wildbillsproplans.com /etc/nginx/sites-enabled/clipart.wildbillsproplans.com
 - sudo nginx -t
 - sudo systemctl reload nginx
 
 7) SSL certificate
 - Wait until DNS resolves to this server IP
-- sudo certbot --nginx -d design.wildbillsproplans.com -d clipart.wildbillsproplans.com
+- sudo certbot --nginx -d clipart.wildbillsproplans.com -d api-clipart.wildbillsproplans.com
 
 8) Verify
-- curl -I http://design.wildbillsproplans.com
-- curl -I https://design.wildbillsproplans.com
 - curl -I http://clipart.wildbillsproplans.com
 - curl -I https://clipart.wildbillsproplans.com
+- curl -I http://api-clipart.wildbillsproplans.com
+- curl -I https://api-clipart.wildbillsproplans.com
 - journalctl -u wildbill-vault -n 100 --no-pager
 
 9) Useful operations

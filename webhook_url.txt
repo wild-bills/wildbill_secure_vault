@@ -1,1 +1,1 @@
-https://www.design.wildbillsproplans.com/paddle-webhook
+https://api-clipart.wildbillsproplans.com/paddle-webhook

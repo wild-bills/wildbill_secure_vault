@@ -14,6 +14,7 @@ mkdir -p "$DIST_DIR/category"
 
 cp index.html "$DIST_DIR/"
 cp category.html "$DIST_DIR/category/index.html"
+cp catalog.json "$DIST_DIR/"
 cp products.json "$DIST_DIR/"
 cp ads.txt "$DIST_DIR/"
 cp sitemap.xml "$DIST_DIR/"
@@ -27,6 +28,10 @@ cp templates/pricing.html "$DIST_DIR/pricing.html"
 
 if [[ -d static/previews ]]; then
     cp -R static/previews "$DIST_DIR/static/"
+fi
+
+if [[ -d static/wildbill_vault ]]; then
+    cp -R static/wildbill_vault "$DIST_DIR/static/"
 fi
 
 if [[ -d static/js ]]; then
