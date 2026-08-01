@@ -209,6 +209,7 @@
             data-checkout-url="{{ product['checkout_url'] or url_for('checkout_redirect', sku=product['sku']) }}"
             data-price-id="{{ product['paddle_price_id'] or '' }}"
             data-product-id="{{ (product['zip_filename'] or product['sku'] or '')|replace('.zip', '') }}"
+            data-sku="{{ product['sku'] or '' }}"
         >
             Start Secure Checkout
         </button>
@@ -236,17 +237,23 @@
                     .replace(/^_+|_+$/g, '');
 
                 const priceId = String(button.dataset.priceId || '').trim();
+                const resolvedSku = String(button.dataset.sku || '').trim();
+                const encodedSku = encodeURIComponent(resolvedSku);
                 const checkoutSessionParameters = {
-                    success_url: 'https://wildbillsproplans.com',
-                    cancel_url: 'https://wildbillsproplans.com',
+                    success_url: window.location.origin + '/checkout/success?sku=' + encodedSku,
+                    cancel_url: window.location.origin + '/checkout/cancel?sku=' + encodedSku,
                     line_items: [{ price: priceId || 'YOUR_STRIPE_PRICE_ID', quantity: 1 }],
                     mode: 'payment',
                     metadata: {
                         product_id: metadataProductId,
+                        sku: resolvedSku,
                     },
                 };
 
                 const redirectUrl = new URL(checkoutUrl, window.location.origin);
+                if (resolvedSku) {
+                    redirectUrl.searchParams.set('sku', resolvedSku);
+                }
                 redirectUrl.searchParams.set('product_id', checkoutSessionParameters.metadata.product_id);
                 if (priceId) {
                     redirectUrl.searchParams.set('price_id', priceId);

@@ -319,17 +319,24 @@
                         .replace(/[^A-Za-z0-9_]+/g, '_')
                         .replace(/^_+|_+$/g, '');
 
+                    const resolvedSku = String(bundle.sku || sku || '').trim();
+                    const encodedSku = encodeURIComponent(resolvedSku);
+
                     const checkoutSessionParameters = {
-                        success_url: 'https://wildbillsproplans.com',
-                        cancel_url: 'https://wildbillsproplans.com',
+                        success_url: checkoutOrigin + '/checkout/success?sku=' + encodedSku,
+                        cancel_url: checkoutOrigin + '/checkout/cancel?sku=' + encodedSku,
                         line_items: [{ price: priceId || 'YOUR_STRIPE_PRICE_ID', quantity: 1 }],
                         mode: 'payment',
                         metadata: {
                             product_id: metadataProductId,
+                            sku: resolvedSku,
                         },
                     };
 
                     const redirectUrl = new URL(checkoutHref);
+                    if (resolvedSku) {
+                        redirectUrl.searchParams.set('sku', resolvedSku);
+                    }
                     redirectUrl.searchParams.set('product_id', checkoutSessionParameters.metadata.product_id);
                     if (priceId) {
                         redirectUrl.searchParams.set('price_id', priceId);

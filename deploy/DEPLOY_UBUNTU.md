@@ -25,6 +25,11 @@ Deploy clipart.wildbillsproplans.com and api-clipart.wildbillsproplans.com on Ub
 - cp deploy/.env.example deploy/.env
 - nano deploy/.env
 - Set FLASK_SECRET_KEY to a long random value
+- Set PAY_PROVIDER=stripe when using Stripe native checkout sessions
+- Set STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET
+- Set STRIPE_CURRENCY (default: usd)
+- If not using Stripe native mode, set PAY_SERVICE_CHECKOUT_URL to your payment provider endpoint (example: https://pay.example.com/checkout?sku={sku})
+- Optional tuning: DOWNLOAD_TOKEN_TTL_HOURS, DOWNLOAD_URL_EXPIRES_SECONDS, PURCHASE_MATCH_WINDOW_MINUTES
 
 5) Systemd service
 - sudo cp deploy/wildbill-vault.service /etc/systemd/system/wildbill-vault.service
@@ -48,7 +53,14 @@ Deploy clipart.wildbillsproplans.com and api-clipart.wildbillsproplans.com on Ub
 - curl -I https://clipart.wildbillsproplans.com
 - curl -I http://api-clipart.wildbillsproplans.com
 - curl -I https://api-clipart.wildbillsproplans.com
+- curl -I "https://api-clipart.wildbillsproplans.com/checkout/WB-BND-143?product_id=WB_BND_143&success_url=https%3A%2F%2Fwildbillsproplans.com&cancel_url=https%3A%2F%2Fwildbillsproplans.com&mode=payment"
+- curl -I https://api-clipart.wildbillsproplans.com/stripe-webhook
 - journalctl -u wildbill-vault -n 100 --no-pager
+
+10) Stripe dashboard wiring (required in Stripe mode)
+- Configure webhook endpoint: https://api-clipart.wildbillsproplans.com/stripe-webhook
+- Subscribe at minimum to event: checkout.session.completed
+- Price IDs are optional now: if a SKU has no Stripe Price ID in your dataset, checkout auto-creates dynamic price_data from your local product price
 
 9) Useful operations
 - sudo systemctl restart wildbill-vault
