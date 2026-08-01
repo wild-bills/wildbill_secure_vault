@@ -100,6 +100,12 @@
         .buy-now-btn:hover {
             filter: brightness(1.06);
         }
+
+        .checkout-note {
+            margin-top: 0.75rem;
+            color: var(--muted);
+            font-size: 0.88rem;
+        }
     </style>
 </head>
 <body>
@@ -139,7 +145,12 @@
             {% endif %}
         </div>
 
-        <a class="buy-now-btn" href="{{ product['gumroad_url'] }}" target="_blank" rel="noopener">Purchase This Full ZIP Collection on Gumroad</a>
+        {% if product['checkout_url'] %}
+        <a class="buy-now-btn" href="{{ product['checkout_url'] }}" target="_blank" rel="noopener">Start Secure Checkout</a>
+        {% else %}
+        <a class="buy-now-btn" href="{{ url_for('checkout_redirect', sku=product['sku']) }}">Start Secure Checkout</a>
+        <div class="checkout-note">If checkout is not configured yet, this link will show setup status.</div>
+        {% endif %}
     </div>
 </body>
 </html>

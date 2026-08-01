@@ -3,465 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category Preview Cards - Wild Bill Pro Plans</title>
+    <title>{{ category.theme }} Bundles - Wild Bill Secure Vault</title>
     <style>
         :root {
-            --bg-primary: #0a0505;
-            --bg-card: #140b0b;
-            --accent-neon: #ff1e27;
-            --accent-glow: rgba(255, 30, 39, 0.15);
-            --text-main: #f5f5f5;
-            --text-muted: #a39797;
-            --border-color: #261213;
+            --bg: #0b0707;
+            --panel: #140c0c;
+            --border: #2c1919;
+            --text: #f4f1f1;
+            --muted: #ae9f9f;
+            --accent: #ff2e35;
         }
 
         * { box-sizing: border-box; }
 
         body {
             margin: 0;
-            min-height: 100vh;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            font-family: Arial, sans-serif;
             background:
-                radial-gradient(circle at top, rgba(255, 30, 39, 0.15), transparent 28%),
-                linear-gradient(180deg, #0a0505 0%, #090505 100%);
-            color: var(--text-main);
-            overflow-x: hidden;
+                radial-gradient(circle at top, rgba(255, 46, 53, 0.14), transparent 30%),
+                linear-gradient(180deg, #0b0707 0%, #080505 100%);
         }
 
-        * {
-            box-sizing: border-box;
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Category Preview Cards - Wild Bill Pro Plans</title>
-            <style>
-                :root {
-                    --bg-primary: #0a0505;
-                    --bg-card: #140b0b;
-                    --accent-neon: #ff1e27;
-                    --accent-glow: rgba(255, 30, 39, 0.15);
-                    --text-main: #f5f5f5;
-                    --text-muted: #a39797;
-                    --border-color: #261213;
-                }
+        .wrap {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1.2rem 1rem 3rem;
+        }
 
-                * { box-sizing: border-box; }
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
 
-                body {
-                    margin: 0;
-                    min-height: 100vh;
-                    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                    color: var(--text-main);
-                    background:
-                        radial-gradient(circle at top, rgba(255, 30, 39, 0.15), transparent 28%),
-                        linear-gradient(180deg, #0a0505 0%, #090505 100%);
-                    overflow-x: hidden;
-                }
+        .back {
+            display: inline-block;
+            color: var(--muted);
+            text-decoration: none;
+            border: 1px solid var(--border);
+            padding: 0.55rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(20, 12, 12, 0.8);
+        }
 
-                body::before {
-                    content: '';
-                    position: fixed;
-                    inset: 0;
-                    background-image: linear-gradient(var(--border-color) 1px, transparent 1px), linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
-                    background-size: 40px 40px;
-                    opacity: 0.34;
-                    pointer-events: none;
-                }
+        .hero {
+            margin-bottom: 1.2rem;
+            padding: 1.35rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: rgba(20, 12, 12, 0.82);
+        }
 
-                .container {
-                    position: relative;
-                    z-index: 1;
-                    max-width: 1280px;
-                    margin: 0 auto;
-                    padding: 32px 20px 56px;
-                }
+        h1 {
+            margin: 0 0 0.4rem;
+            font-size: clamp(1.8rem, 3.8vw, 2.8rem);
+        }
 
-                .topbar {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    gap: 1rem;
-                    margin-bottom: 1.1rem;
-                    flex-wrap: wrap;
-                }
+        .meta {
+            margin: 0;
+            color: var(--muted);
+        }
 
-                .back-link {
-                    color: var(--text-muted);
-                    text-decoration: none;
-                    border: 1px solid var(--border-color);
-                    background: rgba(20, 11, 11, 0.78);
-                    padding: 0.75rem 1rem;
-                    border-radius: 999px;
-                    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
-                }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
 
-                .back-link:hover {
-                    color: var(--accent-neon);
-                    border-color: var(--accent-neon);
-                }
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: var(--panel);
+            overflow: hidden;
+        }
 
-                .hero {
-                    background: rgba(20, 11, 11, 0.8);
-                    border: 1px solid var(--border-color);
-                    border-radius: 28px;
-                    padding: 1.6rem 1.6rem 1.8rem;
-                    box-shadow: 0 16px 60px rgba(0, 0, 0, 0.35);
-                    margin-bottom: 1.25rem;
-                    position: relative;
-                    overflow: hidden;
-                }
+        .thumb {
+            height: 220px;
+            background: #0d0909;
+            padding: 10px;
+        }
 
-                .hero::after {
-                    content: '';
-                    position: absolute;
-                    inset: -45% auto auto 55%;
-                    width: 360px;
-                    height: 360px;
-                    background: radial-gradient(circle, rgba(255, 30, 39, 0.14), transparent 70%);
-                    pointer-events: none;
-                }
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            display: block;
+        }
 
-                .hero-badge {
-                    display: inline-flex;
-                    margin-bottom: 0.85rem;
-                    padding: 0.35rem 0.75rem;
-                    border-radius: 999px;
-                    background: rgba(255, 30, 39, 0.12);
-                    color: var(--accent-neon);
-                    font-size: 0.8rem;
-                    text-transform: uppercase;
-                    letter-spacing: 0.16em;
-                    font-weight: 700;
-                }
+        .body {
+            padding: 1rem;
+        }
 
-                .hero h1 {
-                    margin: 0 0 0.45rem 0;
-                    font-size: clamp(2rem, 3.8vw, 3.5rem);
-                    letter-spacing: -0.05em;
-                    line-height: 1;
-                }
+        .title {
+            margin: 0 0 0.55rem;
+            font-size: 1.02rem;
+            line-height: 1.25;
+        }
 
-                .hero p {
-                    margin: 0;
-                    color: var(--text-muted);
-                    max-width: 720px;
-                }
+        .sku {
+            margin: 0 0 0.55rem;
+            color: var(--muted);
+            font-size: 0.84rem;
+        }
 
-                .theme-chip {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    margin-top: 0.85rem;
-                    padding: 0.35rem 0.75rem;
-                    border-radius: 999px;
-                    background: rgba(255, 30, 39, 0.12);
-                    color: #f3b8bd;
-                    font-size: 0.85rem;
-                    font-weight: 700;
-                }
+        .price {
+            margin: 0 0 0.9rem;
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 1.15rem;
+        }
 
-                .theme-chip strong { color: var(--accent-neon); }
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+        }
 
-                .preview-strip {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                    gap: 1rem;
-                    margin: 1.5rem 0 2rem;
-                }
+        .btn {
+            display: inline-block;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.87rem;
+            border-radius: 10px;
+            padding: 0.7rem 0.75rem;
+        }
 
-                .preview-thumb {
-                    border: 1px solid var(--border-color);
-                    border-radius: 18px;
-                    overflow: hidden;
-                    background: linear-gradient(180deg, #1a1414 0%, #080505 100%);
-                    min-height: 170px;
-                    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35);
-                    padding: 10px;
-                }
+        .btn-preview {
+            background: linear-gradient(135deg, #6d1a1d 0%, #8d2126 100%);
+        }
 
-                .preview-thumb img {
-                    display: block;
-                    width: 100%;
-                    height: 100%;
-                    object-fit: contain;
-                    background: rgba(255, 255, 255, 0.03);
-                    border-radius: 10px;
-                }
+        .btn-buy {
+            background: linear-gradient(135deg, #c9151d 0%, var(--accent) 100%);
+        }
 
-                .cards-grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-                    gap: 1.25rem;
-                }
+        .empty {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            color: var(--muted);
+            text-align: center;
+            background: rgba(20, 12, 12, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <main class="wrap">
+        <div class="top">
+            <a class="back" href="{{ url_for('index') }}">Back to categories</a>
+        </div>
 
-                .card {
-                    background: var(--bg-card);
-                    border: 1px solid var(--border-color);
-                    border-radius: 20px;
-                    overflow: hidden;
-                    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35);
-                    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-                }
+        <section class="hero">
+            <h1>{{ category.theme }}</h1>
+            <p class="meta">{{ category['items']|length }} bundle{{ '' if category['items']|length == 1 else 's' }} in this category.</p>
+        </section>
 
-                .card:hover {
-                    transform: translateY(-4px);
-                    border-color: var(--accent-neon);
-                    box-shadow: 0 0 20px var(--accent-glow);
-                }
-
-                .thumb {
-                    height: 210px;
-                    background: linear-gradient(180deg, #1a1414 0%, #080505 100%);
-                    overflow: hidden;
-                    padding: 10px;
-                }
-
-                .thumb img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: contain;
-                    display: block;
-                    background: rgba(255, 255, 255, 0.03);
-                    border-radius: 10px;
-                }
-
-                .card-body {
-                    padding: 1.15rem;
-                }
-
-                .card-body h2 {
-                    margin: 0 0 0.45rem 0;
-                    font-size: 1.08rem;
-                }
-
-                .meta {
-                    color: var(--text-muted);
-                    font-size: 0.88rem;
-                    margin: 0 0 0.9rem 0;
-                }
-
-                .price {
-                    color: var(--accent-neon);
-                    font-weight: 700;
-                    font-size: 1.25rem;
-                    margin-bottom: 1rem;
-                }
-
-                .actions {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 0.65rem;
-                }
-
-                .preview-btn {
-                    display: block;
-                    width: 100%;
-                    padding: 0.85rem 1rem;
-                    border-radius: 12px;
-                    text-decoration: none;
-                    text-align: center;
-                    color: #fff;
-                    font-weight: 700;
-                    background: linear-gradient(135deg, #cc1117 0%, var(--accent-neon) 100%);
-                    box-shadow: 0 6px 18px rgba(255, 30, 39, 0.24);
-                }
-
-                .preview-btn:hover {
-                    background: linear-gradient(135deg, var(--accent-neon) 0%, #ff4f55 100%);
-                }
-
-                .buy-btn {
-                    display: block;
-                    width: 100%;
-                    padding: 0.85rem 1rem;
-                    border-radius: 12px;
-                    text-decoration: none;
-                    text-align: center;
-                    color: #fff;
-                    font-weight: 700;
-                    background: linear-gradient(135deg, #ad0f14 0%, #d9181f 100%);
-                    border: 1px solid rgba(255, 30, 39, 0.35);
-                }
-
-                .buy-btn:hover {
-                    background: linear-gradient(135deg, #c4161d 0%, #f22630 100%);
-                }
-
-                .empty-state {
-                    padding: 4rem 1rem;
-                    text-align: center;
-                    color: var(--text-muted);
-                    border: 1px solid var(--border-color);
-                    border-radius: 18px;
-                    background: rgba(20, 11, 11, 0.75);
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="topbar">
-                    <a class="back-link" href="index.html">Back to categories</a>
+        {% if category['items'] %}
+        <section class="grid">
+            {% for item in category['items'] %}
+            {% set preview = item.previews[0] if item.previews else '' %}
+            <article class="card">
+                <div class="thumb">
+                    {% if preview %}
+                    <img src="{{ preview }}" alt="{{ item.name }} preview" onerror="this.style.display='none'">
+                    {% endif %}
                 </div>
-
-                <section class="hero">
-                    <div class="hero-badge">Category preview cards</div>
-                    <h1 id="theme-title">Loading category...</h1>
-                    <p id="theme-description">Fetching preview cards for the selected category.</p>
-                    <div class="theme-chip" id="theme-chip" style="display:none;"><strong id="theme-count">0</strong> cards in this category</div>
-                </section>
-
-                <div id="preview-strip" class="preview-strip"></div>
-                <div id="cards-grid" class="cards-grid"></div>
-            </div>
-
-            <script>
-                const previewStrip = document.getElementById('preview-strip');
-                const cardsGrid = document.getElementById('cards-grid');
-                const themeTitle = document.getElementById('theme-title');
-                const themeDescription = document.getElementById('theme-description');
-                const themeChip = document.getElementById('theme-chip');
-                const themeCount = document.getElementById('theme-count');
-
-                function escapeHtml(value) {
-                    return String(value)
-                        .replaceAll('&', '&amp;')
-                        .replaceAll('<', '&lt;')
-                        .replaceAll('>', '&gt;')
-                        .replaceAll('"', '&quot;')
-                        .replaceAll("'", '&#39;');
-                }
-
-                function slugifyTheme(themeName) {
-                    return String(themeName || 'other')
-                        .toLowerCase()
-                        .replace(/[^a-z0-9]+/g, '-')
-                        .replace(/^-+|-+$/g, '') || 'other';
-                }
-
-                function normalizePreviewUrl(previewUrl) {
-                    return String(previewUrl || '').replace(/^\/static\/previews\//, '/previews/');
-                }
-
-                function buildPurchaseUrl(product) {
-                    if (product.Gumroad_URL) {
-                        return product.Gumroad_URL;
-                    }
-
-                    const title = String(product.Title || product.name || 'item').trim();
-                    const slug = title
-                        .toLowerCase()
-                        .replace(/[^a-z0-9]+/g, '-')
-                        .replace(/^-+|-+$/g, '') || 'item';
-
-                    return `https://wildbill.gumroad.com/l/wildbill-${slug}`;
-                }
-
-                function deriveTheme(title) {
-                    const value = String(title || '').trim();
-                    const separators = [' Vol', ' vol', ' Collection', ' collection'];
-                    for (const separator of separators) {
-                        const index = value.indexOf(separator);
-                        if (index > 0) {
-                            return value.slice(0, index).trim();
-                        }
-                    }
-                    return value.split(' ').slice(0, 4).join(' ').trim() || 'Other';
-                }
-
-                function parseThemeParam() {
-                    const queryTheme = new URLSearchParams(window.location.search).get('theme');
-                    if (queryTheme) {
-                        return queryTheme;
-                    }
-                    const pathTheme = window.location.pathname.split('/').filter(Boolean).pop();
-                    return pathTheme || 'other';
-                }
-
-                function renderPreviewCard(product) {
-                    const previewUrl = normalizePreviewUrl(product.Preview_URL || '');
-                    const title = product.Title || 'Untitled Bundle';
-                    const description = product.Description || 'Premium digital asset pack collection.';
-                    const price = product.Price || '15.00';
-                    const purchaseUrl = buildPurchaseUrl(product);
-
-                    return `
-                        <article class="card">
-                            <div class="thumb">
-                                ${previewUrl ? `<img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(title)}" onerror="this.style.display='none'">` : ''}
-                            </div>
-                            <div class="card-body">
-                                <h2>${escapeHtml(title)}</h2>
-                                <p class="meta">${escapeHtml(description)}</p>
-                                <div class="price">$${escapeHtml(price)} USD</div>
-                                <div class="actions">
-                                    <a class="preview-btn" href="${previewUrl || 'contact.html'}" target="_blank" rel="noopener">Open Combined Preview</a>
-                                    <a class="buy-btn" href="${escapeHtml(purchaseUrl)}" target="_blank" rel="noopener">Buy on Gumroad</a>
-                                </div>
-                            </div>
-                        </article>
-                    `;
-                }
-
-                function renderPreviewThumb(product) {
-                    const previewUrl = normalizePreviewUrl(product.Preview_URL || '');
-                    const title = product.Title || 'Preview';
-                    return `
-                        <div class="preview-thumb">
-                            ${previewUrl ? `<img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(title)} preview" onerror="this.style.display='none'">` : ''}
-                        </div>
-                    `;
-                }
-
-                const themeSlug = parseThemeParam();
-
-                fetch('products.json')
-                    .then((response) => response.json())
-                    .then((products) => {
-                        if (!Array.isArray(products) || products.length === 0) {
-                            themeTitle.textContent = 'No category found';
-                            themeDescription.textContent = 'There are no products available in the catalog.';
-                            cardsGrid.innerHTML = '<div class="empty-state">No preview cards found in this category.</div>';
-                            return;
-                        }
-
-                        const grouped = products.reduce((accumulator, product) => {
-                            const theme = deriveTheme(product.Title);
-                            const slug = slugifyTheme(theme);
-                            if (!accumulator[slug]) {
-                                accumulator[slug] = {
-                                    slug,
-                                    theme,
-                                    items: [],
-                                };
-                            }
-                            accumulator[slug].items.push(product);
-                            return accumulator;
-                        }, {});
-
-                        const category = grouped[themeSlug] || Object.values(grouped).find((entry) => entry.theme.toLowerCase() === themeSlug.toLowerCase());
-
-                        if (!category) {
-                            themeTitle.textContent = 'Category not found';
-                            themeDescription.textContent = 'The selected category could not be located in the catalog.';
-                            cardsGrid.innerHTML = '<div class="empty-state">No preview cards found in this category.</div>';
-                            return;
-                        }
-
-                        themeTitle.textContent = category.theme;
-                        themeDescription.textContent = `${category.items.length} preview card${category.items.length === 1 ? '' : 's'} in this category.`;
-                        themeCount.textContent = category.items.length;
-                        themeChip.style.display = 'inline-flex';
-
-                        previewStrip.innerHTML = category.items.slice(0, 4).map(renderPreviewThumb).join('');
-                        cardsGrid.innerHTML = category.items.map(renderPreviewCard).join('');
-                    })
-                    .catch(() => {
-                        themeTitle.textContent = 'Catalog unavailable';
-                        themeDescription.textContent = 'Unable to load the product catalog right now.';
-                        cardsGrid.innerHTML = '<div class="empty-state">No preview cards found in this category.</div>';
-                    });
-            </script>
-        </body>
-        </html>
+                <div class="body">
+                    <h2 class="title">{{ item.name }}</h2>
+                    <p class="sku">SKU: {{ item.sku }}</p>
+                    <p class="price">${{ item.price }} USD</p>
+                    <div class="actions">
+                        <a class="btn btn-preview" href="{{ preview if preview else url_for('contact') }}" target="_blank" rel="noopener">Open Preview</a>
+                        <a class="btn btn-buy" href="{{ url_for('product_detail', sku=item.sku) }}">Buy Bundle</a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </section>
+        {% else %}
+        <div class="empty">No bundles found in this category.</div>
+        {% endif %}
+    </main>
+</body>
+</html>

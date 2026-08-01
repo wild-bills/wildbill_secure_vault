@@ -3,97 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WildBills Clipart Vault - Premium Graphic Assets</title>
+    <title>Wild Bill Secure Vault</title>
     <style>
-        body { background-color: #0d0d0d; color: #e0e0e0; font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        .hero { text-align: center; padding: 60px 20px; background: #111; border-bottom: 1px solid #261010; }
-        .hero h1 { color: #e74c3c; font-size: 36px; text-transform: uppercase; margin: 0 0 10px 0; }
-        .hero p { color: #aaa; font-size: 16px; margin: 0; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-        .category-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; min-height: 200px; }
-        footer { background: #111; padding: 40px 20px; text-align: center; border-top: 1px solid #261010; font-size: 13px; color: #666; }
-        footer a { color: #aaa; text-decoration: none; margin: 0 10px; }
+        :root {
+            --bg: #0b0707;
+            --panel: #140c0c;
+            --border: #2c1919;
+            --text: #f4f1f1;
+            --muted: #ae9f9f;
+            --accent: #ff2e35;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            font-family: Arial, sans-serif;
+            background:
+                radial-gradient(circle at top, rgba(255, 46, 53, 0.14), transparent 30%),
+                linear-gradient(180deg, #0b0707 0%, #080505 100%);
+        }
+
+        .wrap {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 2rem 1rem 3rem;
+        }
+
+        .hero {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 22px;
+            border: 1px solid var(--border);
+            background: rgba(20, 12, 12, 0.82);
+        }
+
+        h1 {
+            margin: 0 0 0.5rem;
+            font-size: clamp(1.9rem, 4vw, 3rem);
+        }
+
+        .sub {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: var(--panel);
+            overflow: hidden;
+        }
+
+        .thumb {
+            height: 180px;
+            background: #0d0909;
+            padding: 10px;
+        }
+
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .body {
+            padding: 0.95rem;
+        }
+
+        .theme {
+            margin: 0 0 0.4rem;
+            color: var(--accent);
+            font-size: 1.04rem;
+        }
+
+        .count {
+            margin: 0 0 0.8rem;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 700;
+            background: linear-gradient(135deg, #c9151d 0%, var(--accent) 100%);
+        }
     </style>
 </head>
 <body>
+    <main class="wrap">
+        <section class="hero">
+            <h1>Browse Vault Categories</h1>
+            <p class="sub">Choose a category to view bundle previews and start checkout for a specific SKU.</p>
+        </section>
 
-<div class="hero">
-    <h1>Browse Categories</h1>
-    <p>Select a category to filter your 120 premium clipart design packs.</p>
-</div>
-
-<div class="container">
-    <div id="vault-filter-bar" style="text-align:center; margin:0 auto 40px auto; display:flex; flex-wrap:wrap; justify-content:center; gap:10px;"></div>
-    <div class="category-grid" id="main-catalog-grid">
-        <div style="color:#aaa; font-style:italic; padding:40px;">Syncing with secure storage array vaults...</div>
-    </div>
-</div>
-
-<script>
-(function() {
-    console.log("[VAULT ENGINE] Initializing secure categorized catalog routing...");
-    const gridContainer = document.getElementById('main-catalog-grid');
-    const filterBar = document.getElementById('vault-filter-bar');
-
-    fetch('https://wildbillsproplans.com')
-        .then(res => {
-            if (!res.ok) throw new Error("HTTP connection fault: " + res.status);
-            return res.json();
-        })
-        .then(data => {
-            if (data.status === "success" && data.categories) {
-                filterBar.innerHTML = '';
-                gridContainer.innerHTML = '';
-                const categoryKeys = Object.keys(data.categories);
-
-                categoryKeys.forEach((catName, index) => {
-                    const btn = document.createElement('button');
-                    btn.innerText = catName;
-                    btn.style.cssText = "padding:10px 20px; font-weight:bold; background:#141414; border:1px solid #261010; color:#fff; cursor:pointer; border-radius:4px; text-transform:uppercase; font-size:12px; margin:5px;";
-                    
-                    btn.addEventListener('click', () => {
-                        document.querySelectorAll('#vault-filter-bar button').forEach(b => {
-                            b.style.background = "#141414";
-                            b.style.borderColor = "#261010";
-                        });
-                        btn.style.background = "#e74c3c";
-                        btn.style.borderColor = "#e74c3c";
-                        renderCategoryCards(data.categories[catName], gridContainer);
-                    });
-
-                    filterBar.appendChild(btn);
-                    if (index === 0) btn.click();
-                });
-            } else {
-                gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">No categories found in data maps.</div>';
-            }
-        })
-        .catch(err => {
-            console.error("[VAULT CRASH]", err);
-            gridContainer.innerHTML = '<div style="color:#e74c3c; padding:20px;">Handshake error over tunnel.</div>';
-        });
-
-    function renderCategoryCards(productArray, container) {
-        container.innerHTML = '';
-        if (!productArray || productArray.length === 0) {
-            container.innerHTML = '<div style="color:#aaa; padding:20px;">No bundles inside this category.</div>';
-            return;
-        }
-        productArray.forEach(prodId => {
-            const displayTitle = prodId.replace(/_/g, ' ').toUpperCase();
-            const cleanId = prodId.toLowerCase();
-            
-            const cardHtml = `
-                <div class="product-card" style="background:#141414; padding:20px; border:1px solid #261010; border-radius:6px; margin:10px; text-align:center; display:inline-block; width:280px; vertical-align:top;">
-                    <img src="https://wildbillsproplans.com{cleanId}_preview.jpg" alt="${displayTitle}" style="max-width:100%; border-radius:4px; margin-bottom:15px;" onerror="this.onerror=null; this.src='https://wildbillsproplans.com{prodId}_preview.jpg';">
-                    <h3 style="color:#e74c3c; font-size:14px; margin-bottom:10px; min-height:40px;">${displayTitle}</h3>
-                    <button class="buy-button" data-product-id="${prodId}" style="width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; font-weight:bold; text-transform:uppercase; border-radius:4px; cursor:pointer;">Buy Pack - $20.00</button>
+        <section class="grid">
+            {% for section in categories %}
+            <article class="card">
+                <div class="thumb">
+                    {% if section.preview %}
+                    <img src="{{ section.preview }}" alt="{{ section.theme }} preview" onerror="this.style.display='none'">
+                    {% endif %}
                 </div>
-            `;
-            container.innerHTML += cardHtml;
-        });
-    }
-})();
-</script>
+                <div class="body">
+                    <h2 class="theme">{{ section.theme }}</h2>
+                    <p class="count">{{ section.count }} bundle{{ '' if section.count == 1 else 's' }}</p>
+                    <a class="btn" href="{{ url_for('category_view', theme_slug=section.slug) }}">View Bundles</a>
+                </div>
+            </article>
+            {% endfor %}
+        </section>
+    </main>
 </body>
 </html>

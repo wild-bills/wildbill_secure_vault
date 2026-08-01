@@ -1,11 +1,11 @@
 import os
 import re
 import sqlite3
-from flask import Flask, render_template, redirect, request, jsonify, send_from_directory
+from urllib.parse import urlencode
+from flask import Flask, render_template, redirect, request, jsonify, send_from_directory, url_for
 import boto3
 from botocore.config import Config
 
-from gumroad_utils import build_gumroad_url
 
 # --- PATH & APP CONFIGURATION ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -86,6 +86,19 @@ def product_previews(product):
     return previews[:4]
 
 
+def build_checkout_url(sku):
+    """Build external checkout URL for the configured payment provider."""
+    checkout_base = (os.environ.get('PAY_SERVICE_CHECKOUT_URL') or '').strip()
+    if not checkout_base:
+        return None
+
+    if '{sku}' in checkout_base:
+        return checkout_base.replace('{sku}', sku)
+
+    separator = '&' if '?' in checkout_base else '?'
+    return f"{checkout_base}{separator}{urlencode({'sku': sku})}"
+
+
 def build_catalog_sections():
     conn = get_db_connection()
     products = conn.execute('SELECT * FROM products ORDER BY id DESC').fetchall()
@@ -95,6 +108,11 @@ def build_catalog_sections():
     for product in products:
         theme_name = normalize_theme(product)
         theme_slug = slugify_theme(theme_name)
+        product_name = (product['name'] or '').strip()
+        if not product_name or product_name.startswith('==='):
+            product_name = product['sku'] or 'Untitled Bundle'
+
+        checkout_sku = product['sku'] or ''
         grouped.setdefault(theme_slug, {
             'slug': theme_slug,
             'theme': theme_name,
@@ -102,10 +120,11 @@ def build_catalog_sections():
         })
         grouped[theme_slug]['items'].append({
             'sku': product['sku'],
-            'name': product['name'],
+            'name': product_name,
             'price': product['price'],
             'theme': theme_name,
             'previews': product_previews(product),
+            'checkout_url': build_checkout_url(checkout_sku),
         })
 
     sections = sorted(grouped.values(), key=lambda section: (-len(section['items']), section['theme'].lower()))
@@ -171,12 +190,12 @@ def category_view(theme_slug):
 
 @app.route('/category', methods=['GET'])
 def category_query_view():
-    return render_template('category.html')
+    return redirect(url_for('index'))
 
 
 @app.route('/category.html', methods=['GET'])
 def category_page():
-    return render_template('category.html')
+    return redirect(url_for('index'))
 
 
 @app.route('/previews/<path:filename>', methods=['GET'])
@@ -200,8 +219,28 @@ def product_detail(sku):
         return "Product not found", 404
 
     product_dict = dict(product)
-    product_dict['gumroad_url'] = build_gumroad_url(product_dict.get('sku') or product_dict.get('name'))
+    product_dict['checkout_url'] = build_checkout_url(product_dict.get('sku') or '')
     return render_template('product.html', product=product_dict)
+
+
+@app.route('/checkout/<sku>', methods=['GET'])
+def checkout_redirect(sku):
+    conn = get_db_connection()
+    product = conn.execute('SELECT sku FROM products WHERE sku = ?', (sku,)).fetchone()
+    conn.close()
+
+    if product is None:
+        return "Product not found", 404
+
+    checkout_url = build_checkout_url(sku)
+    if not checkout_url:
+        return (
+            "Checkout is not configured yet. Set PAY_SERVICE_CHECKOUT_URL "
+            "(example: https://pay.example.com/checkout?sku={sku}) and try again.",
+            503,
+        )
+
+    return redirect(checkout_url)
 
 # --- SECURE COMPLEMENTARY DOWNLOAD PATH ---
 @app.route('/download/<sku>', methods=['GET', 'POST'])
@@ -289,7 +328,7 @@ def pricing_page():
     conn.close()
 
     for bundle in bundles:
-        bundle['gumroad_url'] = build_gumroad_url(bundle.get('sku') or bundle.get('name'))
+        bundle['checkout_url'] = build_checkout_url(bundle.get('sku') or '')
 
     return render_template('pricing.html', bundles=bundles)
 
