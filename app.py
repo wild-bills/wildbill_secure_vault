@@ -33,6 +33,14 @@ def cors_json_response(payload, status_code=200):
     response.headers['Access-Control-Max-Age'] = '86400'
     return response
 
+
+def allow_origin_for_get(response):
+    origin = request.headers.get('Origin', '')
+    if origin in ALLOWED_CORS_ORIGINS:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Vary'] = 'Origin'
+    return response
+
 # --- SECURE BACKBLAZE CLOUD STORAGE CONFIGURATION ---
 B2_KEY_ID = "005a9b63ec462530000000002"
 B2_APPLICATION_KEY = "K005l0PuojaZ6sv1IiHJgJAoJkxiDp8"
@@ -207,6 +215,19 @@ def serve_preview_image(filename):
 @app.route('/products.json', methods=['GET'])
 def products_json():
     return send_from_directory(BASE_DIR, 'products.json', mimetype='application/json')
+
+
+@app.route('/catalog.json', methods=['GET'])
+def catalog_json():
+    sections = build_catalog_sections()
+    payload = {
+        'status': 'success',
+        'categories': {
+            section['theme']: section['items']
+            for section in sections
+        },
+    }
+    return allow_origin_for_get(jsonify(payload))
 
 
 # --- FRONTEND ROUTE: PRODUCT DETAIL VIEW ---
