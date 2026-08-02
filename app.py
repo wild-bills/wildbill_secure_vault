@@ -31,7 +31,8 @@ ALLOWED_CORS_ORIGINS = {
 DOWNLOAD_TOKEN_TTL_HOURS = int(os.environ.get('DOWNLOAD_TOKEN_TTL_HOURS', '48'))
 DOWNLOAD_URL_EXPIRES_SECONDS = int(os.environ.get('DOWNLOAD_URL_EXPIRES_SECONDS', '900'))
 PURCHASE_MATCH_WINDOW_MINUTES = int(os.environ.get('PURCHASE_MATCH_WINDOW_MINUTES', '180'))
-PAY_PROVIDER = (os.environ.get('PAY_PROVIDER') or '').strip().lower()
+PAY_PROVIDER = (os.environ.get('PAY_PROVIDER') or 'gumroad').strip().lower()
+PAY_SERVICE_CHECKOUT_URL = (os.environ.get('PAY_SERVICE_CHECKOUT_URL') or 'https://api-clipart.wildbillsproplans.com').strip()
 STRIPE_CURRENCY = (os.environ.get('STRIPE_CURRENCY') or 'usd').strip().lower()
 
 
