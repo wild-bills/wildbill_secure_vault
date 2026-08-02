@@ -387,7 +387,7 @@
                     const price = item.price || '10.00';
                     const fileCount = item.file_count;
                     const preview = normalizePreview((item.previews && item.previews[0]) || '');
-                    const detailHref = sku ? 'https://clipart.wildbillsproplans.com' + encodeURIComponent(sku) : 'https://clipart.wildbillsproplans.com';
+                    const detailHref = sku ? '/product.html?sku=' + encodeURIComponent(sku) : '/contact.html';
                     const buyHref = detailHref;
 
                     return `
