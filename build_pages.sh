@@ -7,6 +7,18 @@ cd "$SCRIPT_DIR"
 
 DIST_DIR="dist"
 
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+
+if [[ -f validate_gumroad_permalinks.py ]]; then
+    echo "Running Gumroad permalink validation..."
+    VALIDATOR_ARGS=()
+    if [[ "${STRICT_GUMROAD_PERMALINKS:-0}" == "1" ]]; then
+        VALIDATOR_ARGS+=(--strict-sku)
+        echo "Strict SKU permalink enforcement enabled."
+    fi
+    "$PYTHON_BIN" validate_gumroad_permalinks.py "${VALIDATOR_ARGS[@]}"
+fi
+
 rm -rf "$DIST_DIR"
 mkdir -p "$DIST_DIR"
 mkdir -p "$DIST_DIR/static"

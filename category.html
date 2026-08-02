@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Category Preview Cards - Wild Bill Pro Plans</title>
+    <script src="https://gumroad.com/js/gumroad.js"></script>
     <style>
         :root {
             --bg-primary: #0a0505;
@@ -319,6 +320,18 @@
                 return product.Gumroad_URL;
             }
 
+            const rawSku = String(product.sku || product.SKU || '').trim();
+            if (rawSku) {
+                const skuPermalink = rawSku
+                    .toLowerCase()
+                    .replace(/[^a-z0-9-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+
+                if (skuPermalink) {
+                    return `https://wildbill.gumroad.com/l/${skuPermalink}`;
+                }
+            }
+
             const title = String(product.Title || product.name || 'item').trim();
             const slug = title
                 .toLowerCase()
@@ -367,7 +380,7 @@
                         <div class="price">$${escapeHtml(price)} USD</div>
                         <div class="actions">
                             <a class="preview-btn" href="${previewUrl || '/contact.html'}" target="_blank" rel="noopener">Open Combined Preview</a>
-                            <a class="buy-btn" href="${escapeHtml(purchaseUrl)}" target="_blank" rel="noopener">Buy Bundle</a>
+                            <a class="buy-btn gumroad-button" href="${escapeHtml(purchaseUrl)}">Buy Bundle</a>
                         </div>
                     </div>
                 </article>

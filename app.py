@@ -571,6 +571,37 @@ def claim_latest_purchase_by_email(sku, customer_email):
     return token
 
 
+def extract_gumroad_purchase(form_data):
+    """Normalize Gumroad webhook form payload into the internal purchase record shape."""
+    # Gumroad sends webhook payloads as form-encoded fields.
+    raw_product_permalink = str(form_data.get('product_permalink') or '').strip()
+    raw_product_name = str(form_data.get('product_name') or '').strip()
+    raw_custom_sku = str(
+        form_data.get('sku')
+        or form_data.get('custom_fields[sku]')
+        or form_data.get('custom_field[sku]')
+        or ''
+    ).strip()
+
+    sku = raw_custom_sku or raw_product_permalink
+    if not sku and raw_product_name:
+        sku = raw_product_name
+
+    product_id = str(form_data.get('product_id') or '').strip()
+    sale_id = str(form_data.get('sale_id') or form_data.get('id') or '').strip()
+    customer_email = str(form_data.get('email') or form_data.get('purchase_email') or '').strip()
+
+    return {
+        'provider': 'gumroad',
+        'provider_transaction_id': sale_id,
+        'customer_email': customer_email,
+        'sku': sku,
+        'price_id': '',
+        'product_id': product_id,
+        'raw_payload': dict(form_data),
+    }
+
+
 def render_checkout_success_page(sku, message='', token=''):
     safe_sku = escape(str(sku or '').strip())
     safe_message = escape(str(message or '').strip())
@@ -742,6 +773,55 @@ def stripe_webhook():
                     f"email={purchase['customer_email']}",
                     f"sku={purchase['sku']}",
                 )
+
+    return cors_json_response({'status': 'success'}, 200)
+
+
+@app.route('/gumroad-webhook', methods=['POST', 'OPTIONS'])
+def gumroad_webhook():
+    if request.method == 'OPTIONS':
+        return cors_json_response({'status': 'preflight-ok'})
+
+    payload = request.form.to_dict(flat=True)
+
+    # Optional shared secret check if configured in environment.
+    webhook_secret = str(os.environ.get('GUMROAD_WEBHOOK_SECRET') or '').strip()
+    if webhook_secret:
+        provided_secret = str(payload.get('secret') or '').strip()
+        if not provided_secret or not hmac.compare_digest(webhook_secret, provided_secret):
+            return cors_json_response({'status': 'error', 'message': 'invalid secret'}, 400)
+
+    # Ignore test pings where Gumroad marks test=true.
+    is_test = str(payload.get('test') or '').strip().lower()
+    if is_test in ('true', '1', 'yes'):
+        return cors_json_response({'status': 'success', 'message': 'test event ignored'}, 200)
+
+    purchase = extract_gumroad_purchase(payload)
+    row = upsert_completed_purchase_record(
+        provider=purchase['provider'],
+        provider_transaction_id=purchase['provider_transaction_id'],
+        customer_email=purchase['customer_email'],
+        sku=purchase['sku'],
+        price_id=purchase['price_id'],
+        product_id=purchase['product_id'],
+        raw_payload=purchase['raw_payload'],
+    )
+
+    if row is None:
+        return cors_json_response({'status': 'error', 'message': 'missing sale id'}, 400)
+
+    if not str(row['sku'] or '').strip():
+        print(
+            '⚠️ Gumroad sale saved without SKU. Set product permalink to SKU or pass custom_fields[sku].',
+            f"txn={row['provider_transaction_id']}",
+        )
+    else:
+        print(
+            '💰 Gumroad order verified:',
+            f"txn={row['provider_transaction_id']}",
+            f"email={row['customer_email']}",
+            f"sku={row['sku']}",
+        )
 
     return cors_json_response({'status': 'success'}, 200)
 

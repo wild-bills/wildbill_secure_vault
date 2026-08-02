@@ -27,9 +27,11 @@ Deploy clipart.wildbillsproplans.com and api-clipart.wildbillsproplans.com on Ub
 - Set FLASK_SECRET_KEY to a long random value
 - Set PAY_PROVIDER=stripe when using Stripe native checkout sessions
 - Set STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET
+- Optional for Gumroad webhook: set GUMROAD_WEBHOOK_SECRET and use the same secret in Gumroad webhook settings
 - Set STRIPE_CURRENCY (default: usd)
 - If not using Stripe native mode, set PAY_SERVICE_CHECKOUT_URL to your payment provider endpoint (example: https://pay.example.com/checkout?sku={sku})
 - Optional tuning: DOWNLOAD_TOKEN_TTL_HOURS, DOWNLOAD_URL_EXPIRES_SECONDS, PURCHASE_MATCH_WINDOW_MINUTES
+- Optional strict deploy guard after SKU permalink migration: set STRICT_GUMROAD_PERMALINKS=1 before running build_pages.sh
 
 5) Systemd service
 - sudo cp deploy/wildbill-vault.service /etc/systemd/system/wildbill-vault.service
@@ -66,3 +68,13 @@ Deploy clipart.wildbillsproplans.com and api-clipart.wildbillsproplans.com on Ub
 - sudo systemctl restart wildbill-vault
 - sudo systemctl restart nginx
 - sudo journalctl -u wildbill-vault -f
+
+11) Gumroad permalink migration workflow
+- Generate migration CSV: /home/wildbill/wildbill_secure_vault/factory-env/bin/python generate_gumroad_permalink_migration_csv.py --only-updates
+- Review output CSV: gumroad_permalink_migration.csv
+- Preview API operations without changes: /home/wildbill/wildbill_secure_vault/factory-env/bin/python migrate_gumroad_permalinks.py --limit 10
+- Execute live permalink updates (requires GUMROAD_ACCESS_TOKEN): /home/wildbill/wildbill_secure_vault/factory-env/bin/python migrate_gumroad_permalinks.py --execute
+- Review migration report: gumroad_permalink_migration_report.csv
+- Update Gumroad product permalinks using the CSV mapping (current_permalink -> target_sku_permalink)
+- Verify strict mode passes: /home/wildbill/wildbill_secure_vault/factory-env/bin/python validate_gumroad_permalinks.py --strict-sku
+- Enforce in deploy builds: STRICT_GUMROAD_PERMALINKS=1 bash build_pages.sh

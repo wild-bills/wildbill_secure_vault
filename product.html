@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/favicon.ico">
     <title>Bundle Details - Wild Bill Clipart Vault</title>
+    <script src="https://gumroad.com/js/gumroad.js"></script>
     <style>
         :root {
             --bg: #090709;
@@ -178,6 +179,7 @@
             const sku = (params.get('sku') || '').trim().toUpperCase();
             const dataCandidates = ['/catalog.json', '/products.json', '/static/products.json'];
             const checkoutOrigin = 'https://api-clipart.wildbillsproplans.com';
+            const gumroadStoreBase = 'https://wildbill.gumroad.com/l';
 
             function escapeHtml(value) {
                 return String(value || '')
@@ -208,6 +210,29 @@
                     return normalizedSku || 'Bundle';
                 }
                 return name;
+            }
+
+            function buildGumroadPurchaseUrl(bundle) {
+                const explicitUrl = String(bundle.Gumroad_URL || bundle.gumroad_url || '').trim();
+                if (explicitUrl) {
+                    return explicitUrl;
+                }
+
+                const rawSku = String(bundle.sku || sku || '').trim();
+                if (!rawSku) {
+                    return '';
+                }
+
+                const permalink = rawSku
+                    .toLowerCase()
+                    .replace(/[^a-z0-9-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+
+                if (!permalink) {
+                    return '';
+                }
+
+                return gumroadStoreBase + '/' + encodeURIComponent(permalink);
             }
 
             function normalizeItemsFromLegacyProducts(list) {
@@ -267,9 +292,14 @@
                 const itemCountLabel = Number.isFinite(fileCount) && fileCount > 0
                     ? fileCount + ' files in ZIP bundle'
                     : 'ZIP item count will show after inventory sync';
+                const gumroadHref = buildGumroadPurchaseUrl(bundle);
                 const checkoutHref = sku
                     ? checkoutOrigin + '/checkout/' + encodeURIComponent(sku)
                     : checkoutOrigin + '/contact';
+
+                const purchaseCta = gumroadHref
+                    ? `<a class="btn btn-primary gumroad-button" href="${escapeHtml(gumroadHref)}">Buy Bundle</a>`
+                    : '<button class="btn btn-primary" id="buyBundleButton" type="button">Buy Bundle</button>';
 
                 detail.innerHTML = `
                     <h1>${escapeHtml(title)}</h1>
@@ -297,7 +327,7 @@
                     ` : '<div class="status">No preview images available for this bundle yet.</div>'}
 
                     <div class="actions">
-                        <button class="btn btn-primary" id="buyBundleButton" type="button">Buy Bundle</button>
+                        ${purchaseCta}
                         <a class="btn btn-secondary" href="/">Browse More Bundles</a>
                     </div>
                 `;
