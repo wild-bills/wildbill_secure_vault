@@ -3,82 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product['name'] }} Details</title>
+    <link rel="icon" href="/favicon.ico">
+    <title>Bundle Details - Wild Bill Clipart Vault</title>
+    <script src="https://gumroad.com/js/gumroad.js"></script>
     <style>
         :root {
-            --bg: #08070c;
-            --card: #12111a;
-            --accent: #ff1e27;
-            --accent-soft: #f39aa0;
-            --text: #f6f2f2;
-            --muted: #b4a6a7;
-            --border: #2a2023;
+            --bg: #090709;
+            --panel: #151010;
+            --border: #2e1f1f;
+            --text: #f4efef;
+            --muted: #b8a8a8;
+            --accent: #ef4a3b;
         }
 
         * { box-sizing: border-box; }
 
         body {
             margin: 0;
-            padding: 2rem;
-            background:
-                radial-gradient(circle at top, rgba(255, 30, 39, 0.14), transparent 28%),
-                linear-gradient(180deg, #08070c 0%, #050407 100%);
+            font-family: Arial, sans-serif;
             color: var(--text);
-            font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+            background:
+                radial-gradient(circle at top, rgba(239, 74, 59, 0.16), transparent 30%),
+                linear-gradient(180deg, #090709 0%, #070506 100%);
         }
 
-        .wrapper {
+        .wrap {
             max-width: 1100px;
             margin: 0 auto;
-            background: rgba(18, 17, 26, 0.92);
+            padding: 28px 16px 46px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 16px;
+            color: var(--muted);
+            text-decoration: none;
             border: 1px solid var(--border);
-            border-radius: 28px;
-            padding: 2rem;
-            box-shadow: 0 20px 64px rgba(0, 0, 0, 0.45);
+            border-radius: 999px;
+            padding: 8px 14px;
+            background: #140e0e;
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: rgba(21, 16, 16, 0.92);
+            padding: 18px;
         }
 
         h1 {
-            margin: 0 0 0.5rem;
-            font-size: clamp(2rem, 4vw, 3rem);
-            letter-spacing: -0.04em;
+            margin: 0 0 6px;
+            color: var(--accent);
+            font-size: clamp(1.7rem, 3.8vw, 2.5rem);
         }
 
-        .sku {
+        .meta {
+            margin: 0;
             color: var(--muted);
-            margin-bottom: 1.5rem;
-            font-size: 0.92rem;
+            font-size: 14px;
         }
 
-        .stats {
+        .chips {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.6rem;
-            margin: 0.5rem 0 1.2rem;
+            gap: 8px;
+            margin: 14px 0 18px;
         }
 
-        .stat-chip {
+        .chip {
+            padding: 7px 11px;
             border: 1px solid var(--border);
-            background: #0d0b12;
             border-radius: 999px;
-            padding: 0.42rem 0.75rem;
-            color: var(--accent-soft);
-            font-size: 0.85rem;
+            font-size: 12px;
+            color: #ffd8d4;
+            background: #1a1212;
             font-weight: 700;
         }
 
-        .stitched-frame {
-            margin: 1rem 0 1.4rem;
-            border-radius: 18px;
-            overflow: hidden;
+        .stitched {
             border: 1px solid var(--border);
-            background: #07070b;
+            border-radius: 14px;
             padding: 8px;
+            background: #0d0909;
+            margin-bottom: 18px;
         }
 
         .stitched-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            grid-auto-rows: minmax(150px, 220px);
+            grid-auto-rows: minmax(150px, 260px);
             gap: 6px;
         }
 
@@ -86,184 +99,322 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
             border-radius: 8px;
+            display: block;
+            background: #070505;
         }
 
         .preview-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-            margin: 1.5rem 0 1.75rem;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
         }
 
-        .preview-box {
-            border-radius: 18px;
-            overflow: hidden;
+        .preview-card {
             border: 1px solid var(--border);
-            background: #07070b;
-            padding: 10px;
+            border-radius: 12px;
+            padding: 8px;
+            background: #0d0909;
         }
 
-        .preview-box img {
+        .preview-card img {
             width: 100%;
-            height: auto;
-            object-fit: cover;
-            border-radius: 10px;
+            height: 180px;
+            object-fit: contain;
+            border-radius: 8px;
             display: block;
         }
 
-        .preview-title {
-            font-size: 0.88rem;
-            color: var(--muted);
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
             text-align: center;
-            margin-top: 0.6rem;
-        }
-
-        .buy-now-btn {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
             text-decoration: none;
-            background: linear-gradient(135deg, #ff3c44 0%, var(--accent) 100%);
             color: #fff;
-            font-weight: 800;
-            border: none;
-            padding: 1rem 1.25rem;
-            border-radius: 14px;
+            font-weight: 700;
+            border-radius: 8px;
+            padding: 10px 14px;
+            border: 0;
             cursor: pointer;
-            font-size: 1.05rem;
-            margin-top: 1rem;
-            box-shadow: 0 10px 28px rgba(255, 30, 39, 0.26);
         }
 
-        .buy-now-btn:hover {
-            filter: brightness(1.06);
+        .btn-primary {
+            background: var(--accent);
         }
 
-        .checkout-note {
-            margin-top: 0.75rem;
+        .btn-secondary {
+            background: #241717;
+            border: 1px solid #3a2626;
+        }
+
+        .status {
+            text-align: center;
             color: var(--muted);
-            font-size: 0.88rem;
+            padding: 24px;
+        }
+
+        .error {
+            color: var(--accent);
         }
     </style>
 </head>
 <body>
-    <div class="wrapper">
-        <h1>{{ product['name'] }}</h1>
-        <div class="sku">Product Inventory SKU Code Reference: {{ product['sku'] }}</div>
-        <div class="stats">
-            {% if product['file_count'] and product['file_count'] > 0 %}
-            <div class="stat-chip">{{ product['file_count'] }} files in ZIP bundle</div>
-            {% endif %}
-            <div class="stat-chip">{{ previews|length }} preview image{{ '' if previews|length == 1 else 's' }}</div>
-        </div>
-
-        <h3>Asset Bundle Contents Previews</h3>
-
-        {% if previews %}
-        <div class="stitched-frame">
-            <div class="stitched-grid">
-                {% for preview in previews %}
-                <img src="{{ preview }}" alt="Bundle preview {{ loop.index }}" onerror="this.style.display='none'">
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-
-        <div class="preview-grid">
-            {% if product['preview_1'] %}
-            <div class="preview-box">
-                <img src="{{ product['preview_1'] }}" alt="Sample 1">
-                <div class="preview-title">Sample 1</div>
-            </div>
-            {% endif %}
-
-            {% if product['preview_2'] %}
-            <div class="preview-box">
-                <img src="{{ product['preview_2'] }}" alt="Sample 2">
-                <div class="preview-title">Sample 2</div>
-            </div>
-            {% endif %}
-
-            {% if product['preview_3'] %}
-            <div class="preview-box">
-                <img src="{{ product['preview_3'] }}" alt="Sample 3">
-                <div class="preview-title">Sample 3</div>
-            </div>
-            {% endif %}
-
-            {% if product['preview_4'] %}
-            <div class="preview-box">
-                <img src="{{ product['preview_4'] }}" alt="Sample 4">
-                <div class="preview-title">Sample 4</div>
-            </div>
-            {% endif %}
-        </div>
-
-        <button
-            class="buy-now-btn"
-            id="buyNowButton"
-            type="button"
-            data-checkout-url="{{ product['checkout_url'] or url_for('checkout_redirect', sku=product['sku']) }}"
-            data-price-id="{{ product['paddle_price_id'] or '' }}"
-            data-product-id="{{ (product['zip_filename'] or product['sku'] or '')|replace('.zip', '') }}"
-            data-sku="{{ product['sku'] or '' }}"
-        >
-            Start Secure Checkout
-        </button>
-        {% if not product['checkout_url'] %}
-        <div class="checkout-note">If checkout is not configured yet, this button will show setup status.</div>
-        {% endif %}
-    </div>
+    <main class="wrap">
+        <a class="back" href="/">Back to catalog</a>
+        <section id="detail" class="panel">
+            <div class="status">Loading bundle details...</div>
+        </section>
+    </main>
 
     <script>
-        (function () {
-            const button = document.getElementById('buyNowButton');
-            if (!button) {
-                return;
+        (function() {
+            const detail = document.getElementById('detail');
+            const params = new URLSearchParams(window.location.search);
+            const sku = (params.get('sku') || '').trim().toUpperCase();
+            const dataCandidates = ['/catalog.json', '/products.json', '/static/products.json'];
+            const checkoutOrigin = 'https://clipart.wildbillsproplans.com';
+            const gumroadStoreBase = 'https://wildbill.gumroad.com/l';
+
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
             }
 
-            button.addEventListener('click', function () {
-                const checkoutUrl = button.dataset.checkoutUrl || '';
-                if (!checkoutUrl) {
+            function normalizePreview(url) {
+                const value = String(url || '');
+                if (!value) {
+                    return '';
+                }
+                if (value.startsWith('http://') || value.startsWith('https://')) {
+                    return value;
+                }
+                if (value.startsWith('/')) {
+                    return window.location.origin + value;
+                }
+                return value;
+            }
+
+            function displayTitle(rawName, normalizedSku) {
+                const name = String(rawName || '').trim();
+                if (!name || name.startsWith('===')) {
+                    return normalizedSku || 'Bundle';
+                }
+                return name;
+            }
+
+            function buildGumroadPurchaseUrl(bundle) {
+                const explicitUrl = String(bundle.Gumroad_URL || bundle.gumroad_url || '').trim();
+                if (explicitUrl) {
+                    return explicitUrl;
+                }
+
+                const rawSku = String(bundle.sku || sku || '').trim();
+                if (!rawSku) {
+                    return '';
+                }
+
+                const permalink = rawSku
+                    .toLowerCase()
+                    .replace(/[^a-z0-9-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+
+                if (!permalink) {
+                    return '';
+                }
+
+                return gumroadStoreBase + '/' + encodeURIComponent(permalink);
+            }
+
+            function normalizeItemsFromLegacyProducts(list) {
+                const categories = {};
+
+                list.forEach((item) => {
+                    const category = String(item.category || 'All Bundles').trim() || 'All Bundles';
+                    const rawSku = String(item.sku || '').trim();
+                    const normalizedSku = rawSku.toUpperCase().startsWith('WB-') ? rawSku.toUpperCase() : '';
+                    const title = String(item.title || item.name || item.bundle_id || 'Bundle').trim();
+                    const price = String(item.price || '10.00').trim();
+                    const preview = item.preview_url || item.image_url || item.preview || '';
+
+                    if (!categories[category]) {
+                        categories[category] = [];
+                    }
+
+                    categories[category].push({
+                        name: title,
+                        sku: normalizedSku,
+                        price,
+                        previews: preview ? [preview] : [],
+                        file_count: item.file_count || item.count || null,
+                    });
+                });
+
+                return categories;
+            }
+
+            function parseCatalogPayload(data) {
+                if (data && data.status === 'success' && data.categories && typeof data.categories === 'object') {
+                    return data.categories;
+                }
+                if (Array.isArray(data)) {
+                    return normalizeItemsFromLegacyProducts(data);
+                }
+                return null;
+            }
+
+            function findItem(categories) {
+                const groups = Object.keys(categories || {});
+                for (const groupName of groups) {
+                    const hit = (categories[groupName] || []).find((item) => String(item.sku || '').toUpperCase() === sku);
+                    if (hit) {
+                        return { item: hit, groupName };
+                    }
+                }
+                return null;
+            }
+
+            function renderDetail(bundle, categoryName) {
+                const title = displayTitle(bundle.name, bundle.sku || sku);
+                const price = String(bundle.price || '10.00');
+                const priceId = String(bundle.price_id || '').trim();
+                const previews = Array.isArray(bundle.previews) ? bundle.previews.map(normalizePreview).filter(Boolean) : [];
+                const fileCount = Number(bundle.file_count);
+                const itemCountLabel = Number.isFinite(fileCount) && fileCount > 0
+                    ? fileCount + ' files in ZIP bundle'
+                    : 'ZIP item count will show after inventory sync';
+                const gumroadHref = buildGumroadPurchaseUrl(bundle);
+                const checkoutHref = sku
+                    ? checkoutOrigin + '/checkout/' + encodeURIComponent(sku)
+                    : checkoutOrigin + '/contact';
+
+                const purchaseCta = gumroadHref
+                    ? `<a class="btn btn-primary gumroad-button" href="${escapeHtml(gumroadHref)}">Buy Bundle</a>`
+                    : '<button class="btn btn-primary" id="buyBundleButton" type="button">Buy Bundle</button>';
+
+                detail.innerHTML = `
+                    <h1>${escapeHtml(title)}</h1>
+                    <p class="meta">SKU: ${escapeHtml(bundle.sku || '')}</p>
+                    <p class="meta">Category: ${escapeHtml(categoryName)}</p>
+                    <div class="chips">
+                        <div class="chip">${escapeHtml(itemCountLabel)}</div>
+                        <div class="chip">${escapeHtml(String(previews.length))} preview image${previews.length === 1 ? '' : 's'}</div>
+                        <div class="chip">$${escapeHtml(price)} USD</div>
+                    </div>
+
+                    ${previews.length ? `
+                    <div class="stitched">
+                        <div class="stitched-grid">
+                            ${previews.map((url, index) => `<img src="${escapeHtml(url)}" alt="Bundle stitched preview ${index + 1}" onerror="this.style.display='none'">`).join('')}
+                        </div>
+                    </div>
+                    <div class="preview-grid">
+                        ${previews.map((url, index) => `
+                        <div class="preview-card">
+                            <img src="${escapeHtml(url)}" alt="Bundle preview ${index + 1}" onerror="this.style.display='none'">
+                        </div>
+                        `).join('')}
+                    </div>
+                    ` : '<div class="status">No preview images available for this bundle yet.</div>'}
+
+                    <div class="actions">
+                        ${purchaseCta}
+                        <a class="btn btn-secondary" href="/">Browse More Bundles</a>
+                    </div>
+                `;
+
+                const buyButton = document.getElementById('buyBundleButton');
+                if (!buyButton) {
                     return;
                 }
 
-                const metadataProductId = String(button.dataset.productId || '')
-                    .replace(/\.zip$/i, '')
-                    .replace(/[^A-Za-z0-9_]+/g, '_')
-                    .replace(/^_+|_+$/g, '');
+                buyButton.addEventListener('click', () => {
+                    const metadataProductId = String(
+                        bundle.product_id
+                        || bundle.zip_filename
+                        || bundle.sku
+                        || sku
+                        || ''
+                    )
+                        .replace(/\.zip$/i, '')
+                        .replace(/[^A-Za-z0-9_]+/g, '_')
+                        .replace(/^_+|_+$/g, '');
 
-                const priceId = String(button.dataset.priceId || '').trim();
-                const resolvedSku = String(button.dataset.sku || '').trim();
-                const encodedSku = encodeURIComponent(resolvedSku);
-                const checkoutSessionParameters = {
-                    success_url: window.location.origin + '/checkout/success?sku=' + encodedSku,
-                    cancel_url: window.location.origin + '/checkout/cancel?sku=' + encodedSku,
-                    line_items: [{ price: priceId || 'YOUR_STRIPE_PRICE_ID', quantity: 1 }],
-                    mode: 'payment',
-                    metadata: {
-                        product_id: metadataProductId,
-                        sku: resolvedSku,
-                    },
-                };
+                    const resolvedSku = String(bundle.sku || sku || '').trim();
+                    const encodedSku = encodeURIComponent(resolvedSku);
 
-                const redirectUrl = new URL(checkoutUrl, window.location.origin);
-                if (resolvedSku) {
-                    redirectUrl.searchParams.set('sku', resolvedSku);
+                    const checkoutSessionParameters = {
+                        success_url: checkoutOrigin + '/checkout/success?sku=' + encodedSku,
+                        cancel_url: checkoutOrigin + '/checkout/cancel?sku=' + encodedSku,
+                        line_items: [{ price: priceId || 'YOUR_STRIPE_PRICE_ID', quantity: 1 }],
+                        mode: 'payment',
+                        metadata: {
+                            product_id: metadataProductId,
+                            sku: resolvedSku,
+                        },
+                    };
+
+                    const redirectUrl = new URL(checkoutHref);
+                    if (resolvedSku) {
+                        redirectUrl.searchParams.set('sku', resolvedSku);
+                    }
+                    redirectUrl.searchParams.set('product_id', checkoutSessionParameters.metadata.product_id);
+                    if (priceId) {
+                        redirectUrl.searchParams.set('price_id', priceId);
+                    }
+                    redirectUrl.searchParams.set('success_url', checkoutSessionParameters.success_url);
+                    redirectUrl.searchParams.set('cancel_url', checkoutSessionParameters.cancel_url);
+                    redirectUrl.searchParams.set('mode', checkoutSessionParameters.mode);
+
+                    window.location.href = redirectUrl.toString();
+                });
+            }
+
+            function loadCandidate(index) {
+                if (!sku) {
+                    detail.innerHTML = '<div class="status error">Missing SKU in URL. Open this page from a bundle card.</div>';
+                    return;
                 }
-                redirectUrl.searchParams.set('product_id', checkoutSessionParameters.metadata.product_id);
-                if (priceId) {
-                    redirectUrl.searchParams.set('price_id', priceId);
-                }
-                redirectUrl.searchParams.set('success_url', checkoutSessionParameters.success_url);
-                redirectUrl.searchParams.set('cancel_url', checkoutSessionParameters.cancel_url);
-                redirectUrl.searchParams.set('mode', checkoutSessionParameters.mode);
 
-                window.location.href = redirectUrl.toString();
-            });
+                if (index >= dataCandidates.length) {
+                    detail.innerHTML = '<div class="status error">Unable to load bundle details right now.</div>';
+                    return;
+                }
+
+                const path = dataCandidates[index];
+                fetch(path)
+                    .then((res) => {
+                        if (!res.ok) {
+                            throw new Error(path + ' failed with HTTP ' + res.status);
+                        }
+                        return res.json();
+                    })
+                    .then((data) => {
+                        const categories = parseCatalogPayload(data);
+                        if (!categories) {
+                            throw new Error('No usable categories in payload');
+                        }
+                        const result = findItem(categories);
+                        if (!result) {
+                            throw new Error('SKU not found in payload');
+                        }
+                        renderDetail(result.item, result.groupName);
+                    })
+                    .catch(() => {
+                        loadCandidate(index + 1);
+                    });
+            }
+
+            loadCandidate(0);
         })();
     </script>
 </body>
