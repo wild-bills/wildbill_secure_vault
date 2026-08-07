@@ -1,10 +1,13 @@
 import json
 import os
+import socket
 import time
+from contextlib import contextmanager
 from pathlib import Path
 from urllib.parse import urlparse
 
 import requests
+from urllib3.util import connection as urllib3_connection
 
 from gumroad_utils import build_gumroad_permalink
 
@@ -16,6 +19,17 @@ RESUME_STATE_FILE = Path("upload_local_zips.resume.json")
 LOCAL_BUNDLE_DIR = Path("/run/media/wildbill/storage/completed_bundles")
 LOCAL_PREVIEW_DIR = Path(__file__).resolve().parent / "static" / "previews"
 # ------------------------------------------------- #
+
+
+@contextmanager
+def prefer_ipv4_for_storage_upload():
+    """Use IPv4 only for the temporary storage host, not Gumroad's API."""
+    original_allowed_gai_family = urllib3_connection.allowed_gai_family
+    urllib3_connection.allowed_gai_family = lambda: socket.AF_INET
+    try:
+        yield
+    finally:
+        urllib3_connection.allowed_gai_family = original_allowed_gai_family
 
 
 def load_catalog_rows():
@@ -144,15 +158,19 @@ def extract_permalink(row):
 
 
 def upload_zip_to_gumroad_storage(zip_path):
-    presign_response = requests.post(
-        f"{BASE_URL}/files/presign",
-        data={
-            "access_token": GUMROAD_TOKEN,
-            "filename": zip_path.name,
-            "file_size": str(zip_path.stat().st_size),
-        },
-        timeout=30,
-    )
+    try:
+        presign_response = requests.post(
+            f"{BASE_URL}/files/presign",
+            data={
+                "access_token": GUMROAD_TOKEN,
+                "filename": zip_path.name,
+                "file_size": str(zip_path.stat().st_size),
+            },
+            timeout=30,
+        )
+    except requests.RequestException as exc:
+        print(f"   ⏸️ Presign request failed for {zip_path.name}: {exc}")
+        return None, True
 
     if presign_response.status_code == 429:
         print(f"   ⏸️ Gumroad rate-limited file upload for {zip_path.name}.")
@@ -183,8 +201,12 @@ def upload_zip_to_gumroad_storage(zip_path):
         print(f"   ❌ Missing presigned upload URL for {zip_path.name}.")
         return None, False
 
-    with zip_path.open("rb") as file_handle:
-        upload_response = requests.put(presigned_url, data=file_handle, timeout=300)
+    try:
+        with zip_path.open("rb") as file_handle, prefer_ipv4_for_storage_upload():
+            upload_response = requests.put(presigned_url, data=file_handle, timeout=300)
+    except requests.RequestException as exc:
+        print(f"   ⏸️ Storage upload failed for {zip_path.name}: {exc}")
+        return None, True
 
     if upload_response.status_code not in (200, 201):
         print(f"   ❌ File upload failed for {zip_path.name}. Code: {upload_response.status_code}")
@@ -196,17 +218,21 @@ def upload_zip_to_gumroad_storage(zip_path):
         print(f"   ❌ Gumroad upload finished without an ETag for {zip_path.name}.")
         return None, False
 
-    complete_response = requests.post(
-        f"{BASE_URL}/files/complete",
-        data={
-            "access_token": GUMROAD_TOKEN,
-            "upload_id": upload_id,
-            "key": key,
-            "parts[][part_number]": str(part_number),
-            "parts[][etag]": etag,
-        },
-        timeout=30,
-    )
+    try:
+        complete_response = requests.post(
+            f"{BASE_URL}/files/complete",
+            data={
+                "access_token": GUMROAD_TOKEN,
+                "upload_id": upload_id,
+                "key": key,
+                "parts[][part_number]": str(part_number),
+                "parts[][etag]": etag,
+            },
+            timeout=30,
+        )
+    except requests.RequestException as exc:
+        print(f"   ⏸️ File completion failed for {zip_path.name}: {exc}")
+        return None, True
 
     if complete_response.status_code == 429:
         print(f"   ⏸️ Gumroad rate-limited file completion for {zip_path.name}.")

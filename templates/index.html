@@ -256,6 +256,21 @@
                 return name;
             }
 
+            function buildGumroadPurchaseUrl(item) {
+                const explicitUrl = String(item.Gumroad_URL || item.gumroad_url || '').trim();
+                if (explicitUrl) {
+                    return explicitUrl;
+                }
+
+                const permalink = String(item.sku || '')
+                    .trim()
+                    .toLowerCase()
+                    .replace(/[^a-z0-9-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+
+                return permalink ? 'https://wildbill3.gumroad.com/l/' + encodeURIComponent(permalink) : '';
+            }
+
             function buildGroupedCategories(categories) {
                 const grouped = {};
                 const maxItemsPerCategory = 60;
@@ -388,7 +403,7 @@
                     const fileCount = item.file_count;
                     const preview = normalizePreview((item.previews && item.previews[0]) || '');
                     const detailHref = sku ? 'https://clipart.wildbillsproplans.com/product.html?sku=' + encodeURIComponent(sku) : 'https://clipart.wildbillsproplans.com';
-                    const buyHref = detailHref;
+                    const buyHref = buildGumroadPurchaseUrl(item) || detailHref;
 
                     return `
                         <article class="card" role="link" tabindex="0" data-detail-href="${escapeHtml(detailHref)}">
@@ -398,7 +413,7 @@
                             <p class="sku">${Number.isFinite(Number(fileCount)) && Number(fileCount) > 0 ? escapeHtml(String(fileCount)) + ' files in ZIP' : ''}</p>
                             <p class="price">$${escapeHtml(price)}</p>
                             <a class="details-btn" href="${detailHref}">View Details</a>
-                            <a class="buy-btn" href="${buyHref}">Buy Bundle</a>
+                            <a class="buy-btn gumroad-button" href="${escapeHtml(buyHref)}">Buy Bundle</a>
                         </article>
                     `;
                 }).join('');
