@@ -2,7 +2,7 @@ import os
 import re
 from urllib.parse import urlparse
 
-DEFAULT_GUMROAD_STORE_URL = os.environ.get("GUMROAD_STORE_URL", "https://wildbill.gumroad.com/l")
+DEFAULT_GUMROAD_STORE_URL = os.environ.get("GUMROAD_STORE_URL", "https://wildbill3.gumroad.com/l")
 
 
 def slugify_permalink(value: str) -> str:

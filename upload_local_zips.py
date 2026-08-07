@@ -60,29 +60,36 @@ def clear_resume_state():
 def get_all_gumroad_products():
     print("🔍 Fetching your current Gumroad products...")
 
-    response = requests.get(f"{BASE_URL}/products", params={"access_token": GUMROAD_TOKEN})
+    response = requests.get(
+        f"{BASE_URL}/products",
+        params={"access_token": GUMROAD_TOKEN},
+        timeout=30,
+    )
     if response.status_code != 200:
-        print(f"❌ Failed to contact Gumroad API. Code: {response.status_code}")
-        return []
+        raise RuntimeError(
+            f"Failed to fetch Gumroad products (HTTP {response.status_code}): "
+            f"{response.text[:250]}"
+        )
 
     try:
         return response.json().get("products", [])
     except Exception:
-        print("❌ Server returned non-JSON data. Please double-check your API token permissions.")
-        return []
+        raise RuntimeError("Gumroad returned non-JSON product data. Check the API token permissions.")
 
 
-def create_gumroad_product(title, description, price):
+def create_gumroad_product(title, description, price, permalink):
+    """Create an unpublished listing; publishing only happens after its ZIP attaches."""
     payload = {
         "access_token": GUMROAD_TOKEN,
         "name": title,
         "description": description,
         "price": str(int(float(price) * 100)),
         "product_type": "digital",
-        "published": "true",
+        "custom_permalink": permalink,
+        "published": "false",
     }
 
-    response = requests.post(f"{BASE_URL}/products", data=payload)
+    response = requests.post(f"{BASE_URL}/products", data=payload, timeout=30)
     if response.status_code == 429:
         print(f"   ⏸️ Gumroad rate-limited listing creation for '{title}'.")
         return None, True
@@ -103,7 +110,11 @@ def create_gumroad_product(title, description, price):
 
 
 def get_gumroad_product(product_id):
-    response = requests.get(f"{BASE_URL}/products/{product_id}", params={"access_token": GUMROAD_TOKEN})
+    response = requests.get(
+        f"{BASE_URL}/products/{product_id}",
+        params={"access_token": GUMROAD_TOKEN},
+        timeout=30,
+    )
     if response.status_code != 200:
         return {}
 
@@ -140,6 +151,7 @@ def upload_zip_to_gumroad_storage(zip_path):
             "filename": zip_path.name,
             "file_size": str(zip_path.stat().st_size),
         },
+        timeout=30,
     )
 
     if presign_response.status_code == 429:
@@ -172,7 +184,7 @@ def upload_zip_to_gumroad_storage(zip_path):
         return None, False
 
     with zip_path.open("rb") as file_handle:
-        upload_response = requests.put(presigned_url, data=file_handle.read())
+        upload_response = requests.put(presigned_url, data=file_handle, timeout=300)
 
     if upload_response.status_code not in (200, 201):
         print(f"   ❌ File upload failed for {zip_path.name}. Code: {upload_response.status_code}")
@@ -193,6 +205,7 @@ def upload_zip_to_gumroad_storage(zip_path):
             "parts[][part_number]": str(part_number),
             "parts[][etag]": etag,
         },
+        timeout=30,
     )
 
     if complete_response.status_code == 429:
@@ -267,6 +280,36 @@ def resolve_local_preview_path(row):
     return None
 
 
+def write_catalog_rows(rows):
+    """Atomically persist confirmed Gumroad URLs for the static buy buttons."""
+    temp_file = CATALOG_FILE.with_suffix(".json.tmp")
+    with temp_file.open("w", encoding="utf-8") as file_handle:
+        json.dump(rows, file_handle, indent=2)
+        file_handle.write("\n")
+    temp_file.replace(CATALOG_FILE)
+
+
+def trusted_resume_index(rows, product_map, resume_state):
+    """Only honour a resume point if Gumroad still has that bundle's ZIP attached."""
+    if not resume_state:
+        return 0
+
+    resume_title = str(resume_state.get("title") or "").strip().lower()
+    resume_zip = str(resume_state.get("zip_filename") or "").strip()
+    product_id = product_map.get(resume_title)
+    if not resume_title or not resume_zip or not product_id:
+        return 0
+
+    product = get_gumroad_product(product_id)
+    if not product_has_matching_file(product, resume_zip):
+        return 0
+
+    for row_index, row in enumerate(rows, start=1):
+        if str(row.get("Title") or "").strip().lower() == resume_title:
+            return row_index
+    return 0
+
+
 def upload_physical_files():
     live_products = get_all_gumroad_products()
     product_map = {p.get("name", "").strip().lower(): p.get("id") for p in live_products if p.get("name") and p.get("id")}
@@ -275,20 +318,7 @@ def upload_physical_files():
     print(f"📋 Loaded {len(rows)} catalog rows from {CATALOG_FILE}.")
 
     resume_state = load_resume_state()
-    start_index = 0
-    if resume_state:
-        resume_title = str(resume_state.get("title") or "").strip().lower()
-        resume_zip = str(resume_state.get("zip_filename") or "").strip()
-        resume_index = int(resume_state.get("last_completed_index") or 0)
-        for row_index, row in enumerate(rows, start=1):
-            row_title = str(row.get("Title") or "").strip().lower()
-            row_zip_name = Path(str(row.get("Zip_Path") or "")).name or Path(str(row.get("Zip_URL") or "")).name
-            if row_title == resume_title and row_zip_name == resume_zip:
-                start_index = row_index
-                break
-        else:
-            if 0 < resume_index < len(rows):
-                start_index = resume_index
+    start_index = trusted_resume_index(rows, product_map, resume_state)
 
     if start_index:
         print(f"🔁 Resuming after row {start_index} from {RESUME_STATE_FILE}.")
@@ -306,7 +336,7 @@ def upload_physical_files():
         price = str(row.get("Price") or "15.00")
         title_key = title.lower()
         zip_path = resolve_local_zip_path(row)
-        preview_path = resolve_local_preview_path(row)
+        permalink = extract_permalink(row)
 
         if not title:
             print(f"⚠️ Row [{index}]: skipped because the title is empty.")
@@ -314,7 +344,7 @@ def upload_physical_files():
 
         if title_key not in product_map:
             print(f"\n➕ Row [{index}]: creating missing Gumroad listing for '{title}'...")
-            product_id, should_stop = create_gumroad_product(title, description, price)
+            product_id, should_stop = create_gumroad_product(title, description, price, permalink)
             if should_stop:
                 stop_requested = True
                 break
@@ -331,10 +361,12 @@ def upload_physical_files():
 
         existing_product = get_gumroad_product(product_id)
         zip_filename = zip_path.name
-        permalink = extract_permalink(row)
 
         if existing_product and product_has_matching_file(existing_product, zip_filename):
             print(f"\n📦 Processing [{index}]: '{title}' already has {zip_filename}, skipping file upload.")
+            row["Gumroad_URL"] = str(existing_product.get("short_url") or "").strip()
+            if row["Gumroad_URL"]:
+                write_catalog_rows(rows)
             save_resume_state({
                 "last_completed_index": index,
                 "title": title,
@@ -363,10 +395,10 @@ def upload_physical_files():
 
         if existing_product.get("files"):
             update_payload.extend(build_file_payload(existing_product.get("files"), file_url))
-            response = requests.put(f"{BASE_URL}/products/{product_id}", data=update_payload)
+            response = requests.put(f"{BASE_URL}/products/{product_id}", data=update_payload, timeout=60)
         else:
             update_payload.append(("files[][url]", file_url))
-            response = requests.put(f"{BASE_URL}/products/{product_id}", data=update_payload)
+            response = requests.put(f"{BASE_URL}/products/{product_id}", data=update_payload, timeout=60)
 
         if response.status_code == 429:
             print(f"   ⏸️ Gumroad rate-limited product update for '{title}'.")
@@ -374,8 +406,24 @@ def upload_physical_files():
             break
 
         if response.status_code in (200, 201):
-            print(f"   ✅ Attached ZIP to '{title}'.")
+            # Gumroad can return a 2xx JSON response with an API-level error message.
+            # Confirm the remote listing before exposing its URL to customers.
+            product_data = get_gumroad_product(product_id)
+            if not product_has_matching_file(product_data, zip_filename):
+                print(f"   ❌ Gumroad did not confirm {zip_filename} on '{title}'.")
+                print(f"   Details: {response.text[:250]}")
+                continue
+            if not bool(product_data.get("published")):
+                print(f"   ❌ Gumroad did not publish '{title}'.")
+                print(f"   Details: {response.text[:250]}")
+                continue
+
+            print(f"   ✅ Attached and published '{title}'.")
             success_count += 1
+            row["Gumroad_URL"] = str(product_data.get("short_url") or "").strip()
+            if not row["Gumroad_URL"]:
+                row["Gumroad_URL"] = f"https://wildbill3.gumroad.com/l/{permalink}"
+            write_catalog_rows(rows)
             save_resume_state({
                 "last_completed_index": index,
                 "title": title,
