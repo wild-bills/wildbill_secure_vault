@@ -298,7 +298,7 @@
                     : checkoutOrigin + '/contact';
 
                 const purchaseCta = gumroadHref
-                    ? `<a class="btn btn-primary gumroad-button" href="${escapeHtml(gumroadHref)}">Buy Bundle</a>`
+                    ? `<a class="btn btn-primary gumroad-button" href="{{ product.Gumroad_URL }}">Buy Bundle</a>`
                     : '<button class="btn btn-primary" id="buyBundleButton" type="button">Buy Bundle</button>';
 
                 detail.innerHTML = `
