@@ -1,3 +1,4 @@
+import csv
 import json
 import os
 import socket
@@ -12,10 +13,11 @@ from urllib3.util import connection as urllib3_connection
 from gumroad_utils import build_gumroad_permalink
 
 # ----------------- CONFIGURATION ----------------- #
-GUMROAD_TOKEN = os.environ.get("GUMROAD_ACCESS_TOKEN", "7UAA_2Bu6PLFQslkhCAHCrwmdh16XHh3HE17HNdLoTg")
+GUMROAD_TOKEN = os.environ.get("GUMROAD_ACCESS_TOKEN", "")
 BASE_URL = "https://api.gumroad.com/v2"
 CATALOG_FILE = Path("products.json")
 RESUME_STATE_FILE = Path("upload_local_zips.resume.json")
+MANUAL_UPLOAD_MANIFEST = Path("gumroad_manual_upload_manifest.csv")
 LOCAL_BUNDLE_DIR = Path("/run/media/wildbill/storage/completed_bundles")
 LOCAL_PREVIEW_DIR = Path(__file__).resolve().parent / "static" / "previews"
 # ------------------------------------------------- #
@@ -203,7 +205,7 @@ def upload_zip_to_gumroad_storage(zip_path):
 
     try:
         with zip_path.open("rb") as file_handle, prefer_ipv4_for_storage_upload():
-            upload_response = requests.put(presigned_url, data=file_handle, timeout=300)
+            upload_response = requests.put(presigned_url, data=file_handle, timeout=90)
     except requests.RequestException as exc:
         print(f"   ⏸️ Storage upload failed for {zip_path.name}: {exc}")
         return None, True
@@ -313,6 +315,48 @@ def write_catalog_rows(rows):
         json.dump(rows, file_handle, indent=2)
         file_handle.write("\n")
     temp_file.replace(CATALOG_FILE)
+
+
+def generate_manual_upload_manifest():
+    """Create the supported Gumroad-dashboard upload checklist from products.json.
+
+    Gumroad's public API supports sales data and license verification, but does
+    not support product/content creation. Product files must therefore be
+    attached in the Gumroad dashboard. This manifest supplies every field the
+    dashboard needs while retaining the exact URLs used by the storefront.
+    """
+    rows = load_catalog_rows()
+    fieldnames = [
+        "Title",
+        "Price_USD",
+        "Description",
+        "Custom_Permalink",
+        "Expected_Gumroad_URL",
+        "ZIP_Path",
+        "Preview_Path",
+        "Status",
+    ]
+
+    with MANUAL_UPLOAD_MANIFEST.open("w", newline="", encoding="utf-8") as file_handle:
+        writer = csv.DictWriter(file_handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in rows:
+            permalink = extract_permalink(row)
+            writer.writerow(
+                {
+                    "Title": str(row.get("Title") or "").strip(),
+                    "Price_USD": str(row.get("Price") or "15.00").strip(),
+                    "Description": str(row.get("Description") or "").strip(),
+                    "Custom_Permalink": permalink,
+                    "Expected_Gumroad_URL": f"https://wildbill3.gumroad.com/l/{permalink}",
+                    "ZIP_Path": str(resolve_local_zip_path(row)),
+                    "Preview_Path": str(resolve_local_preview_path(row) or ""),
+                    "Status": "Create as Digital product, attach ZIP, set custom URL, then publish",
+                }
+            )
+
+    print(f"Created {MANUAL_UPLOAD_MANIFEST} with {len(rows)} products.")
+    print("Upload the ZIP files through the Gumroad dashboard, then publish each product.")
 
 
 def trusted_resume_index(rows, product_map, resume_state):
@@ -469,4 +513,4 @@ def upload_physical_files():
 
 
 if __name__ == "__main__":
-    upload_physical_files()
+    generate_manual_upload_manifest()
